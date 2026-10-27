@@ -317,10 +317,12 @@ function MapView({
               return state === "verified" ||
                 state === "consolidated" ||
                 state === "learned"
-                ? "var(--success)"
-                : state === "locked"
-                  ? "var(--slate-8)"
-                  : "var(--primary)";
+                ? "var(--status-complete)"
+                : state === "learning"
+                  ? "var(--status-learning)"
+                  : state === "locked"
+                    ? "var(--slate-8)"
+                    : "var(--blue-5)";
             }}
             nodeStrokeWidth={0}
             nodeBorderRadius={4}

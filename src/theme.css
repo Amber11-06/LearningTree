@@ -56,6 +56,14 @@
   --success-text: var(--jade-12);
   --success-soft: var(--jade-3);
   --success-border: var(--jade-7);
+  /* Completion reads as deep blue, exploring as light blue. */
+  --status-complete: var(--blue-11);
+  --status-complete-text: var(--blue-12);
+  --status-complete-soft: var(--blue-3);
+  --status-complete-border: var(--blue-7);
+  --status-learning: var(--blue-8);
+  --status-learning-text: var(--blue-11);
+  --status-learning-soft: var(--blue-3);
   --danger-soft: var(--red-3);
   --danger-border: var(--red-7);
   --map-background: var(--slate-3);

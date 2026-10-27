@@ -720,9 +720,6 @@
   .command-center .rank-milestones > div {
     width: 65px;
   }
-  .command-center .rank-milestones > div + div:before {
-    width: 39px;
-  }
   .tree-page .toast {
     left: calc(50% - 50px);
   }
@@ -834,9 +831,6 @@
   }
   .command-center .rank-milestones > div {
     width: 80px;
-  }
-  .command-center .rank-milestones > div + div:before {
-    width: 54px;
   }
   .command-center .inspector-metrics {
     padding-bottom: 20px;

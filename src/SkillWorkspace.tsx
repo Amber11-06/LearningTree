@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import {
   ArrowDownRight,
   ArrowRight,
@@ -527,16 +527,28 @@ function SkillInspector({
           { label: "验证", icon: ShieldCheck },
           { label: "巩固", icon: Trophy },
         ].map((m, i) => (
-          <div key={m.label} className={progress.rank >= i + 1 ? "earned" : ""}>
-            <span>
-              {progress.rank >= i + 1 ? (
-                <Check size={12} />
-              ) : (
-                <m.icon size={12} />
-              )}
-            </span>
-            <small>{m.label}</small>
-          </div>
+          <Fragment key={m.label}>
+            {i > 0 && (
+              <ArrowRight
+                size={14}
+                strokeWidth={1.5}
+                aria-hidden="true"
+                className={`milestone-arrow ${
+                  progress.rank >= i + 1 ? "earned" : ""
+                }`}
+              />
+            )}
+            <div className={progress.rank >= i + 1 ? "earned" : ""}>
+              <span>
+                {progress.rank >= i + 1 ? (
+                  <Check size={12} />
+                ) : (
+                  <m.icon size={12} />
+                )}
+              </span>
+              <small>{m.label}</small>
+            </div>
+          </Fragment>
         ))}
       </div>
       <div className="inspector-tabs">
@@ -560,7 +572,7 @@ function SkillInspector({
       <div className="inspector-body">
         {tab === "mission" ? (
           <>
-            <div className="mission-title">
+            <div className="mission-title highlight">
               <Target size={14} />
               <h3>当前学习任务</h3>
             </div>
@@ -573,6 +585,7 @@ function SkillInspector({
                 已标记为已学，已计入进度。你仍可继续阅读或测验。
               </p>
             )}
+            <p className="requirements-title">解锁要求</p>
             <div className="requirements">
               <div className={progress.questions >= 5 ? "met" : ""}>
                 <span>

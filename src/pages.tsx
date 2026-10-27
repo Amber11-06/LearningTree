@@ -79,7 +79,7 @@ export function Home({
     .sort((a, b) => b.at.localeCompare(a.at))
     .slice(0, 3);
   return (
-    <>
+    <div className="home-page">
       <section className="welcome">
         <div>
           <div className="eyebrow">
@@ -94,31 +94,6 @@ export function Home({
             <Plus size={17} />
             记录一次学习
           </button>
-        </div>
-        <div className="week-card">
-          <span className="mini-label">
-            <Flame size={15} />
-            你的学习节奏
-          </span>
-          <div className="week-days">
-            {week.map((day) => (
-              <div key={day.date.toISOString()}>
-                <span>
-                  {
-                    ["日", "一", "二", "三", "四", "五", "六"][
-                      day.date.getDay()
-                    ]
-                  }
-                </span>
-                <i className={day.minutes || day.reviews ? "done" : ""}>
-                  {day.minutes || day.reviews ? <Check size={15} /> : <span />}
-                </i>
-              </div>
-            ))}
-          </div>
-          <p>
-            最近 7 天，有 <strong>{studiedDays} 天</strong> 留下了学习的足迹
-          </p>
         </div>
       </section>
       <section className="stats-grid" aria-label="学习概览">
@@ -254,6 +229,31 @@ export function Home({
           )}
         </section>
         <aside className="dashboard-aside">
+          <div className="week-card">
+            <span className="mini-label">
+              <Flame size={15} />
+              你的学习节奏
+            </span>
+            <div className="week-days">
+              {week.map((day) => (
+                <div key={day.date.toISOString()}>
+                  <span>
+                    {
+                      ["日", "一", "二", "三", "四", "五", "六"][
+                        day.date.getDay()
+                      ]
+                    }
+                  </span>
+                  <i className={day.minutes || day.reviews ? "done" : ""}>
+                    {day.minutes || day.reviews ? <Check size={15} /> : <span />}
+                  </i>
+                </div>
+              ))}
+            </div>
+            <p>
+              最近 7 天，有 <strong>{studiedDays} 天</strong> 留下了学习的足迹
+            </p>
+          </div>
           <section className="next-step">
             <div className="mini-label">
               <Leaf size={17} />
@@ -354,7 +354,7 @@ export function Home({
       <p className="page-foot">
         学习不是填满进度条，而是让原本模糊的事物，慢慢清晰。
       </p>
-    </>
+    </div>
   );
 }
 function actSignal(
