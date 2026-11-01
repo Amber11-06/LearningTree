@@ -344,13 +344,11 @@ describe("nested-tree map contract", () => {
     expect(child.height).toBeGreaterThan(topic.height!);
     expect(child.data.external).toBe(false);
     expect(prerequisite.data.external).toBe(true);
-    expect(graph.edges).toContainEqual(
-      expect.objectContaining({
-        source: prerequisite.id,
-        target: child.id,
-        label: "前置依赖",
-      }),
+    const dependency = graph.edges.find(
+      (edge) => edge.source === prerequisite.id && edge.target === child.id,
     );
+    expect(dependency).toBeDefined();
+    expect(dependency?.label).toBeUndefined();
     const ids = new Set(graph.nodes.map((n) => n.id));
     expect(
       graph.edges.every((e) => ids.has(e.source) && ids.has(e.target)),
