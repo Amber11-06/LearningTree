@@ -48,12 +48,12 @@ npm start          # 生产模式：FastAPI 提供 API 和 dist/
 
 ## 部署到 Sealos Devbox
 
-当前部署使用 **8080 单端口**：FastAPI 同时提供 `/api` 和构建后的 `dist/`，Sealos 公网调试地址映射到 8080。生产环境不需要 Vite，也不暴露 5173。
+当前部署使用 **8000 单端口**：FastAPI 同时提供 `/api` 和构建后的 `dist/`，Sealos 公网调试地址映射到 8000。生产环境不需要 Vite，也不暴露 5173。
 
 - 公网地址：https://yxcpadoqcxca.sealosbja.site
 - 部署与 Supervisor 配置：[deploy/README.md](deploy/README.md)
 - GitHub Actions：push 到 `main` 后自动测试、构建并 SSH 部署到 Devbox，见 [.github/workflows/deploy.yml](.github/workflows/deploy.yml)
-- 远程环境变量需要设置 `LEARNINGTREE_API_HOST=0.0.0.0`、`LEARNINGTREE_API_PORT=8080`、`LEARNINGTREE_COOKIE_SECURE=true`
+- 远程环境变量需要设置 `LEARNINGTREE_API_HOST=0.0.0.0`、`LEARNINGTREE_API_PORT=8000`、`LEARNINGTREE_COOKIE_SECURE=true`
 
 ## 使用流程
 
