@@ -2,40 +2,70 @@
 
 面向个人学习者的网页应用：蓝白工作台、可拖拽缩放的游戏式技能树，以及「学习内容 → 底部开始测验 → 判分反馈 → 解锁节点」的完整流程。
 
-当前布局保留左侧导航；项目导航位于画布左上，右侧为固定任务指挥台。新版设计与参考项目见 [交互重做说明](docs/interaction-redesign.md)。
+前端为 React + TypeScript + Vite；后端为 **FastAPI + PostgreSQL**，提供本地账号注册、登录、会话鉴权和按用户隔离的学习工作区。当前布局保留左侧导航；项目导航位于画布左上，右侧为固定任务指挥台。新版设计与参考项目见 [交互重做说明](docs/interaction-redesign.md)。
+
+## 技术栈
+
+| 层     | 技术                                                  |
+| ------ | ----------------------------------------------------- |
+| 前端   | React 19、TypeScript、Vite 8、React Flow、Zod         |
+| 后端   | FastAPI、Uvicorn、SQLAlchemy 2、Pydantic              |
+| 数据库 | PostgreSQL（工作区 JSONB + 账号/会话/导入记录关系表） |
+| 认证   | 本地用户名/密码、Argon2id、HttpOnly 会话 Cookie       |
+| 测试   | Vitest（前端领域逻辑）、pytest（FastAPI 接口）        |
 
 ## 运行
 
-使用 Node.js 24 LTS，在项目根目录执行：
+需要 Node.js 24、Python 3.12+ 和本地 PostgreSQL 14+。
 
 ```powershell
+# 1. 创建本地数据库（只需一次；请替换为自己的密码）
+psql -U postgres -c "CREATE ROLE learningtree LOGIN PASSWORD 'learningtree';"
+psql -U postgres -c "CREATE DATABASE learningtree OWNER learningtree;"
+
+# 2. 配置与 Python 依赖
+Copy-Item .env.example .env
+python -m venv .venv
+.venv\Scripts\python -m pip install -r backend\requirements.txt
+
+# 3. 前端依赖并启动
 npm ci
 npm run dev
 ```
 
-打开 http://127.0.0.1:5173 。此命令同时启动 Node API 和前端。学习数据保存在 `data/learningtree.sqlite`，首次启动自动建库并安装内置前端学习科技树；空数据库会在首次初始化时合并当前浏览器的旧数据。已有服务进程需要停止后重新运行此命令。
+打开 http://127.0.0.1:5173 ，首次使用点击「注册」创建本地账号。`npm run dev` 同时启动 FastAPI 和 Vite；Vite 将 `/api` 代理到 `http://127.0.0.1:8000`。学习数据保存在 PostgreSQL 中，每个账号有独立工作区。
+
+已有 SQLite 数据可迁移，见 [迁移说明](docs/fastapi-postgres.md#从旧-sqlite-迁移)。
 
 ```powershell
 npm test           # 数据一致性、反馈规则、FSRS 调度测试
 npm run typecheck  # TypeScript 检查
 npm run build      # 构建到 dist/
-npm run preview    # 预览构建产物
+npm start          # 生产模式：FastAPI 提供 API 和 dist/
 ```
 
-`npm run preview` 需要另外运行 `npm run dev:api`；日常开发直接使用 `npm run dev` 即可同时启动两端。
+生产模式默认访问 http://127.0.0.1:8000 。详细的配置、认证接口和数据表说明见 [FastAPI + PostgreSQL 后端](docs/fastapi-postgres.md)。
 
-生产运行使用 `npm run build` 后执行 `npm start`，由 Node 同时提供前端和 API，访问 http://127.0.0.1:3001 。当前为本机单人工作区，无需账号或 API 密钥。SQLite 配置、接口和导入格式见 [后端与课程包说明](docs/sqlite-backend.md)。
+## 部署到 Sealos Devbox
+
+当前部署使用 **8080 单端口**：FastAPI 同时提供 `/api` 和构建后的 `dist/`，Sealos 公网调试地址映射到 8080。生产环境不需要 Vite，也不暴露 5173。
+
+- 公网地址：https://yxcpadoqcxca.sealosbja.site
+- 部署与 Supervisor 配置：[deploy/README.md](deploy/README.md)
+- GitHub Actions：push 到 `main` 后自动测试、构建并 SSH 部署到 Devbox，见 [.github/workflows/deploy.yml](.github/workflows/deploy.yml)
+- 远程环境变量需要设置 `LEARNINGTREE_API_HOST=0.0.0.0`、`LEARNINGTREE_API_PORT=8080`、`LEARNINGTREE_COOKIE_SECURE=true`
 
 ## 使用流程
 
-1. 在左上项目导航选择或创建学习树；点击「推荐节点」聚焦放大，展开「推荐路线」查看学习顺序。
-2. 从右侧任务指挥台「开始学习」，阅读内容、示例并保存笔记；已掌握的节点可点击「标记为已学」跳过，直接推进进度与解锁后续节点。该标记与测验成绩分别记录，刷新或课程更新后保留。学习者界面不提供延伸、删除节点入口。
-3. 从学习页底部「开始测验」，提交后先查看选择、判断、填空、排序、代码阅读等自动题的成绩与逐题解析；简答、代码改错和实战题另行对照参考答案与评分项自评。完成后一起保存记录并更新节点进展。
-4. 近期正确率按最近最多 5 次有成绩的自测题数加权；达到 80% 且这些记录合计至少 5 题后，通过节点验证。标准自评单独保存，不进入自动正确率。
-5. 讲义与题库由作者通过 JSON 课程包维护和导入，学习者直接阅读、作答和记录笔记。同一 ID 的课程更新保留个人进度。
-6. 复习流程仍使用 FSRS；先回忆、再核对参考答案、自评并安排下一次复习。
-7. 在「偏好与数据」调整每日目标、导出备份或恢复备份。
-8. 点击「添加子树」创建嵌套学习树，或在项目编辑中设置「上级学习树」和「前置学习树」。子树节点更大、边框加粗，点击可进入，左上可返回上级。推荐路线先安排前置树。
+1. 注册或登录本地账号，进入自己的学习空间。
+2. 在左上项目导航选择或创建学习树；点击「推荐节点」聚焦放大，展开「推荐路线」查看学习顺序。
+3. 从右侧任务指挥台「开始学习」，阅读内容、示例并保存笔记；已掌握的节点可点击「标记为已学」跳过，直接推进进度与解锁后续节点。该标记与测验成绩分别记录，刷新或课程更新后保留。
+4. 从学习页底部「开始测验」，提交后先查看选择、判断、填空、排序、代码阅读等自动题的成绩与逐题解析；简答、代码改错和实战题另行对照参考答案与评分项自评。完成后一起保存记录并更新节点进展。
+5. 近期正确率按最近最多 5 次有成绩的自测题数加权；达到 80% 且这些记录合计至少 5 题后，通过节点验证。标准自评单独保存，不进入自动正确率。
+6. 讲义与题库由作者通过 JSON 课程包维护和导入，学习者直接阅读、作答和记录笔记。同一 ID 的课程更新保留个人进度。
+7. 复习流程仍使用 FSRS；先回忆、再核对参考答案、自评并安排下一次复习。
+8. 在「偏好与数据」调整每日目标、导出备份或恢复备份。
+9. 点击「添加子树」创建嵌套学习树，或在项目编辑中设置「上级学习树」和「前置学习树」。子树节点更大、边框加粗，点击可进入，左上可返回上级。推荐路线先安排前置树。
 
 ## 内置课程与制作 skills
 
@@ -69,31 +99,34 @@ npm run import:course -- courses/builtin/frontend-tech-tree.json
 
 ## 数据与边界
 
-- 学习树、讲义与题库、个人笔记、成绩、复习记录和偏好保存到 SQLite；浏览器不再承担主要持久化。
-- 首次空库迁移旧浏览器记录，保留旧原文。数据库已有数据时不自动覆盖，可在设置中显式迁移。
+- 学习树、讲义与题库、个人笔记、成绩、复习记录和偏好按登录账号保存到 PostgreSQL。
+- 一个账号一个工作区；账号之间不共享学习数据。工作区使用 revision 防止旧页面覆盖新数据。
+- 首次空工作区会自动安装内置课程；已有工作区不会被重启覆盖。
 - 课程包按稳定 ID 合并内容，保留笔记与历史；完整备份恢复则在确认后整体替换工作区。
-- 保存使用事务和 revision，服务器确认后才更新界面；旧页面不能静默覆盖新数据。
+- 保存使用数据库事务和行级锁，服务器确认后才更新界面。
 - JSON 文件最大 32 MB；工作区最多 100 棵学习树、1,000 个知识点、30 层树结构、20,000 条学习记录和 20,000 条复习记录。
 - 删除知识点会删除其子节点和关联记录；删除树时保留子树并调整关系。修改回忆题会重置当前复习卡，历史记录保留。
-- 当前是本机单人版，无远程账号和云同步；请定期导出完整 JSON 备份。
+- 当前为本机单机部署，无云同步；请定期导出完整 JSON 备份。
 
 ## 结构
 
-| 文件                 | 职责                                   |
-| -------------------- | -------------------------------------- |
-| `src/domain.ts`      | 数据契约、关系校验、反馈统计、复习调度 |
-| `src/storage.ts`     | API 通信、旧数据迁移、导入与导出       |
-| `src/demo.ts`        | 隔离标记的示例空间                     |
-| `src/App.tsx`        | 导航、操作、持久化和错误处理           |
-| `src/pages.tsx`      | 概览、学习树、复习、反馈、日志、设置   |
-| `src/forms.tsx`      | 学习树、知识点、学习记录表单           |
-| `src/components.tsx` | 可访问弹窗、知识树布局和共享组件       |
-| `src/domain.test.ts` | 核心数据与调度回归测试                 |
-| `references/`        | 搜索结果、参考清单、独立 Git 浅克隆    |
-
-后端文件：`server/index.ts` 提供 API 和生产静态服务，`server/database.ts` 管理 SQLite，`src/course-package.ts` 定义导入协议。内置前端课程包位于 `courses/builtin/frontend-tech-tree.json`；旧混合示例包保留在 `courses/frontend-foundations.json`。
-
-本次内置课程、多题型与 SQLite 安装接入按用户要求未运行构建、测试、接口或浏览器验证；仅生成内容文件，交由用户验收。
+| 文件 / 目录                 | 职责                                       |
+| --------------------------- | ------------------------------------------ |
+| `backend/app/main.py`       | FastAPI 应用、路由、异常和静态资源         |
+| `backend/app/auth.py`       | 注册、登录、退出、当前用户                 |
+| `backend/app/workspace.py`  | 工作区读写、revision、内置课程安装         |
+| `backend/app/validation.py` | 数据契约、关系校验和课程合并               |
+| `backend/app/models.py`     | SQLAlchemy 表模型                          |
+| `backend/scripts/`          | SQLite 迁移、命令行课程导入                |
+| `src/domain.ts`             | 数据契约、关系校验、反馈统计、复习调度     |
+| `src/storage.ts`            | 前端 API 通信、旧数据迁移、导入与导出      |
+| `src/auth.ts`               | 登录、注册、退出和会话语义                 |
+| `src/AuthScreen.tsx`        | 本地账号登录/注册界面                      |
+| `src/App.tsx`               | 导航、操作、持久化和错误处理               |
+| `src/pages.tsx`             | 概览、学习树、复习、反馈、日志、设置       |
+| `src/forms.tsx`             | 学习树、知识点、学习记录表单               |
+| `src/components.tsx`        | 可访问弹窗、知识树布局和共享组件           |
+| `references/`               | 搜索结果、参考清单、独立 Git 浅克隆        |
 
 ## 参考项目
 

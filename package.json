@@ -7,9 +7,9 @@
   "scripts": {
     "dev": "node --env-file-if-exists=.env scripts/dev.mjs",
     "dev:client": "vite --host 127.0.0.1",
-    "dev:api": "node --env-file-if-exists=.env --watch server/index.ts",
-    "start": "node --env-file-if-exists=.env server/index.ts",
-    "import:course": "node --env-file-if-exists=.env server/import-course.ts",
+    "dev:api": "node --env-file-if-exists=.env scripts/api.mjs",
+    "start": "node --env-file-if-exists=.env scripts/api.mjs",
+    "import:course": "node --env-file-if-exists=.env scripts/import-course.mjs",
     "courses:example": "node scripts/build-builtin-course.mjs",
     "courses:build": "node scripts/build-builtin-course.mjs",
     "courses:legacy-example": "node scripts/export-course.mjs",
@@ -17,8 +17,8 @@
     "preview": "vite preview --host 127.0.0.1",
     "test": "vitest run",
     "typecheck": "tsc -b --pretty false",
-    "format": "prettier --write src server scripts/*.mjs courses/*.json *.ts *.json index.html README.md docs",
-    "format:check": "prettier --check src server scripts/*.mjs courses/*.json *.ts *.json index.html README.md docs"
+    "format": "prettier --write src scripts/*.mjs courses/*.json *.ts *.json index.html README.md docs",
+    "format:check": "prettier --check src scripts/*.mjs courses/*.json *.ts *.json index.html README.md docs"
   },
   "dependencies": {
     "@dagrejs/dagre": "3.1.1",

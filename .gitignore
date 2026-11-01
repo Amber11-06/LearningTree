@@ -1,5 +1,9 @@
 node_modules/
 dist/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
 references/*/
 .search-index/
 playwright-report/
@@ -14,3 +18,4 @@ data/
 *.sqlite
 *.sqlite-wal
 *.sqlite-shm
+deploy/*.log

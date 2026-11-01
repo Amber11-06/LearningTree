@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import {
   ArrowDownToLine,
   ArrowRight,
@@ -9,6 +9,7 @@ import {
   CircleHelp,
   Home as HomeIcon,
   Leaf,
+  LogOut,
   Menu,
   Network,
   RotateCcw,
@@ -46,7 +47,8 @@ import {
 } from "./storage";
 import { Modal } from "./components";
 import { SessionForm, TopicForm, TreeForm } from "./forms";
-import { LearningRoom } from "./LearningRoom";
+import { AuthScreen } from "./AuthScreen";
+import { currentUser, logout, type AuthUser } from "./auth";
 import {
   Feedback,
   Home,
@@ -57,6 +59,12 @@ import {
   type Actions,
   type Page,
 } from "./pages";
+
+const LearningRoom = lazy(() =>
+  import("./LearningRoom").then((module) => ({
+    default: module.LearningRoom,
+  })),
+);
 
 type Dialog =
   | { kind: "tree"; tree?: Tree; parentTreeId?: string }
@@ -86,6 +94,76 @@ function message(error: unknown) {
   return error instanceof Error ? error.message : "操作失败，请重试";
 }
 export default function App() {
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [checking, setChecking] = useState(true);
+  const [connectionError, setConnectionError] = useState("");
+  const [attempt, setAttempt] = useState(0);
+
+  useEffect(() => {
+    let active = true;
+    setChecking(true);
+    currentUser()
+      .then((value) => {
+        if (!active) return;
+        setUser(value);
+        setConnectionError("");
+      })
+      .catch((error) => {
+        if (active) setConnectionError(message(error));
+      })
+      .finally(() => {
+        if (active) setChecking(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [attempt]);
+
+  async function endSession() {
+    try {
+      await logout();
+    } catch {
+      /* The local session is cleared even when the API is unreachable. */
+    }
+    setUser(null);
+  }
+
+  if (checking)
+    return (
+      <div className="recovery" role="status">
+        <Sprout size={38} />
+        <h1>正在连接学习空间</h1>
+        <p>正在确认本地账号与会话…</p>
+      </div>
+    );
+
+  if (connectionError)
+    return (
+      <div className="recovery">
+        <Sprout size={38} />
+        <h1>无法连接后端</h1>
+        <p role="alert">{connectionError}</p>
+        <button
+          className="button primary"
+          onClick={() => setAttempt((value) => value + 1)}
+        >
+          重新连接
+        </button>
+      </div>
+    );
+
+  if (!user)
+    return <AuthScreen onAuthenticated={(value) => setUser(value)} />;
+
+  return <WorkspaceApp user={user} onSessionEnd={endSession} />;
+}
+function WorkspaceApp({
+  user,
+  onSessionEnd,
+}: {
+  user: AuthUser;
+  onSessionEnd: () => Promise<void>;
+}) {
   const [data, setData] = useState<Data>(blankData);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -146,10 +224,13 @@ export default function App() {
         if (active) acceptWorkspace(value);
       })
       .catch((error) => {
-        if (active) {
-          setLoadError(message(error));
-          setLegacyError(error instanceof LegacyDataError);
+        if (!active) return;
+        if (error instanceof BackendError && error.code === "unauthorized") {
+          void onSessionEnd();
+          return;
         }
+        setLoadError(message(error));
+        setLegacyError(error instanceof LegacyDataError);
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -160,7 +241,9 @@ export default function App() {
   }, []);
   useEffect(() => {
     if (typeof BroadcastChannel !== "undefined") {
-      channel.current = new BroadcastChannel("learning-tree:sqlite");
+      channel.current = new BroadcastChannel(
+        `learning-tree:postgres:${user.id}`,
+      );
       channel.current.onmessage = (event) => {
         if (
           revision.current !== null &&
@@ -176,8 +259,9 @@ export default function App() {
         .then((value) => {
           if (value.revision !== revision.current) setRemoteChanged(true);
         })
-        .catch(() => {
-          /* Reconnection happens on the next user operation. */
+        .catch((error) => {
+          if (error instanceof BackendError && error.code === "unauthorized")
+            void onSessionEnd();
         });
     };
     window.addEventListener("focus", refreshNotice);
@@ -186,7 +270,7 @@ export default function App() {
       channel.current = null;
       window.removeEventListener("focus", refreshNotice);
     };
-  }, []);
+  }, [onSessionEnd, user.id]);
   async function reloadWorkspace(skipLegacy = false) {
     if (savingRef.current) return;
     setLoading(true);
@@ -196,6 +280,10 @@ export default function App() {
       acceptWorkspace(await loadData(skipLegacy));
       setDialog(null);
     } catch (error) {
+      if (error instanceof BackendError && error.code === "unauthorized") {
+        void onSessionEnd();
+        return;
+      }
       setLoadError(message(error));
       setLegacyError(error instanceof LegacyDataError);
     } finally {
@@ -228,6 +316,10 @@ export default function App() {
       setToast({ text: notification, error: false });
       return true;
     } catch (error) {
+      if (error instanceof BackendError && error.code === "unauthorized") {
+        void onSessionEnd();
+        return false;
+      }
       if (error instanceof BackendError && error.code === "revision_conflict")
         setRemoteChanged(true);
       const text = message(error);
@@ -614,15 +706,16 @@ export default function App() {
             <strong>{data.settings.name}</strong>
             <span>
               <i />
-              {data.demo ? "示例学习空间" : "个人学习空间"}
+              {data.demo ? "示例学习空间" : "个人学习空间"} · @{user.username}
             </span>
           </div>
           <button
             className="icon-button"
-            aria-label="打开个人偏好"
-            onClick={() => navigate("settings")}
+            aria-label="退出登录"
+            title="退出登录"
+            onClick={() => void onSessionEnd()}
           >
-            <ChevronRight size={17} />
+            <LogOut size={17} />
           </button>
         </div>
       </aside>
@@ -717,12 +810,22 @@ export default function App() {
         )}
         <main id="main" className="main-content">
           {page === "learn" && (
-            <LearningRoom
-              key={selectedId}
-              data={data}
-              nodeId={selectedId}
-              actions={actions}
-            />
+            <Suspense
+              fallback={
+                <div className="recovery" role="status">
+                  <Sprout size={38} />
+                  <h1>正在打开学习工作台</h1>
+                  <p>加载讲义、测验与复习内容…</p>
+                </div>
+              }
+            >
+              <LearningRoom
+                key={selectedId}
+                data={data}
+                nodeId={selectedId}
+                actions={actions}
+              />
+            </Suspense>
           )}
           {page === "home" && (
             <Home
@@ -762,7 +865,7 @@ export default function App() {
           </span>
           <span>
             <i />
-            学习数据保存在本机数据库
+            学习数据保存在本机 PostgreSQL
           </span>
         </footer>
       </div>

@@ -23,6 +23,7 @@ async function request(path: string, init?: RequestInit): Promise<unknown> {
   try {
     response = await fetch(path, {
       ...init,
+      credentials: "include",
       cache: "no-store",
       signal: AbortSignal.timeout(15000),
     });
@@ -32,12 +33,15 @@ async function request(path: string, init?: RequestInit): Promise<unknown> {
       "connection_error",
     );
   }
+  if (response.status === 401) {
+    throw new BackendError("登录已过期，请重新登录。", "unauthorized");
+  }
   let payload: unknown;
   try {
     payload = await response.json();
   } catch {
     throw new BackendError(
-      "后端未返回有效数据，请确认 SQLite 服务已启动。",
+      "后端未返回有效数据，请确认 FastAPI 与 PostgreSQL 已启动。",
       "connection_error",
     );
   }
@@ -85,7 +89,7 @@ export function markLegacyMigrated() {
   try {
     localStorage.setItem(MIGRATED_KEY, "true");
   } catch {
-    /* SQLite remains authoritative. */
+    /* The PostgreSQL workspace remains authoritative. */
   }
 }
 export async function loadData(skipLegacy = false): Promise<Workspace> {

@@ -1039,8 +1039,8 @@ export function Settings({ data, actions }: Props) {
           <h3>关于这里的反馈</h3>
           <p>
             反馈由实际学习记录和明确规则生成；自测正确率、主观信心和复习自评分开记录。复习采用
-            FSRS 算法安排时间。课程和学习数据通过本机后端写入
-            SQLite，当前为单人工作区，无需账号、不调用 AI。请定期导出完整备份。
+            FSRS 算法安排时间。课程和学习数据通过本机 FastAPI 写入
+            PostgreSQL，账号与数据按登录用户隔离，不调用 AI。请定期导出完整备份。
           </p>
         </div>
       </section>

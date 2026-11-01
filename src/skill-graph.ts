@@ -176,11 +176,19 @@ export function buildSkillGraph(
     });
   for (const edge of graph.edges()) {
     if (!edge.v.startsWith("tree:") && !edge.w.startsWith("tree:")) continue;
+    const sourceId = edge.v.startsWith("tree:") ? edge.v.slice(5) : null;
+    const targetTreeId = edge.w.startsWith("tree:")
+      ? edge.w.slice(5)
+      : data.nodes.find((n) => `topic:${n.id}` === edge.w)?.treeId;
+    const targetTree = data.trees.find((t) => t.id === targetTreeId);
+    const isPrerequisite =
+      !!sourceId && !!targetTree?.prerequisiteTreeIds.includes(sourceId);
     edges.push({
       id: `dependency:${edge.v}:${edge.w}`,
       source: edge.v,
       target: edge.w,
       type: "circuit",
+      ...(isPrerequisite ? { label: "前置依赖" } : {}),
       style: {
         stroke: "var(--primary)",
         strokeWidth: 2,
