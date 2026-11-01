@@ -73,3 +73,22 @@
 
 迁移后的接口验证还覆盖：未登录 401、错误密码 401、重复用户名 409、跨账号工作区隔离、旧 revision 409、断链数据 422、内置课程首次安装和显式导入。
 
+## Sealos Devbox 部署与 CI/CD 验收（2026-11-01）
+
+环境：Sealos Devbox（Ubuntu 24.04）、Node.js 24.22.2、Python 3.12、PostgreSQL 16、Supervisor。
+
+| 检查                                      | 结果                                                                 |
+| ----------------------------------------- | -------------------------------------------------------------------- |
+| 公网地址                                  | https://yxcpadoqcxca.sealosbja.site → Devbox 8000                     |
+| 单端口部署                                | FastAPI 同时提供 `/api` 与 `dist/`；未暴露 Vite 5173                 |
+| 公网注册 → 工作区 → 退出                  | 201 → revision 1（9 棵树、24 个知识点）→ 200 → 401                    |
+| 公网 Cookie                               | `HttpOnly`、`Secure`、`SameSite=Lax`                                 |
+| GitHub Actions `CI/CD`（run 41309622561） | 测试 48s、部署 36s，全部成功                                         |
+| 部署后远程版本                            | `7dd5f09`，Supervisor 中 `learningtree` 与 `postgresql` 均为 RUNNING |
+| 公网健康检查                              | 200 `{"ok":true,"storage":"postgresql","auth":"cookie"}`             |
+
+前端优化：学习工作台改为 `React.lazy` 按需加载，初始 JS 从 859.51 kB 降至 676.32 kB，LearningRoom 拆为 184.92 kB 独立块。
+
+CI/CD 流程：push 到 `main` → GitHub Actions 启动 PostgreSQL service → pytest / Vitest / typecheck / build → SSH 到 Devbox → `git reset --hard origin/main` → 重装依赖并构建 → 更新 Supervisor 配置并重启 → `/api/health` 健康检查。
+
+
