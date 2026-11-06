@@ -55,7 +55,9 @@ function SkillNodeView({ data }: NodeProps<SkillNode>) {
         <strong title={data.title}>{data.title}</strong>
         {data.external && <span className="subtree-kind">前置树</span>}
         <span className="skill-state">
-          {skillLabels[data.state]} · {data.completed} / {data.total} 已完成
+          {data.state === "locked"
+            ? "未解锁"
+            : `${skillLabels[data.state]} · ${data.completed} / ${data.total}`}
         </span>
         <Handle type="source" position={Position.Right} />
       </div>

@@ -99,6 +99,7 @@ CI/CD 流程：push 到 `main` → GitHub Actions 启动 PostgreSQL service → 
 - 学习页：`rehype-highlight` 语法高亮、深色代码块、笔记空状态与辅助文字对比度提升。
 - 移动端：`<=760px` 切换为纵向时间轴，支持「列表 / 画布」切换；已完成节点使用 ✔ 和深色实线。
 - 清理首页/日志/表单中的空泛副标题，改为直接说明。
+- 页面标题统一为功能名：学习树、待复习、自测趋势、学习偏好、数据管理；移除「正在生长」「足迹」「节奏」「此刻」等装饰性标题。
 - 验证：`npm test` 41 / 41、`npm run typecheck`、`npm run build`、pytest 7 / 7；GitHub Actions run `42166131599` 测试与部署成功；公网 `/api/health` 为 200。
 
 
