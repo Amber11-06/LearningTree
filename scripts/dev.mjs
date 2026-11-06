@@ -37,8 +37,7 @@ const api = spawn(
     "--port",
     port,
     "--proxy-headers",
-    "--forwarded-allow-ips",
-    "*",
+    "--forwarded-allow-ips=*",
   ],
   {
     cwd: root,

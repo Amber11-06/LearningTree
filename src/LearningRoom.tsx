@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import Markdown from "react-markdown";
+import rehypeHighlight from "rehype-highlight";
 import {
   ArrowLeft,
   ArrowRight,
@@ -288,10 +289,10 @@ export function LearningRoom({
           <div>
             <span className="section-kicker">
               {mode === "read"
-                ? "LEARN & UNDERSTAND"
+                ? "学习内容"
                 : mode === "quiz"
-                  ? "CHECK YOUR UNDERSTANDING"
-                  : "YOUR LEARNING FEEDBACK"}
+                  ? "课后测验"
+                  : "学习反馈"}
             </span>
             <h1>
               {mode === "read"
@@ -341,6 +342,7 @@ export function LearningRoom({
             {content ? (
               <div className="markdown-content">
                 <Markdown
+                  rehypePlugins={[rehypeHighlight]}
                   components={{
                     h2: ({ node, children }) => (
                       <h2 id={`section-${node?.position?.start.line}`}>
@@ -413,7 +415,7 @@ export function LearningRoom({
                 disabled={pending}
                 maxLength={4000}
                 rows={7}
-                placeholder="我的理解是…"
+                placeholder="记录概念、例子或疑问…"
                 value={note}
                 onChange={(e) => {
                   setNote(e.target.value);
@@ -742,7 +744,9 @@ export function LearningRoom({
               <strong>{topic.title}</strong>
               <small>
                 {mode === "read"
-                  ? "先理解，再验证。准备好后进入本节测验。"
+                  ? quiz.length
+                    ? `${quiz.length} 道题 · 保存笔记后可开始测验`
+                    : "本节暂无测验"
                   : mode === "quiz"
                     ? `已完成 ${answered} / ${questions.length} 题`
                     : mode === "evaluate"

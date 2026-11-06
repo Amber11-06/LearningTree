@@ -72,61 +72,66 @@ export function AuthScreen({
 
   return (
     <div className="auth-shell">
-      <section className="auth-story" aria-label="LearningTree 简介">
+      <section className="auth-story" aria-label="LearningTree 本地账号">
         <div className="auth-brand">
           <span className="brand-icon">
             <Sprout size={24} />
           </span>
           <span>
-            LearningTree<small>YOUR PERSONAL SKILL MAP</small>
+            LearningTree<small>PERSONAL SKILL MAP</small>
           </span>
         </div>
         <div className="auth-story-copy">
           <span className="auth-kicker">
-            <Leaf size={14} />
-            本地优先的学习工作台
+            <Database size={14} />
+            LOCAL WORKSPACE
           </span>
           <h1>
-            把学习走成
+            登录你的
             <br />
-            一条看得见的路。
+            学习空间
           </h1>
           <p>
-            用技能树组织知识，以自测、反思和间隔复习留下证据。现在使用本地账号，
-            每位学习者拥有独立的学习空间。
+            技能树、学习记录和复习计划保存在本机 PostgreSQL。每个账号拥有独立工作区。
           </p>
+          <div className="auth-stats">
+            <div>
+              <strong>本地</strong>
+              <span>账号存储</span>
+            </div>
+            <div>
+              <strong>PostgreSQL</strong>
+              <span>学习数据</span>
+            </div>
+            <div>
+              <strong>Argon2</strong>
+              <span>密码哈希</span>
+            </div>
+          </div>
         </div>
-        <ul className="auth-features">
-          <li>
-            <Database size={17} />
-            <span>
-              <strong>数据留在本机</strong>
-              PostgreSQL 保存账号、课程与学习记录
-            </span>
-          </li>
-          <li>
-            <ShieldCheck size={17} />
-            <span>
-              <strong>本地登录认证</strong>
-              密码使用 Argon2 哈希，会话保存在 HttpOnly Cookie
-            </span>
-          </li>
-        </ul>
+        <div className="auth-meta">
+          <span>
+            <ShieldCheck size={14} />
+            HttpOnly 会话
+          </span>
+          <span>独立工作区</span>
+          <span>不连接第三方</span>
+        </div>
       </section>
 
       <section className="auth-panel">
         <div className="auth-card">
           <div className="auth-card-head">
             <span className="auth-eyebrow">LOCAL ACCOUNT</span>
-            <h2>{mode === "login" ? "欢迎回来" : "创建本地账号"}</h2>
+            <h2>{mode === "login" ? "登录" : "创建账号"}</h2>
             <p>
               {mode === "login"
-                ? "登录后继续你的技能树和学习记录。"
+                ? "使用本地账号进入工作区。"
                 : "账号只保存在这台电脑的 PostgreSQL 中。"}
             </p>
           </div>
 
-          <div className="auth-tabs" role="tablist" aria-label="登录或注册">
+          <div className="auth-tabs" role="tablist" aria-label="登录或创建账号">
             <button
               type="button"
               role="tab"
@@ -143,7 +148,7 @@ export function AuthScreen({
               className={mode === "register" ? "active" : ""}
               onClick={() => switchMode("register")}
             >
-              注册
+              创建账号
             </button>
           </div>
 
@@ -245,7 +250,7 @@ export function AuthScreen({
               {busy
                 ? "请稍候…"
                 : mode === "login"
-                  ? "进入学习空间"
+                  ? "登录"
                   : "创建并进入"}
               {!busy && <ArrowRight size={17} />}
             </button>

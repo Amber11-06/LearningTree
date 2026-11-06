@@ -56,6 +56,7 @@ export function Trees({
   selectedId: string | null;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [mobileView, setMobileView] = useState<"list" | "map">("list");
   const [collapsedTrees, setCollapsedTrees] = useState<Set<string>>(
     () => new Set(),
   );
@@ -76,6 +77,10 @@ export function Trees({
   const tree = data.trees.find((t) => t.id === treeId) ?? data.trees[0];
   const nodes = data.nodes.filter((n) => n.treeId === tree?.id);
   const recommendation = recommendedRoute(data, tree?.id ?? "");
+  const childTrees = data.trees.filter((t) => t.parentTreeId === tree?.id);
+  const activeChildId =
+    recommendation.next?.treeId ??
+    childTrees.find((t) => !treeProgress(data, t.id).complete)?.id;
   const parentTree = data.trees.find((t) => t.id === tree?.parentTreeId);
   const treePath: Tree[] = [];
   let pathTree: Tree | undefined = tree;
@@ -146,7 +151,9 @@ export function Trees({
     };
   }, []);
   return (
-    <div className="constellation-workspace">
+    <div
+      className={`constellation-workspace mobile-${mobileView}`}
+    >
       <section className="constellation-stage" aria-label="项目技能地图">
         <div className="project-navigation" ref={navigationRef}>
           <button
@@ -378,6 +385,135 @@ export function Trees({
             </div>
           )}
         </div>
+        {tree && (
+          <div className="mobile-tree-tools">
+            <div className="mobile-segment" role="tablist" aria-label="技能树视图">
+              <button
+                type="button"
+                role="tab"
+                aria-selected={mobileView === "list"}
+                className={mobileView === "list" ? "active" : ""}
+                onClick={() => setMobileView("list")}
+              >
+                <List size={14} />
+                列表
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={mobileView === "map"}
+                className={mobileView === "map" ? "active" : ""}
+                onClick={() => setMobileView("map")}
+              >
+                <Network size={14} />
+                画布
+              </button>
+            </div>
+            {recommendation.next && (
+              <button
+                className="mobile-continue"
+                onClick={() => actions.learn(recommendation.next!.id)}
+              >
+                <Play size={13} />
+                继续学习
+              </button>
+            )}
+            <div className="mobile-stage-list">
+              {childTrees.length
+                ? childTrees.map((child, index) => {
+                    const progress = treeProgress(data, child.id);
+                    const complete = progress.complete;
+                    const blocked = treeBlockers(data, child.id).length > 0;
+                    const active = child.id === activeChildId;
+                    const percentage = progress.total
+                      ? Math.round((progress.completed / progress.total) * 100)
+                      : 0;
+                    return (
+                      <div
+                        className={`mobile-stage-row ${complete ? "done" : ""} ${active ? "active" : ""}`}
+                        key={child.id}
+                      >
+                        <span className="mobile-stage-index">
+                          {complete ? (
+                            <Check size={13} />
+                          ) : blocked ? (
+                            <LockKeyhole size={12} />
+                          ) : (
+                            String(index + 1).padStart(2, "0")
+                          )}
+                        </span>
+                        <button
+                          className="mobile-stage-card"
+                          onClick={() => setTreeId(child.id)}
+                        >
+                          <span className="mobile-stage-head">
+                            <strong>{child.title}</strong>
+                            <small>
+                              {complete
+                                ? "已完成"
+                                : blocked
+                                  ? "未解锁"
+                                  : "进行中"}
+                            </small>
+                          </span>
+                          <span className="mobile-stage-progress">
+                            <i style={{ width: `${percentage}%` }} />
+                          </span>
+                          <span className="mobile-stage-meta">
+                            <span>
+                              {progress.completed} / {progress.total} 知识点
+                            </span>
+                            <span>{percentage}%</span>
+                          </span>
+                          {active && recommendation.next && (
+                            <span className="mobile-stage-next">
+                              下一站：{recommendation.next.title}
+                            </span>
+                          )}
+                        </button>
+                      </div>
+                    );
+                  })
+                : nodes.map((node, index) => {
+                    const state = skillState(data, node);
+                    const complete =
+                      state === "verified" ||
+                      state === "consolidated" ||
+                      state === "learned";
+                    const active = selected?.id === node.id;
+                    return (
+                      <div
+                        className={`mobile-stage-row ${complete ? "done" : ""} ${active ? "active" : ""}`}
+                        key={node.id}
+                      >
+                        <span className="mobile-stage-index">
+                          {complete ? (
+                            <Check size={13} />
+                          ) : state === "locked" ? (
+                            <LockKeyhole size={12} />
+                          ) : (
+                            String(index + 1).padStart(2, "0")
+                          )}
+                        </span>
+                        <button
+                          className="mobile-stage-card"
+                          onClick={() => actions.learn(node.id)}
+                        >
+                          <span className="mobile-stage-head">
+                            <strong>{node.title}</strong>
+                            <small>{skillLabels[state]}</small>
+                          </span>
+                          <span className="mobile-stage-meta">
+                            <span>{node.quiz.length} 道题</span>
+                            <span>开始学习</span>
+                          </span>
+                        </button>
+                      </div>
+                    );
+                  })}
+            </div>
+          </div>
+        )}
         {tree ? (
           <>
             <div className="map-quick-actions">
@@ -471,7 +607,7 @@ function SkillInspector({
         <div className="inspector-empty">
           <Crosshair size={30} />
           <h3>选择一个知识点</h3>
-          <p>在地图中查看它的前置路线、学习任务和成长证据。</p>
+          <p>查看前置路线、学习任务和学习记录。</p>
         </div>
       </aside>
     );
@@ -749,7 +885,7 @@ function SkillInspector({
               ))}
             {!sessions.length && !reviews.length && !node.learnedAt && (
               <p className="empty-history">
-                完成第一次探索，这里就会留下你的进步。
+                暂无学习或复习记录。
               </p>
             )}
           </div>

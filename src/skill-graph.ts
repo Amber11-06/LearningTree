@@ -56,16 +56,16 @@ export function buildSkillGraph(
   const graph = new dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
   graph.setGraph({
     rankdir: "LR",
-    ranksep: 65,
-    nodesep: 35,
-    marginx: 80,
-    marginy: 70,
+    ranksep: 58,
+    nodesep: 28,
+    marginx: 64,
+    marginy: 56,
   });
   topics.forEach((n) =>
-    graph.setNode(`topic:${n.id}`, { width: 170, height: 150 }),
+    graph.setNode(`topic:${n.id}`, { width: 196, height: 96 }),
   );
   relatedTrees.forEach((t) =>
-    graph.setNode(`tree:${t.id}`, { width: 210, height: 190 }),
+    graph.setNode(`tree:${t.id}`, { width: 220, height: 116 }),
   );
   topics.forEach((n) => {
     if (n.parentId) graph.setEdge(`topic:${n.parentId}`, `topic:${n.id}`);
@@ -84,6 +84,20 @@ export function buildSkillGraph(
     }),
   );
   dagre.layout(graph);
+  const manualPositions = new Map<string, { x: number; y: number }>();
+  if (!topics.length && children.length > 2) {
+    const columns = 3;
+    const gapX = 40;
+    const gapY = 48;
+    const cardWidth = 220;
+    const cardHeight = 116;
+    children.forEach((child, index) => {
+      manualPositions.set(child.id, {
+        x: 24 + (index % columns) * (cardWidth + gapX),
+        y: 340 + Math.floor(index / columns) * (cardHeight + gapY),
+      });
+    });
+  }
   const route = new Set(
     recommendedIds.length
       ? recommendedIds
@@ -98,9 +112,9 @@ export function buildSkillGraph(
     return {
       id: `topic:${n.id}`,
       type: "skill",
-      position: { x: p.x - 85, y: p.y - 75 },
-      width: 170,
-      height: 150,
+      position: { x: p.x - 98, y: p.y - 48 },
+      width: 196,
+      height: 96,
       draggable: false,
       focusable: true,
       ariaLabel: `${n.title}，${skillLabels[skillState(data, n)]}`,
@@ -123,9 +137,12 @@ export function buildSkillGraph(
     nodes.push({
       id: `tree:${t.id}`,
       type: "skill",
-      position: { x: p.x - 105, y: p.y - 95 },
-      width: 210,
-      height: 190,
+      position: manualPositions.get(t.id) ?? {
+        x: p.x - 110,
+        y: p.y - 58,
+      },
+      width: 220,
+      height: 116,
       draggable: false,
       focusable: true,
       ariaLabel: `${t.parentTreeId === tree.id ? "子学习树" : "前置学习树"}：${t.title}，${progress.completed} / ${progress.total} 已完成，点击进入`,
@@ -181,12 +198,37 @@ export function buildSkillGraph(
       source: edge.v,
       target: edge.w,
       type: "circuit",
-      style: {
-        stroke: "var(--primary)",
-        strokeWidth: 2,
-        strokeDasharray: "6 5",
-      },
+      style: manualPositions.size
+        ? {
+            stroke: "var(--edge-muted)",
+            strokeWidth: 1,
+            strokeDasharray: "3 7",
+            opacity: 0.4,
+          }
+        : {
+            stroke: "var(--primary)",
+            strokeWidth: 2,
+            strokeDasharray: "6 5",
+          },
     });
+  }
+  if (manualPositions.size && children.length > 1) {
+    const sequenceEdges: Edge[] = children.slice(0, -1).map((child, index) => {
+      const next = children[index + 1];
+      return {
+        id: `sequence:${child.id}:${next.id}`,
+        source: `tree:${child.id}`,
+        target: `tree:${next.id}`,
+        type: "circuit",
+        style: {
+          stroke: "var(--edge-muted)",
+          strokeWidth: 1.2,
+          strokeDasharray: "4 8",
+          opacity: 0.55,
+        } as CSSProperties,
+      };
+    });
+    return { nodes, edges: sequenceEdges };
   }
   return { nodes, edges };
 }

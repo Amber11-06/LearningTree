@@ -84,12 +84,10 @@ export function Home({
         <div>
           <div className="eyebrow">
             <span />
-            每天一点，慢慢生长
+            学习概览
           </div>
-          <h1>
-            每一次学习，都有回响<span>。</span>
-          </h1>
-          <p>把好奇心种下，让理解在一次次反馈中扎根。</p>
+          <h1>今天的学习进度</h1>
+          <p>查看当前进度、待复习节点和最近学习记录。</p>
           <button className="button primary" onClick={() => actions.study()}>
             <Plus size={17} />
             记录一次学习
@@ -745,11 +743,11 @@ export function Feedback({ data, actions }: Props) {
           </div>
         ) : (
           <Empty
-            title="从一次真实的学习开始"
+            title="暂无学习记录"
             action="记录学习"
             onAction={() => actions.study()}
           >
-            先留下一条记录，反馈就会从这里生长。
+            完成一次学习或测验后，记录会显示在这里。
           </Empty>
         )}
       </section>
@@ -766,9 +764,9 @@ export function Journal({ data, actions }: Props) {
   return (
     <>
       <PageHeading
-        eyebrow="走过的每一步，都算数"
+        eyebrow="学习记录"
         title="学习日志"
-        description="记录收获，也容纳困惑。回头看时，你会发现自己已经走了很远。"
+        description="按时间查看学习与复习记录。"
       >
         <button className="button primary" onClick={() => actions.study()}>
           <Plus size={17} />

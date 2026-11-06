@@ -690,7 +690,7 @@ function WorkspaceApp({
             <p>
               {data.trees.length} 条学习路线 · {data.nodes.length} 个节点
             </p>
-            <span>探索 → 验证 → 巩固</span>
+            <span>本地 PostgreSQL · 自动保存</span>
           </div>
         </div>
         <button

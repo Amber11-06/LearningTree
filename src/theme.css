@@ -80,3 +80,93 @@
   --paper: var(--card);
   --soft: var(--secondary);
 }
+
+/* Monet / The Japanese Bridge 3 palette.
+   Primitive Radix tokens are remapped so existing component styles inherit the
+   blue-gray system without a risky selector rewrite. */
+:root {
+  --slate-1: #ffffff;
+  --slate-2: #f8fafb;
+  --slate-3: #f3f7f9;
+  --slate-4: #edf3f6;
+  --slate-5: #e4edf1;
+  --slate-6: #dce5ea;
+  --slate-7: #d0dde4;
+  --slate-8: #c5d4dd;
+  --slate-9: #b1c4ce;
+  --slate-10: #8fa7b5;
+  --slate-11: #5a7382;
+  --slate-12: #16263d;
+
+  --blue-1: #f7fafc;
+  --blue-2: #eef4f7;
+  --blue-3: #e6eef3;
+  --blue-4: #dbe8ef;
+  --blue-5: #ccdde7;
+  --blue-6: #b8cfdd;
+  --blue-7: #9fbcd0;
+  --blue-8: #7f9cb1;
+  --blue-9: #6c8ba2;
+  --blue-10: #597481;
+  --blue-11: #334c64;
+  --blue-12: #16263d;
+
+  --jade-1: #f7faf9;
+  --jade-2: #eef4f2;
+  --jade-3: #e3edeb;
+  --jade-4: #d6e5e1;
+  --jade-5: #c5d9d4;
+  --jade-6: #b0cbc4;
+  --jade-7: #96b8af;
+  --jade-8: #7a9f95;
+  --jade-9: #62877c;
+  --jade-10: #50746a;
+  --jade-11: #4f736b;
+  --jade-12: #35564f;
+
+  --background: #f3f7f9;
+  --foreground: #16263d;
+  --card: #ffffff;
+  --primary: #334c64;
+  --primary-hover: #16263d;
+  --primary-foreground: #ffffff;
+  --secondary: #edf3f6;
+  --secondary-foreground: #4f6877;
+  --muted-foreground: #4f6877;
+  --accent: #edf3f6;
+  --border: #dce5ea;
+  --input: #c5d4dd;
+  --ring: #547095;
+  --sidebar: #fbfcfd;
+  --surface-subtle: #f4f8fa;
+  --surface-inset: #e9f1f5;
+  --text-primary: #16263d;
+  --text-secondary: #4f6877;
+  --text-accent: #547095;
+  --text-accent-strong: #334c64;
+  --icon-muted: #6b8494;
+  --success: #4f736b;
+  --success-text: #35564f;
+  --success-soft: #e8f0ee;
+  --success-border: #b7ccc7;
+  --status-complete: #334c64;
+  --status-complete-text: #334c64;
+  --status-complete-soft: #edf3f6;
+  --status-complete-border: #b1c4ce;
+  --status-learning: #547095;
+  --status-learning-text: #547095;
+  --status-learning-soft: #edf3f6;
+  --map-background: #f7fafb;
+  --map-grid: #dce5ea;
+  --map-mask: color-mix(in srgb, #f7fafb 72%, transparent);
+  --edge-active: #547095;
+  --edge-muted: #c5d4dd;
+  --shadow-color: rgb(22 38 61 / 0.08);
+  --scrim: rgb(22 38 61 / 0.34);
+  --focus-glow: rgb(84 112 149 / 0.12);
+  --green: var(--primary);
+  --ink: var(--foreground);
+  --muted: var(--muted-foreground);
+  --paper: var(--card);
+  --soft: var(--secondary);
+}

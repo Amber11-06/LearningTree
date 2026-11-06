@@ -9,7 +9,7 @@ import {
   Position,
   ReactFlow,
   ReactFlowProvider,
-  getSmoothStepPath,
+  getBezierPath,
   useReactFlow,
   useViewport,
   type EdgeProps,
@@ -50,12 +50,14 @@ function SkillNodeView({ data }: NodeProps<SkillNode>) {
       >
         <Handle type="target" position={Position.Left} />
         <div className="subtree-emblem">
-          <GitBranch size={38} strokeWidth={2} />
-          <span>{data.external ? "前置树" : "子树"}</span>
+          <GitBranch size={19} strokeWidth={2} />
         </div>
         <strong title={data.title}>{data.title}</strong>
+        <span className="subtree-kind">
+          {data.external ? "前置树" : "子树"}
+        </span>
         <span className="skill-state">
-          {data.completed} / {data.total} 已完成 · 点击进入
+          {skillLabels[data.state]} · {data.completed} / {data.total} 已完成
         </span>
         <Handle type="source" position={Position.Right} />
       </div>
@@ -100,10 +102,9 @@ function SkillNodeView({ data }: NodeProps<SkillNode>) {
   );
 }
 function CircuitEdge(props: EdgeProps) {
-  const [path, labelX, labelY] = getSmoothStepPath({
+  const [path, labelX, labelY] = getBezierPath({
     ...props,
-    borderRadius: 18,
-    offset: 28,
+    curvature: 0.26,
   });
   return (
     <>
@@ -173,6 +174,7 @@ function MapView({
   switching: boolean;
 }) {
   const [expanded, setExpanded] = useState(false);
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
   const flow = useReactFlow<SkillNode>();
   const { zoom } = useViewport();
   const effective = selected ?? nextSkill(data, tree.id)?.id;
@@ -191,6 +193,24 @@ function MapView({
   const reduced =
     typeof matchMedia !== "undefined" &&
     matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const visibleEdges = useMemo(() => {
+    if (!hoveredId) return graph.edges;
+    const source = `topic:${hoveredId}`;
+    return graph.edges.map((edge) => {
+      if (edge.source !== source && edge.target !== source) return edge;
+      return {
+        ...edge,
+        data: { ...edge.data, active: true },
+        style: {
+          ...edge.style,
+          stroke: "var(--primary)",
+          strokeWidth: 2.5,
+          strokeDasharray: undefined,
+          opacity: 1,
+        },
+      };
+    });
+  }, [graph.edges, hoveredId]);
   const { controlCamera, fit, centerOnNode } = useTreeCamera({
     treeId: tree.id,
     compact,
@@ -249,7 +269,7 @@ function MapView({
     >
       <ReactFlow<SkillNode>
         nodes={graph.nodes}
-        edges={graph.edges}
+        edges={visibleEdges}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         onNodeClick={(_, node) =>
@@ -257,6 +277,10 @@ function MapView({
             ? onOpenTree?.(node.data.treeId)
             : node.data.topicId && onSelect(node.data.topicId)
         }
+        onNodeMouseEnter={(_, node) =>
+          setHoveredId(node.data.topicId ?? null)
+        }
+        onNodeMouseLeave={() => setHoveredId(null)}
         onNodeDoubleClick={(_, node) => centerOnNode(node.id, 1.15)}
         nodesDraggable={false}
         deleteKeyCode={null}
@@ -356,7 +380,9 @@ function MapView({
             </button>
           </div>
           {!compact && (
-            <span className="map-hint">拖动探索 · 滚轮缩放 · 双击聚焦</span>
+            <span className="map-hint">
+              悬停节点查看关联路径 · 拖动探索 · 滚轮缩放
+            </span>
           )}
         </Panel>
         {!compact && (
@@ -382,8 +408,8 @@ function MapView({
         {!graph.nodes.length && (
           <Panel position="top-center" className="empty-map">
             <Trophy size={34} />
-            <h3>你的技能树从这里开始</h3>
-            <p>添加第一个知识点，建立自己的成长路线。</p>
+            <h3>暂无知识点</h3>
+            <p>添加第一个知识点。</p>
           </Panel>
         )}
         {routeOnly && !compact && (

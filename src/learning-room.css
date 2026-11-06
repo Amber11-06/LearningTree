@@ -174,14 +174,14 @@
   font-weight: var(--weight-semibold);
 }
 .markdown-content pre {
-  background: var(--slate-3);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 20px 22px;
+  background: var(--ink);
+  border: 1px solid var(--ink);
+  border-radius: 10px;
+  padding: 16px 18px;
   overflow: auto;
   font-size: var(--text-sm);
-  line-height: var(--leading-body);
-  color: var(--text-secondary);
+  line-height: 1.7;
+  color: #dbe6ec;
   margin: 21px 0;
   tab-size: 2;
 }
@@ -200,6 +200,35 @@
   color: inherit;
   font-size: var(--text-sm);
   word-break: normal;
+}
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-built_in {
+  color: #b8d4e4;
+}
+.hljs-string,
+.hljs-attr,
+.hljs-template-tag {
+  color: #cfe0b9;
+}
+.hljs-title,
+.hljs-title.function_,
+.hljs-function .hljs-title {
+  color: #f0d6a6;
+}
+.hljs-comment,
+.hljs-quote {
+  color: #88a4b3;
+  font-style: italic;
+}
+.hljs-number,
+.hljs-literal {
+  color: #e3b7a3;
+}
+.hljs-variable,
+.hljs-params,
+.hljs-property {
+  color: #dbe6ec;
 }
 .markdown-content blockquote {
   border-left: 3px solid var(--border);
@@ -328,16 +357,16 @@
   resize: vertical;
   padding: 11px;
   border: 1px solid var(--input);
-  border-radius: 6px;
-  font-size: var(--text-base);
+  border-radius: 8px;
+  font-size: var(--text-sm);
   background: var(--card);
   line-height: var(--leading-body);
   color: var(--text-primary);
-  min-height: 130px;
+  min-height: 150px;
   outline-color: var(--ring);
 }
 .lesson-notes textarea::placeholder {
-  color: var(--text-primary);
+  color: var(--text-secondary);
 }
 .lesson-notes > div {
   display: flex;

@@ -85,7 +85,7 @@ export function TreeForm({
       >
         <fieldset disabled={saving}>
           <p className="form-intro">
-            选一个你想持续探索的方向，再把它拆成小小的知识点。
+            填写学习树名称、说明和颜色。
           </p>
           <label>
             学习目标
@@ -445,7 +445,7 @@ export function SessionForm({
               ? Number(correct) / Number(total) < 0.6
                 ? "下一步：挑一道错题，不看答案重新解释思路，再用新题验证。"
                 : "下一步：隔一段时间，再试着不看笔记回答回忆题。"
-              : "下一步：试着给自己出一道题，让反馈多一份实际依据。"}
+              : "尚未填写自测成绩；完成一次带自测的学习记录后再查看趋势。"}
           </p>
           <button className="button primary" onClick={onClose}>
             查看我的进展
