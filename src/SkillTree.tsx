@@ -53,9 +53,7 @@ function SkillNodeView({ data }: NodeProps<SkillNode>) {
           <GitBranch size={19} strokeWidth={2} />
         </div>
         <strong title={data.title}>{data.title}</strong>
-        <span className="subtree-kind">
-          {data.external ? "前置树" : "子树"}
-        </span>
+        {data.external && <span className="subtree-kind">前置树</span>}
         <span className="skill-state">
           {skillLabels[data.state]} · {data.completed} / {data.total} 已完成
         </span>
@@ -393,15 +391,15 @@ function MapView({
             </span>
             <span>
               <i className="learning" />
-              探索中
+              学习中
             </span>
             <span>
               <i className="available" />
-              可挑战
+              可开始
             </span>
             <span>
               <LockKeyhole size={10} />
-              待解锁
+              未开始
             </span>
           </Panel>
         )}

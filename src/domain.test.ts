@@ -108,7 +108,7 @@ describe("learning feedback", () => {
       note: "",
     }));
     expect(nodeScore(data, "a")).toBe(40);
-    expect(feedback(data, now).some((f) => f.title.includes("一点时间"))).toBe(
+    expect(feedback(data, now).some((f) => f.title.includes("复习「知识点」"))).toBe(
       true,
     );
   });

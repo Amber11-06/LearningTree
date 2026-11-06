@@ -382,7 +382,7 @@ export function LearningRoom({
             <div className="reading-end">
               <ShieldCheck size={22} />
               <div>
-                <strong>读完了，试着验证一下。</strong>
+                <strong>本节测验</strong>
                 <p>
                   {quiz.length
                     ? `本节有 ${quiz.length} 道题，其中 ${objectiveCount} 道自动判分（${objectivePoints} 分）、${quiz.length - objectiveCount} 道标准自评（${manualPoints} 分）。每题标明题号与分值。完成后查看解析和节点进展。`

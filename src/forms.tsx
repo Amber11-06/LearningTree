@@ -62,7 +62,7 @@ export function TreeForm({
   const candidates = data.trees.filter((t) => t.id !== tree?.id);
   return (
     <Modal
-      title={tree ? "编辑学习树" : "种下一棵学习树"}
+      title={tree ? "编辑学习树" : "创建学习树"}
       onClose={onClose}
       busy={saving}
     >

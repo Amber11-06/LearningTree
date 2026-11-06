@@ -378,10 +378,10 @@ export function topicStatus(data: Data, nodeId: string) {
     : "new";
 }
 export const statusLabels = {
-  strong: "表现稳定",
-  growing: "正在生长",
-  weak: "需要巩固",
-  new: "等待探索",
+  strong: "掌握良好",
+  growing: "学习中",
+  weak: "需巩固",
+  new: "未开始",
 };
 export function dueTopics(data: Data, now = new Date()) {
   return data.nodes
@@ -510,24 +510,24 @@ export function feedback(data: Data, now = new Date()) {
   }[] = [];
   if (due.length)
     signals.push({
-      title: `${due.length} 个知识点，值得再回想一次`,
-      detail: "先不看答案，试着说出来。复习后的自评会决定下次提醒时间。",
-      action: "开始回忆",
+      title: `${due.length} 个知识点待复习`,
+      detail: "按到期顺序复习；先回忆，再自评。",
+      action: "开始复习",
       kind: "review",
     });
   if (weak)
     signals.push({
-      title: `给「${weak.node.title}」一点时间`,
+      title: `复习「${weak.node.title}」`,
       detail: `最近最多 5 次自测的加权正确率为 ${weak.score}%。建议先回看错题，再做一次不同题目的自测。`,
-      action: "记录新的尝试",
+      action: "记录学习",
       nodeId: weak.node.id,
       kind: "study",
     });
   if (overconfident)
     signals.push({
-      title: "把“觉得会了”变成“真的能用”",
-      detail: `「${data.nodes.find((n) => n.id === overconfident.nodeId)?.title}」的信心较高，但本次自测低于 60%。用一道新题检验理解。`,
-      action: "再验证一次",
+      title: `「${data.nodes.find((n) => n.id === overconfident.nodeId)?.title}」自测正确率低于 60%`,
+      detail: "本次信心较高，但自测低于 60%。用一道新题检验理解。",
+      action: "记录学习",
       nodeId: overconfident.nodeId,
       kind: "study",
     });
@@ -535,17 +535,15 @@ export function feedback(data: Data, now = new Date()) {
     signals.push(
       data.nodes.length
         ? {
-            title: "下一次反馈，来自你的下一次尝试",
-            detail:
-              "选一个知识点，记录学习过程和自测结果。积累证据后，这里会呈现你的变化。",
+            title: "暂无待复习或待巩固知识点",
+            detail: "记录一次学习或自测后，这里会显示建议。",
             action: "记录学习",
             kind: "study",
             nodeId: data.nodes[0].id,
           }
         : {
-            title: "从一个想弄懂的问题开始",
-            detail:
-              "种下第一棵学习树，把目标拆成具体知识点，每学一点就留下一点反馈。",
+            title: "暂无学习树",
+            detail: "创建学习树并添加知识点。",
             action: "创建学习树",
             kind: "create",
           },

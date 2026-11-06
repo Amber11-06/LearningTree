@@ -4,11 +4,11 @@ export type SkillState =
   "locked" | "available" | "learning" | "learned" | "verified" | "consolidated";
 export const skillLabels: Record<SkillState, string> = {
   locked: "前置未完成",
-  available: "可以挑战",
-  learning: "正在探索",
-  learned: "已标记为已学",
-  verified: "验证通过",
-  consolidated: "已回忆巩固",
+  available: "可开始",
+  learning: "学习中",
+  learned: "已标记已学",
+  verified: "已验证",
+  consolidated: "已巩固",
 };
 export function evidence(data: Data, nodeId: string) {
   const sessions = data.sessions

@@ -884,7 +884,7 @@ function WorkspaceApp({
             };
             const ok = await commit(
               next,
-              dialog.tree ? "学习树已更新" : "学习树已种下，添加第一个知识点吧",
+              dialog.tree ? "学习树已更新" : "学习树已创建",
             );
             if (ok) {
               setTreeId(tree.id);

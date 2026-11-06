@@ -262,14 +262,6 @@ export function Trees({
               <span>
                 {projectProgress.completed} / {projectProgress.total} 已完成
               </span>
-              <span className="caption-divider" />
-              <span>
-                {data.demo
-                  ? "示例项目"
-                  : parentTree
-                    ? "项目内学习树"
-                    : "个人学习项目"}
-              </span>
             </div>
           )}
           {parentTree && (
@@ -573,7 +565,7 @@ export function Trees({
           </div>
         )}
       </section>
-      <section className="command-center" aria-label="任务指挥台">
+      <section className="command-center" aria-label="节点详情">
         <SkillInspector
           key={selected?.id ?? "none"}
           data={data}
@@ -628,7 +620,7 @@ function SkillInspector({
       <div className="inspector-top">
         <span className="command-title">
           <Crosshair size={13} />
-          任务指挥台
+          节点详情
         </span>
         <button
           className="icon-button"
@@ -659,7 +651,7 @@ function SkillInspector({
       <h2>{node.title}</h2>
       <div className="rank-milestones">
         {[
-          { label: "探索", icon: BookOpen },
+          { label: "学习", icon: BookOpen },
           { label: "验证", icon: ShieldCheck },
           { label: "巩固", icon: Trophy },
         ].map((m, i) => (
@@ -710,7 +702,7 @@ function SkillInspector({
           <>
             <div className="mission-title highlight">
               <Target size={14} />
-              <h3>当前学习任务</h3>
+              <h3>学习任务</h3>
             </div>
             <p className="challenge-copy">
               {node.question ||
@@ -906,7 +898,7 @@ function SkillInspector({
               {blockers.length ? "前往前置学习树" : "前往前置节点"}
             </button>
             <button className="text-button" onClick={() => onLearn(node.id)}>
-              我想提前探索此节点
+              提前学习此节点
               <ArrowRight size={12} />
             </button>
           </>

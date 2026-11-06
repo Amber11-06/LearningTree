@@ -100,14 +100,14 @@ export function Home({
             <Sprout size={21} />
           </span>
           <div>
-            <span>正在生长的学习树</span>
+            <span>学习树</span>
             <strong>
               {data.trees.length}
               <small>棵</small>
             </strong>
           </div>
           <span className="stat-foot">
-            {data.nodes.length} 个知识点，慢慢连接
+            {data.nodes.length} 个知识点
           </span>
         </div>
         <div className="stat">
@@ -131,14 +131,14 @@ export function Home({
             <RotateCcw size={21} />
           </span>
           <div>
-            <span>等待回忆的知识点</span>
+            <span>待复习</span>
             <strong>
               {due.length}
               <small>个</small>
             </strong>
           </div>
           <span className="stat-foot">
-            给记忆浇一点水 <ArrowUpRight size={14} />
+            进入复习 <ArrowUpRight size={14} />
           </span>
         </button>
         <div className="stat">
@@ -146,13 +146,13 @@ export function Home({
             <Target size={21} />
           </span>
           <div>
-            <span>自测表现稳定</span>
+            <span>掌握知识点</span>
             <strong>
               {strong}
               <small>个知识点</small>
             </strong>
           </div>
-          <span className="stat-foot">近期自测正确率 ≥ 80%</span>
+          <span className="stat-foot">最近自测正确率 ≥ 80%</span>
         </div>
       </section>
       <div className="dashboard-grid">
@@ -161,9 +161,11 @@ export function Home({
             <div>
               <h2>
                 <Network size={18} />
-                我的学习树
+                学习树
               </h2>
-              <p>看见知识的连接，也看见自己的进步。</p>
+              <p>
+                {data.trees.length} 条路线 · {data.nodes.length} 个知识点
+              </p>
             </div>
             <button
               className="text-button"
@@ -205,7 +207,7 @@ export function Home({
               <div className="tree-bottom">
                 <span>
                   <Leaf size={15} />
-                  点击知识点，看看它最近的生长
+                  点击知识点查看详情
                 </span>
                 <button
                   className="text-button"
@@ -218,11 +220,11 @@ export function Home({
             </>
           ) : (
             <Empty
-              title="种下你的第一棵学习树"
+              title="暂无学习树"
               action="创建学习树"
               onAction={() => actions.tree()}
             >
-              从一个你一直想弄懂的主题开始。
+              创建第一棵学习树。
             </Empty>
           )}
         </section>
@@ -230,7 +232,7 @@ export function Home({
           <div className="week-card">
             <span className="mini-label">
               <Flame size={15} />
-              你的学习节奏
+              近 7 天记录
             </span>
             <div className="week-days">
               {week.map((day) => (
@@ -249,13 +251,13 @@ export function Home({
               ))}
             </div>
             <p>
-              最近 7 天，有 <strong>{studiedDays} 天</strong> 留下了学习的足迹
+              最近 7 天，有 <strong>{studiedDays} 天</strong> 有学习记录
             </p>
           </div>
           <section className="next-step">
             <div className="mini-label">
               <Leaf size={17} />
-              此刻，值得做的一小步
+              下一步
             </div>
             <h2>{signals[0].title}</h2>
             <p>{signals[0].detail}</p>
@@ -271,7 +273,7 @@ export function Home({
           </section>
           <section className="panel daily-goal">
             <div className="row-between">
-              <h3>今天的小目标</h3>
+              <h3>今日目标</h3>
               <span>
                 {Math.min(
                   100,
@@ -295,8 +297,8 @@ export function Home({
             </div>
             <span>
               {today.minutes >= data.settings.dailyMinutes
-                ? "今天的目标已完成，给自己一点肯定。"
-                : `再专注 ${data.settings.dailyMinutes - today.minutes} 分钟，也是向前。`}
+                ? "今日目标已完成"
+                : `还差 ${data.settings.dailyMinutes - today.minutes} 分钟`}
             </span>
           </section>
         </aside>
@@ -306,7 +308,7 @@ export function Home({
           <div>
             <h2>
               <BookOpen size={18} />
-              最近的学习足迹
+              最近记录
             </h2>
           </div>
           <button
@@ -331,7 +333,7 @@ export function Home({
                 <strong>
                   {data.nodes.find((n) => n.id === s.nodeId)?.title}
                 </strong>
-                <p>{s.note || "又多理解了一点。"}</p>
+                <p>{s.note || "无笔记"}</p>
               </div>
               <span className="recent-score">
                 {s.total
@@ -344,14 +346,11 @@ export function Home({
             </button>
           ))
         ) : (
-          <Empty title="你的足迹会留在这里">
-            完成一次学习，记下你的收获和困惑。
+          <Empty title="暂无学习记录">
+            完成一次学习后，记录会显示在这里。
           </Empty>
         )}
       </section>
-      <p className="page-foot">
-        学习不是填满进度条，而是让原本模糊的事物，慢慢清晰。
-      </p>
     </div>
   );
 }
@@ -375,9 +374,9 @@ export function Reviews({ data, actions }: Props) {
   return (
     <>
       <PageHeading
-        eyebrow="给记忆一点恰好的提醒"
-        title="温故，才会知新"
-        description="先独立回忆，再核对答案。诚实的自评，会让下次复习更合适。"
+        eyebrow="复习"
+        title="复习挑战"
+        description="按到期时间复习；先回忆，再自评。"
       >
         <span className="pill">
           <RotateCcw size={15} />
@@ -386,7 +385,7 @@ export function Reviews({ data, actions }: Props) {
       </PageHeading>
       <div className="review-layout">
         <section className="panel review-queue">
-          <h2>现在可以回忆</h2>
+          <h2>待复习</h2>
           {due.map((n) => (
             <button
               className={current?.id === n.id ? "active" : ""}
@@ -431,15 +430,15 @@ export function Reviews({ data, actions }: Props) {
         ) : (
           <section className="panel">
             <Empty
-              title={done ? "这一轮回忆，完成了" : "此刻，记忆不需要催促"}
-              action={data.nodes.length ? "看看我的学习树" : "创建学习树"}
+              title={done ? "本轮复习完成" : "暂无到期复习"}
+              action={data.nodes.length ? "查看学习树" : "创建学习树"}
               onAction={() =>
                 data.nodes.length ? actions.navigate("trees") : actions.tree()
               }
             >
               {done
-                ? `刚刚巩固了 ${done} 个知识点。新的复习时间已经安排好。`
-                : "为知识点填写回忆题和答案，就能开始间隔复习。已有题目会在到期后出现在这里。"}
+                ? `已复习 ${done} 个知识点，新的复习时间已安排。`
+                : "为知识点填写回忆题和答案后，到期时会出现在这里。"}
             </Empty>
           </section>
         )}
@@ -495,7 +494,7 @@ function ReviewCard({
             <span className="mini-label">参考答案</span>
             <p className="preserve">{node.answer}</p>
           </div>
-          <h3>这次回忆得怎么样？</h3>
+          <h3>自评</h3>
           <p className="muted">按实际表现选择，下次复习时间会随之调整。</p>
           <div className="ratings">
             {([1, 2, 3, 4] as Grade[]).map((rating, i) => (
@@ -539,9 +538,9 @@ export function Feedback({ data, actions }: Props) {
   return (
     <>
       <PageHeading
-        eyebrow="从学习证据里，找到下一步"
-        title="我的学习反馈"
-        description="这里的变化来自你的记录。每一条建议，都有可以回看的依据。"
+        eyebrow="学习反馈"
+        title="学习反馈"
+        description="基于最近最多 5 次自测与学习记录。"
       />
       <div className="feedback-signals">
         {signals.map((s) => (
@@ -565,7 +564,7 @@ export function Feedback({ data, actions }: Props) {
         <section className="panel chart-panel">
           <div className="panel-heading">
             <div>
-              <h2>理解，有没有更清晰？</h2>
+              <h2>自测趋势</h2>
               <p>最近 {scored.length} 次自测的正确率</p>
             </div>
             <ChartNoAxesCombined size={18} />
@@ -673,8 +672,8 @@ export function Feedback({ data, actions }: Props) {
         <section className="panel chart-panel">
           <div className="panel-heading">
             <div>
-              <h2>让学习成为一种节奏</h2>
-              <p>近 7 天的学习时长 · 分钟</p>
+              <h2>近 7 天学习时长</h2>
+              <p>单位：分钟</p>
             </div>
             <Clock3 size={18} />
           </div>
@@ -699,14 +698,14 @@ export function Feedback({ data, actions }: Props) {
             ))}
           </div>
           <p className="chart-note">
-            绿色表示达到每日 {data.settings.dailyMinutes} 分钟的小目标。
+            绿色表示达到每日 {data.settings.dailyMinutes} 分钟目标。
           </p>
         </section>
       </div>
       <section className="panel">
         <div className="panel-heading">
           <div>
-            <h2>把注意力，放在需要的地方</h2>
+            <h2>知识点反馈</h2>
             <p>
               各知识点最近最多 5 次自测，按题数加权；无自测时不推断掌握程度。
             </p>
@@ -776,7 +775,7 @@ export function Journal({ data, actions }: Props) {
       <div className="journal-toolbar">
         <div className="segmented">
           {[
-            ["all", "全部足迹"],
+            ["all", "全部"],
             ["study", "学习记录"],
             ["review", "回忆记录"],
           ].map(([id, label]) => (
@@ -860,11 +859,11 @@ export function Journal({ data, actions }: Props) {
           ))
         ) : (
           <Empty
-            title="把今天的一点收获，留给明天的自己"
+            title="暂无学习记录"
             action="记录第一次学习"
             onAction={() => actions.study()}
           >
-            记录会按时间保存在这里，随时可以回顾。
+            学习记录会按时间显示在这里。
           </Empty>
         )}
       </section>
@@ -879,13 +878,13 @@ export function Settings({ data, actions }: Props) {
   return (
     <>
       <PageHeading
-        eyebrow="让这里，成为你的学习角落"
+        eyebrow="设置"
         title="偏好与数据"
-        description="学习记录由本机数据库保存。课程包管理学习内容，完整备份包含你的全部进展。"
+        description="学习记录保存在本机 PostgreSQL；课程包管理内容，完整备份包含全部进度。"
       />
       <div className="settings-layout">
         <section className="panel settings-panel">
-          <h2>按自己的节奏来</h2>
+          <h2>学习偏好</h2>
           <form
             onSubmit={async (e) => {
               e.preventDefault();
@@ -917,7 +916,7 @@ export function Settings({ data, actions }: Props) {
                 />
               </label>
               <label>
-                每天的小目标（分钟）
+                每日目标（分钟）
                 <input
                   type="number"
                   required
@@ -930,7 +929,7 @@ export function Settings({ data, actions }: Props) {
                   }}
                 />
               </label>
-              <p className="muted">选择一个容易开始、可以持续的时长。</p>
+              <p className="muted">范围 5–480 分钟。</p>
               <button className="button primary" disabled={!name.trim()}>
                 {saved ? (
                   <>
@@ -945,7 +944,7 @@ export function Settings({ data, actions }: Props) {
           </form>
         </section>
         <section className="panel settings-panel">
-          <h2>我的数据，由我保管</h2>
+          <h2>数据管理</h2>
           <p>
             包含 {data.trees.length} 棵学习树、{data.nodes.length} 个知识点、
             {data.sessions.length} 条学习记录和 {data.reviews.length}{" "}
@@ -980,14 +979,14 @@ export function Settings({ data, actions }: Props) {
             <ArrowUpRight size={14} />
           </button>
           <div className="settings-divider" />
-          <h3>{data.demo ? "准备开始自己的学习？" : "从新的一页开始"}</h3>
+          <h3>{data.demo ? "清空示例空间" : "清空学习数据"}</h3>
           <p>
             {data.demo
               ? "当前是示例空间。清空示例后，就能建立属于你的学习树。"
               : "清空数据库中的学习内容与进度。建议先导出完整备份。"}
           </p>
           <button className="button danger" onClick={actions.reset}>
-            {data.demo ? "清空示例，开始我的学习" : "清空全部学习数据"}
+            {data.demo ? "清空示例空间" : "清空全部学习数据"}
           </button>
           {!data.trees.length && (
             <button className="text-button demo-link" onClick={actions.demo}>
@@ -1034,7 +1033,7 @@ export function Settings({ data, actions }: Props) {
       <section className="panel method-note">
         <Leaf size={22} />
         <div>
-          <h3>关于这里的反馈</h3>
+          <h3>数据说明</h3>
           <p>
             反馈由实际学习记录和明确规则生成；自测正确率、主观信心和复习自评分开记录。复习采用
             FSRS 算法安排时间。课程和学习数据通过本机 FastAPI 写入
