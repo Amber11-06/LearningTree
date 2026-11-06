@@ -91,4 +91,15 @@
 
 CI/CD 流程：push 到 `main` → GitHub Actions 启动 PostgreSQL service → pytest / Vitest / typecheck / build → SSH 到 Devbox → `git reset --hard origin/main` → 重装依赖并构建 → 更新 Supervisor 配置并重启 → `/api/health` 健康检查。
 
+## 前端改版验收（2026-11-06）
+
+- 采用 Monet《The Japanese Bridge 3》蓝灰色板：`#16263D`、`#334C64`、`#547095`、`#597481`、`#7F9CB1`、`#B1C4CE`。
+- 登录页：76px 网格基线、统一「登录 / 创建账号」入口、本地 PostgreSQL 说明。
+- 技能树：卡片节点、画布容器边界、悬停路径高亮、按编号成组的 3 列布局、减弱跨行依赖线。
+- 学习页：`rehype-highlight` 语法高亮、深色代码块、笔记空状态与辅助文字对比度提升。
+- 移动端：`<=760px` 切换为纵向时间轴，支持「列表 / 画布」切换；已完成节点使用 ✔ 和深色实线。
+- 清理首页/日志/表单中的空泛副标题，改为直接说明。
+- 验证：`npm test` 41 / 41、`npm run typecheck`、`npm run build`、pytest 7 / 7；GitHub Actions run `42166131599` 测试与部署成功；公网 `/api/health` 为 200。
+
+
 
