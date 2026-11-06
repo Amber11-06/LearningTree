@@ -374,3 +374,44 @@
     z-index: 1;
   }
 }
+
+.auth-constellation {
+  position: absolute;
+  left: 8%;
+  bottom: 64px;
+  width: min(560px, 62%);
+  height: auto;
+  color: rgb(255 255 255 / 0.34);
+  pointer-events: none;
+}
+.auth-constellation path {
+  stroke-dasharray: 4 8;
+}
+.auth-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: -2px;
+  color: var(--text-secondary);
+  font-size: 0.68rem;
+}
+.auth-options label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+.auth-options input {
+  width: 13px;
+  height: 13px;
+  accent-color: var(--primary);
+}
+@media (max-width: 900px) {
+  .auth-constellation {
+    display: none;
+  }
+}
+.auth-story-copy {
+  margin-top: 0;
+}

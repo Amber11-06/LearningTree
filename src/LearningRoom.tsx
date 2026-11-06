@@ -4,25 +4,25 @@ import rehypeHighlight from "rehype-highlight";
 import {
   ArrowLeft,
   ArrowRight,
+  Bookmark,
   BookOpen,
   Check,
   CheckCircle2,
+  ChevronLeft,
   ChevronRight,
   ClipboardList,
   FileText,
   GitBranch,
   HelpCircle,
-  ListChecks,
   Pencil,
   Save,
   ShieldCheck,
-  Sparkles,
   UnlockKeyhole,
   X,
 } from "lucide-react";
 import type { Data, QuizQuestion, Session } from "./domain";
 import { uid } from "./domain";
-import { Empty } from "./components";
+import { dateText, dueText, Empty } from "./components";
 import { evidence, newlyUnlocked } from "./progression";
 import { lessons } from "./lessons";
 import {
@@ -78,7 +78,9 @@ export function LearningRoom({
     score: number | null;
   } | null>(null);
   const [onlyWrong, setOnlyWrong] = useState(false);
+  const [bookmarked, setBookmarked] = useState(false);
   const [pending, setPending] = useState(false);
+  const noteRef = useRef<HTMLTextAreaElement>(null);
   const startedAt = useRef(Date.now()),
     submitting = useRef(false);
   const attemptId = useRef(uid());
@@ -107,13 +109,6 @@ export function LearningRoom({
       ? `## 核心概念\n\n${topic.question}\n\n${topic.answer}\n\n## 练习与思考\n\n用你自己的例子解释这个概念，再把疑问记在旁边。`
       : "");
   const quiz = topic.quiz.length ? topic.quiz : (demoLesson?.quiz ?? []);
-  const headings = content
-    .split("\n")
-    .flatMap((line, i) =>
-      line.startsWith("## ")
-        ? [{ title: line.slice(3), id: `section-${i + 1}` }]
-        : [],
-    );
   const answered = questions.filter((q, i) =>
     answerComplete(q, answers[i]),
   ).length;
@@ -131,6 +126,17 @@ export function LearningRoom({
   const automaticScore = assessmentPoints(result?.session.quizAnswers ?? []);
   const selfScore = assessmentPoints(result?.session.quizAnswers ?? [], "self");
   const nodeProgress = evidence(data, topic.id);
+  const siblings = data.nodes.filter((node) => node.treeId === topic.treeId);
+  const nodeIndex = siblings.findIndex((node) => node.id === topic.id);
+  const previousNode = nodeIndex > 0 ? siblings[nodeIndex - 1] : undefined;
+  const nextNode =
+    nodeIndex >= 0 && nodeIndex < siblings.length - 1
+      ? siblings[nodeIndex + 1]
+      : undefined;
+  const lastSession = data.sessions
+    .filter((session) => session.nodeId === topic.id)
+    .sort((a, b) => b.at.localeCompare(a.at))[0];
+  const estimatedMinutes = Math.max(5, Math.round(content.length / 420));
   async function markLearned() {
     if (pending || nodeProgress.completed) return;
     setPending(true);
@@ -257,6 +263,23 @@ export function LearningRoom({
       setPending(false);
     }
   }
+  function insertNote(before: string, after = "") {
+    const input = noteRef.current;
+    if (!input) return;
+    const start = input.selectionStart;
+    const end = input.selectionEnd;
+    const selected = note.slice(start, end);
+    const next = note.slice(0, start) + before + selected + after + note.slice(end);
+    setNote(next);
+    setNoteSaved(false);
+    requestAnimationFrame(() => {
+      input.focus();
+      input.setSelectionRange(
+        start + before.length,
+        start + before.length + selected.length,
+      );
+    });
+  }
   function backToReading() {
     if (
       (mode !== "quiz" && mode !== "evaluate") ||
@@ -282,62 +305,85 @@ export function LearningRoom({
         <strong>{topic.title}</strong>
       </div>
       <div className="lesson-heading">
-        <div className="lesson-title">
-          <span className="lesson-icon">
-            <Icon size={25} />
+        <div className="lesson-heading-copy">
+          <span className="lesson-kicker">
+            {course?.title} · 第 {nodeIndex + 1} 节
           </span>
-          <div>
-            <span className="section-kicker">
-              {mode === "read"
-                ? "学习内容"
-                : mode === "quiz"
-                  ? "课后测验"
-                  : "学习反馈"}
-            </span>
-            <h1>
-              {mode === "read"
-                ? topic.title
-                : mode === "quiz"
-                  ? `${topic.title} · 课后测验`
-                  : mode === "evaluate"
-                    ? automaticPreview
-                      ? "自动成绩与主观自评"
-                      : "主观练习 · 对照自评"
-                    : "测验反馈"}
-            </h1>
+          <h1>
+            {mode === "read"
+              ? topic.title
+              : mode === "quiz"
+                ? `${topic.title} · 课后测验`
+                : mode === "evaluate"
+                  ? automaticPreview
+                    ? "自动成绩与主观自评"
+                    : "主观练习 · 对照自评"
+                  : "测验反馈"}
+          </h1>
+          <p className="lesson-meta">
+            预计 {estimatedMinutes} 分钟 ·{" "}
+            {lastSession
+              ? `最后学习于 ${dateText(lastSession.at)}`
+              : "尚未学习"}
+          </p>
+        </div>
+        {mode === "read" && (
+          <div className="lesson-head-actions">
+            <button
+              className="button"
+              onClick={() => setBookmarked((value) => !value)}
+            >
+              <Bookmark
+                size={15}
+                fill={bookmarked ? "currentColor" : "none"}
+              />
+              {bookmarked ? "已收藏" : "收藏"}
+            </button>
+            <button
+              className="button"
+              disabled={!previousNode}
+              onClick={() => previousNode && actions.learn(previousNode.id)}
+            >
+              <ChevronLeft size={15} />
+              上一个节点
+            </button>
+            <button
+              className="button primary"
+              disabled={!nextNode}
+              onClick={() => nextNode && actions.learn(nextNode.id)}
+            >
+              下一个节点
+              <ChevronRight size={15} />
+            </button>
           </div>
-        </div>
-        <div className="learning-steps">
-          <span className={mode === "read" ? "active" : "done"}>
-            <i>{mode !== "read" ? <Check size={11} /> : 1}</i>学习
-          </span>
-          <ChevronRight size={11} />
-          <span
-            className={
-              mode === "quiz" || mode === "evaluate"
-                ? "active"
-                : mode === "result"
-                  ? "done"
-                  : ""
-            }
-          >
-            <i>{mode === "result" ? <Check size={11} /> : 2}</i>测验
-          </span>
-          <ChevronRight size={11} />
-          <span className={mode === "result" ? "active" : ""}>
-            <i>3</i>反馈
-          </span>
-        </div>
+        )}
       </div>
       {mode === "read" ? (
         <div className="lesson-layout">
           <article className="lesson-article">
             <div className="lesson-article-top">
-              <span>
-                <BookOpen size={14} />
-                学习内容
-              </span>
-              <span className="lesson-source">攻略讲义</span>
+              <div className="lesson-tabs">
+                <button className="active">讲义</button>
+                <button
+                  onClick={() =>
+                    document
+                      .querySelector(".lesson-notes")
+                      ?.scrollIntoView({ behavior: "smooth", block: "start" })
+                  }
+                >
+                  笔记
+                </button>
+                <button disabled={!quiz.length} onClick={startQuiz}>
+                  题库 <small>{quiz.length}</small>
+                </button>
+              </div>
+              <button
+                className="text-button"
+                onClick={() => actions.topic(topic.treeId, topic)}
+              >
+                <Pencil size={13} />
+                编辑
+              </button>
             </div>
             {content ? (
               <div className="markdown-content">
@@ -392,25 +438,73 @@ export function LearningRoom({
             </div>
           </article>
           <aside className="lesson-aside">
-            <section className="lesson-toc">
-              <h3>
-                <ListChecks size={16} />
-                本节导航
-              </h3>
-              {headings.map((h, i) => (
-                <a key={h.id} href={`#${h.id}`}>
-                  <small>{String(i + 1).padStart(2, "0")}</small>
-                  {h.title}
-                </a>
-              ))}
+            <section className="lesson-progress-card">
+              <header>
+                <h3>本节点</h3>
+                <span className="state-pill">
+                  {nodeProgress.completed ? "已完成" : "学习中"}
+                </span>
+              </header>
+              <div className="node-progress-head">
+                <span>完成进度</span>
+                <span>{nodeProgress.rank} / 3</span>
+              </div>
+              <div className="node-progress-track">
+                <i style={{ width: `${(nodeProgress.rank / 3) * 100}%` }} />
+              </div>
+              <dl>
+                <div>
+                  <dt>本次学习</dt>
+                  <dd>{lastSession?.minutes ?? 0} 分钟</dd>
+                </div>
+                <div>
+                  <dt>下次复习</dt>
+                  <dd>{dueText(topic.card.due)}</dd>
+                </div>
+              </dl>
+              <button
+                className="button primary"
+                disabled={!quiz.length}
+                onClick={startQuiz}
+              >
+                开始测验
+                <span>{quiz.length} 题</span>
+              </button>
             </section>
             <section className="lesson-notes">
-              <h3>
-                <Pencil size={15} />
-                我的笔记
-              </h3>
-              <p>写一个自己的例子，或记下还没弄懂的地方。</p>
+              <div className="note-card-head">
+                <h3>
+                  <Pencil size={15} />
+                  我的笔记
+                </h3>
+                <span>{noteSaved ? "已保存" : "未保存"}</span>
+              </div>
+              <div className="note-toolbar">
+                <button
+                  type="button"
+                  onClick={() => insertNote("**", "**")}
+                  aria-label="加粗"
+                >
+                  B
+                </button>
+                <button
+                  type="button"
+                  onClick={() => insertNote("`", "`")}
+                  aria-label="代码"
+                >
+                  {"<>"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => insertNote("[", "](https://)")}
+                  aria-label="链接"
+                >
+                  链接
+                </button>
+                <span>Markdown</span>
+              </div>
               <textarea
+                ref={noteRef}
                 aria-label="本节学习笔记"
                 disabled={pending}
                 maxLength={4000}
@@ -434,13 +528,23 @@ export function LearningRoom({
                 </button>
               </div>
             </section>
-            <div className="lesson-rule">
-              <Sparkles size={17} />
-              <p>
-                最近 5 次计分自测的加权正确率达到 80%，且至少完成 5
-                道计分题，即可点亮节点；标准自评不计入正确率。
-              </p>
-            </div>
+            <section className="lesson-related">
+              <h3>关联知识点</h3>
+              {siblings.slice(0, 4).map((item) => {
+                const itemDone = evidence(data, item.id).completed;
+                return (
+                  <button
+                    key={item.id}
+                    className={item.id === topic.id ? "active" : ""}
+                    onClick={() => actions.learn(item.id)}
+                  >
+                    <i className={itemDone ? "done" : ""} />
+                    {item.title}
+                    <ChevronRight size={12} />
+                  </button>
+                );
+              })}
+            </section>
           </aside>
         </div>
       ) : mode === "quiz" && current ? (

@@ -27,11 +27,14 @@ export function AuthScreen({
   notice?: string;
 }) {
   const [mode, setMode] = useState<Mode>("login");
-  const [username, setUsername] = useState("");
+  const [username, setUsername] = useState(
+    () => localStorage.getItem("learningtree:last-username") ?? "",
+  );
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [remember, setRemember] = useState(true);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(notice ?? "");
 
@@ -62,6 +65,11 @@ export function AuthScreen({
         mode === "login"
           ? await login(username.trim(), password)
           : await register(username.trim(), password, displayName.trim());
+      if (remember) {
+        localStorage.setItem("learningtree:last-username", username.trim());
+      } else {
+        localStorage.removeItem("learningtree:last-username");
+      }
       onAuthenticated(user);
     } catch (caught) {
       setError(errorText(caught));
@@ -96,19 +104,44 @@ export function AuthScreen({
           </p>
           <div className="auth-stats">
             <div>
-              <strong>本地</strong>
-              <span>账号存储</span>
+              <strong>8</strong>
+              <span>学习阶段</span>
             </div>
             <div>
-              <strong>PostgreSQL</strong>
-              <span>学习数据</span>
+              <strong>24</strong>
+              <span>知识点</span>
             </div>
             <div>
-              <strong>Argon2</strong>
-              <span>密码哈希</span>
+              <strong>4</strong>
+              <span>待复习</span>
             </div>
           </div>
         </div>
+        <svg
+          className="auth-constellation"
+          viewBox="0 0 620 150"
+          aria-hidden="true"
+        >
+          <g fill="none" stroke="currentColor" strokeWidth="1">
+            <path d="M10 88C96 28 156 28 226 74S364 132 430 84s110-52 170-18" />
+            <path d="M10 88c74 18 104 46 176 30s108-52 180-22 92 42 154 6" />
+            <path d="M226 74v48M430 84V46M302 104V66" />
+          </g>
+          <g fill="currentColor">
+            {[
+              [10, 88, 5],
+              [158, 44, 4],
+              [226, 74, 6],
+              [302, 104, 5],
+              [366, 92, 4],
+              [430, 84, 6],
+              [508, 58, 4],
+              [600, 66, 5],
+            ].map(([cx, cy, r]) => (
+              <circle key={`${cx}-${cy}`} cx={cx} cy={cy} r={r} />
+            ))}
+          </g>
+        </svg>
         <div className="auth-meta">
           <span>
             <ShieldCheck size={14} />
@@ -234,6 +267,20 @@ export function AuthScreen({
                   />
                 </div>
               </label>
+            )}
+
+            {mode === "login" && (
+              <div className="auth-options">
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={remember}
+                    onChange={(event) => setRemember(event.target.checked)}
+                  />
+                  保持登录
+                </label>
+                <span>7 天会话</span>
+              </div>
             )}
 
             {error && (

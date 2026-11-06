@@ -2167,3 +2167,89 @@
 .skill-map .react-flow__attribution {
   display: none;
 }
+.skill-map .subtree-emblem {
+  grid-row: 1 / 5;
+}
+.skill-map .subtree-progress {
+  grid-column: 2;
+  grid-row: 3;
+  display: block;
+  height: 3px;
+  margin-top: 4px;
+  overflow: hidden;
+  border-radius: 99px;
+  background: var(--surface-inset);
+}
+.skill-map .subtree-progress i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--primary);
+}
+.skill-map .subtree-node .skill-state {
+  grid-row: 4;
+}
+.skill-map .skill-node.subtree-node {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 0;
+  padding: 11px 13px;
+}
+.subtree-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 14px;
+}
+.subtree-head small {
+  color: var(--text-secondary);
+  font-size: 9px;
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.06em;
+}
+.subtree-dot {
+  width: 6px;
+  height: 6px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--card);
+}
+.skill-map .subtree-node.available .subtree-dot,
+.skill-map .subtree-node.learning .subtree-dot,
+.skill-map .subtree-node.learned .subtree-dot,
+.skill-map .subtree-node.verified .subtree-dot,
+.skill-map .subtree-node.consolidated .subtree-dot {
+  border-color: var(--primary);
+  background: var(--primary);
+}
+.skill-map .subtree-node > strong {
+  display: block;
+  overflow: hidden;
+  margin-top: 2px;
+  color: var(--text-primary);
+  font-size: 12px;
+  line-height: 1.4;
+  font-weight: var(--weight-semibold);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.skill-map .subtree-kind {
+  margin-top: 1px;
+  font-size: 9px;
+}
+.skill-map .subtree-progress {
+  margin-top: 9px;
+}
+.subtree-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 5px;
+  color: var(--text-secondary);
+  font-size: 9px;
+}
+.skill-map .subtree-node.locked .subtree-foot {
+  color: var(--text-secondary);
+}

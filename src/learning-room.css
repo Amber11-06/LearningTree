@@ -1679,3 +1679,196 @@
     gap: 10px;
   }
 }
+
+.lesson-heading-copy {
+  min-width: 0;
+}
+.lesson-kicker {
+  display: block;
+  color: var(--text-secondary);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.lesson-heading-copy h1 {
+  margin: 5px 0 4px;
+}
+.lesson-meta {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--text-xs);
+}
+.lesson-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+}
+.lesson-tabs {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.lesson-tabs button {
+  padding: 4px 0 10px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  color: var(--text-secondary);
+  background: transparent;
+  font-size: var(--text-sm);
+}
+.lesson-tabs button.active {
+  border-bottom-color: var(--primary);
+  color: var(--text-primary);
+  font-weight: var(--weight-medium);
+}
+.lesson-tabs button:disabled {
+  opacity: 0.45;
+}
+.lesson-tabs small {
+  color: var(--text-secondary);
+  font-size: 10px;
+}
+.lesson-progress-card {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--card);
+}
+.lesson-progress-card header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.lesson-progress-card h3 {
+  margin: 0;
+  font-size: var(--text-base);
+}
+.node-progress-head {
+  display: flex;
+  justify-content: space-between;
+  color: var(--text-secondary);
+  font-size: var(--text-xs);
+}
+.node-progress-track {
+  height: 4px;
+  overflow: hidden;
+  border-radius: 99px;
+  background: var(--surface-inset);
+}
+.node-progress-track i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--primary);
+}
+.lesson-progress-card dl {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+  padding-top: 2px;
+  border-top: 1px solid var(--border);
+}
+.lesson-progress-card dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: var(--text-xs);
+}
+.lesson-progress-card dt {
+  color: var(--text-secondary);
+}
+.lesson-progress-card dd {
+  margin: 0;
+  color: var(--text-primary);
+}
+.lesson-progress-card .button {
+  justify-content: space-between;
+  width: 100%;
+}
+.lesson-progress-card .button span {
+  font-size: var(--text-xs);
+  opacity: 0.7;
+}
+.note-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.note-card-head h3 {
+  margin: 0;
+}
+.note-card-head > span {
+  color: var(--text-secondary);
+  font-size: 10px;
+}
+.note-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 8px;
+}
+.note-toolbar button {
+  min-width: 24px;
+  height: 22px;
+  padding: 0 5px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-secondary);
+  background: var(--card);
+  font-size: 10px;
+}
+.note-toolbar button:hover {
+  background: var(--surface-subtle);
+}
+.note-toolbar > span {
+  margin-left: auto;
+  color: var(--text-secondary);
+  font-size: 10px;
+}
+.lesson-related {
+  display: grid;
+  gap: 3px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--card);
+}
+.lesson-related h3 {
+  margin: 0 0 6px;
+  font-size: var(--text-base);
+}
+.lesson-related button {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  padding: 5px 6px;
+  border-radius: 5px;
+  color: var(--text-secondary);
+  background: transparent;
+  font-size: var(--text-xs);
+  text-align: left;
+}
+.lesson-related button:hover,
+.lesson-related button.active {
+  background: var(--surface-subtle);
+  color: var(--text-primary);
+}
+.lesson-related button i {
+  width: 6px;
+  height: 6px;
+  border: 1px solid var(--text-secondary);
+  border-radius: 50%;
+}
+.lesson-related button i.done {
+  border-color: var(--primary);
+  background: var(--primary);
+}
+.lesson-related button svg {
+  margin-left: auto;
+}

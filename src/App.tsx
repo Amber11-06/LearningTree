@@ -2,9 +2,11 @@ import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import {
   ArrowDownToLine,
   ArrowRight,
+  Bell,
   BookOpen,
   ChartNoAxesCombined,
   CheckCircle2,
+  ChevronDown,
   ChevronRight,
   CircleHelp,
   Home as HomeIcon,
@@ -45,6 +47,7 @@ import {
   saveCoursePackage,
   type Workspace,
 } from "./storage";
+import { treeProgress } from "./progression";
 import { Modal } from "./components";
 import { SessionForm, TopicForm, TreeForm } from "./forms";
 import { AuthScreen } from "./AuthScreen";
@@ -632,6 +635,23 @@ function WorkspaceApp({
         .slice(0, 8)
     : [];
   const due = dueTopics(data).length;
+  const currentTree = data.trees.find((tree) => tree.id === treeId);
+  const topProjects = data.trees.filter((tree) => !tree.parentTreeId);
+  const sidebarProject = currentTree?.parentTreeId
+    ? data.trees.find((tree) => tree.id === currentTree.parentTreeId)
+    : currentTree;
+  const selectedNode = data.nodes.find((node) => node.id === selectedId);
+  const fallbackStage = currentTree
+    ? data.trees.find((tree) => tree.parentTreeId === currentTree.id)
+    : undefined;
+  const activeStage = selectedNode
+    ? data.trees.find((tree) => tree.id === selectedNode.treeId)
+    : currentTree?.parentTreeId
+      ? currentTree
+      : (fallbackStage ?? currentTree);
+  const activeStageProgress = activeStage
+    ? treeProgress(data, activeStage.id)
+    : null;
   return (
     <div
       className={`app-shell ${page === "trees" ? "tree-page" : ""} ${page === "learn" ? "learning-page" : ""}`}
@@ -669,6 +689,29 @@ function WorkspaceApp({
             LearningTree<small>YOUR PERSONAL SKILL MAP</small>
           </span>
         </button>
+        {page === "trees" && sidebarProject && (
+          <div className="sidebar-project">
+            <span className="sidebar-project-icon">
+              <Network size={16} />
+            </span>
+            <span>
+              <small>当前项目</small>
+              <strong>{sidebarProject.title}</strong>
+            </span>
+            <ChevronDown size={14} />
+            <select
+              aria-label="切换学习项目"
+              value={sidebarProject.id}
+              onChange={(event) => setTreeId(event.target.value)}
+            >
+              {topProjects.map((project) => (
+                <option key={project.id} value={project.id}>
+                  {project.title}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
         <span className="nav-label">WORKSPACE</span>
         <nav>
           {nav.map((item) => (
@@ -684,6 +727,15 @@ function WorkspaceApp({
             </button>
           ))}
         </nav>
+        {page === "trees" && activeStage && activeStageProgress && (
+          <div className="sidebar-route">
+            <span>当前节点</span>
+            <strong>{activeStage.title}</strong>
+            <small>
+              {activeStageProgress.completed} / {activeStageProgress.total} 节点已完成
+            </small>
+          </div>
+        )}
         <div className="sidebar-grow">
           <div className="sidebar-note">
             <Network size={18} />
@@ -780,20 +832,16 @@ function WorkspaceApp({
                 </div>
               )}
             </div>
-            <time>
-              {new Intl.DateTimeFormat("zh-CN", {
-                month: "long",
-                day: "numeric",
-                weekday: "long",
-              }).format(new Date())}
-            </time>
             <button
-              className="icon-button help-button"
-              aria-label="了解反馈和数据保存方式"
-              onClick={() => navigate("settings")}
+              className="icon-button"
+              aria-label="通知"
+              onClick={() => navigate("reviews")}
             >
-              <CircleHelp size={19} />
+              <Bell size={18} />
             </button>
+            <span className="topbar-avatar">
+              {data.settings.name.charAt(0)}
+            </span>
           </div>
         </header>
         {data.demo && (

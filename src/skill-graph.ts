@@ -86,16 +86,22 @@ export function buildSkillGraph(
   dagre.layout(graph);
   const manualPositions = new Map<string, { x: number; y: number }>();
   if (!topics.length && children.length > 2) {
-    const columns = 3;
-    const gapX = 40;
-    const gapY = 48;
-    const cardWidth = 220;
-    const cardHeight = 116;
+    const positions = [
+      [24, 112],
+      [300, 34],
+      [300, 172],
+      [576, 70],
+      [576, 220],
+      [300, 312],
+      [24, 256],
+      [24, 396],
+    ];
     children.forEach((child, index) => {
-      manualPositions.set(child.id, {
-        x: 24 + (index % columns) * (cardWidth + gapX),
-        y: 340 + Math.floor(index / columns) * (cardHeight + gapY),
-      });
+      const [x, y] = positions[index] ?? [
+        24 + (index % 3) * 260,
+        118 + Math.floor(index / 3) * 160,
+      ];
+      manualPositions.set(child.id, { x, y });
     });
   }
   const route = new Set(

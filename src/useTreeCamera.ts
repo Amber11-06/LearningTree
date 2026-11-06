@@ -53,14 +53,13 @@ export function useTreeCamera({
   const initialized = useStore((state) => !!state.panZoom);
   const active = useRef<Camera | null>(null);
   const rawBounds = getNodesBounds(nodes);
-  // Leave room for the floating project navigation / map controls so the first
-  // row of cards does not sit underneath them.
+  // Leave a small top inset for the floating map controls.
   const bounds = compact
     ? rawBounds
     : {
         ...rawBounds,
-        y: rawBounds.y - 150,
-        height: rawBounds.height + 150,
+        y: rawBounds.y - 24,
+        height: rawBounds.height + 24,
       };
   const requestedNode =
     focusRequest?.treeId === treeId

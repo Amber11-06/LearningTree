@@ -19,7 +19,6 @@ import {
   Check,
   Crosshair,
   Expand,
-  GitBranch,
   LockKeyhole,
   Minus,
   Plus,
@@ -43,25 +42,39 @@ const noRecommendedIds: string[] = [];
 
 function SkillNodeView({ data }: NodeProps<SkillNode>) {
   const Icon = skillIcon(data.title);
-  if (data.treeId)
+  if (data.treeId) {
+    const [rawIndex, ...titleParts] = data.title.split(" · ");
+    const hasIndex = /^\d+$/.test(rawIndex);
+    const displayTitle = hasIndex ? titleParts.join(" · ") : data.title;
+    const percentage = data.total
+      ? Math.round(((data.completed ?? 0) / data.total) * 100)
+      : 0;
     return (
       <div
         className={`skill-node subtree-node ${data.state} ${data.dim ? "is-dim" : ""}`}
       >
         <Handle type="target" position={Position.Left} />
-        <div className="subtree-emblem">
-          <GitBranch size={19} strokeWidth={2} />
-        </div>
-        <strong title={data.title}>{data.title}</strong>
+        <span className="subtree-head">
+          {hasIndex && <small>{rawIndex}</small>}
+          <i className="subtree-dot" />
+        </span>
+        <strong title={data.title}>{displayTitle}</strong>
         {data.external && <span className="subtree-kind">前置树</span>}
-        <span className="skill-state">
-          {data.state === "locked"
-            ? "未解锁"
-            : `${skillLabels[data.state]} · ${data.completed} / ${data.total}`}
+        <span className="subtree-progress">
+          <i style={{ width: `${percentage}%` }} />
+        </span>
+        <span className="subtree-foot">
+          <span>
+            {data.state === "locked"
+              ? "未解锁"
+              : `${data.completed ?? 0} / ${data.total} 已完成`}
+          </span>
+          <span>{percentage}%</span>
         </span>
         <Handle type="source" position={Position.Right} />
       </div>
     );
+  }
   return (
     <div
       className={`skill-node ${data.state} ${data.active ? "is-selected" : ""} ${data.dim ? "is-dim" : ""}`}

@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ArrowDownRight,
   ArrowRight,
@@ -19,24 +19,23 @@ import {
   Play,
   Plus,
   Route,
+  RotateCcw,
   ShieldCheck,
   Sparkles,
   Target,
   Trash2,
-  Trophy,
 } from "lucide-react";
 import type { Data, Topic, Tree } from "./domain";
-import { dateText, dueText, Empty } from "./components";
+import { Empty } from "./components";
+import { dueTopics, weeklyActivity } from "./domain";
 import {
   evidence,
   nextSkill,
-  routeTo,
   skillLabels,
   skillState,
   treeBlockers,
   treeProgress,
 } from "./progression";
-import { skillIcon } from "./skill-icons";
 import { SkillTree, type SkillFocusRequest } from "./SkillTree";
 import { recommendedRoute } from "./recommended-routes";
 import { ProjectTreeNavigation } from "./ProjectTreeNavigation";
@@ -124,6 +123,34 @@ export function Trees({
   const projectProgress = tree
     ? treeProgress(data, tree.id)
     : { total: 0, verified: 0, completed: 0, complete: false };
+  const projectTreeIds = new Set<string>();
+  if (project) {
+    const queue = [project.id];
+    while (queue.length) {
+      const id = queue.shift()!;
+      if (projectTreeIds.has(id)) continue;
+      projectTreeIds.add(id);
+      data.trees
+        .filter((item) => item.parentTreeId === id)
+        .forEach((item) => queue.push(item.id));
+    }
+  }
+  const wholeProject = project
+    ? treeProgress(data, project.id)
+    : projectProgress;
+  const projectDue = dueTopics(data).filter((node) =>
+    projectTreeIds.has(node.treeId),
+  ).length;
+  const projectStages = project
+    ? data.trees.filter((item) => item.parentTreeId === project.id).length
+    : childTrees.length;
+  const weekMinutes = weeklyActivity(data).reduce(
+    (sum, day) => sum + day.minutes,
+    0,
+  );
+  const progressPercent = wholeProject.total
+    ? Math.round((wholeProject.completed / wholeProject.total) * 100)
+    : 0;
   useEffect(() => {
     setRouteOnly(false);
     setMenuOpen(false);
@@ -154,6 +181,67 @@ export function Trees({
     <div
       className={`constellation-workspace mobile-${mobileView}`}
     >
+      {project && (
+        <>
+          <header className="tree-hero">
+            <div>
+              <span className="tree-eyebrow">学习树</span>
+              <h1>{project.title}</h1>
+              <p>
+                {projectStages} 个阶段 · {wholeProject.total} 个知识点
+              </p>
+            </div>
+            <div className="tree-hero-actions">
+              <button
+                className="button"
+                onClick={() => actions.navigate("settings")}
+              >
+                <FileUp size={15} />
+                导入课程
+              </button>
+              <button
+                className="button primary"
+                onClick={() => actions.tree(undefined, tree?.id)}
+              >
+                <Plus size={15} />
+                添加子树
+              </button>
+            </div>
+          </header>
+          <section className="tree-metrics" aria-label="学习树概览">
+            <div className="tree-stat">
+              <span>
+                总进度 <Route size={15} />
+              </span>
+              <strong>{progressPercent}%</strong>
+            </div>
+            <div className="tree-stat">
+              <span>
+                已学节点 <Check size={15} />
+              </span>
+              <strong>
+                {wholeProject.completed}
+                <em> / {wholeProject.total}</em>
+              </strong>
+            </div>
+            <div className="tree-stat">
+              <span>
+                待复习 <RotateCcw size={15} />
+              </span>
+              <strong>{projectDue}</strong>
+            </div>
+            <div className="tree-stat">
+              <span>
+                本周学习 <Clock3 size={15} />
+              </span>
+              <strong>
+                {weekMinutes}
+                <em> 分钟</em>
+              </strong>
+            </div>
+          </section>
+        </>
+      )}
       <section className="constellation-stage" aria-label="项目技能地图">
         <div className="project-navigation" ref={navigationRef}>
           <button
@@ -591,8 +679,6 @@ function SkillInspector({
   onLearn: (id: string) => void;
   onOpenTree: (id: string) => void;
 }) {
-  const [tab, setTab] = useState("mission");
-  const [marking, setMarking] = useState(false);
   if (!node)
     return (
       <aside className="skill-inspector">
@@ -604,17 +690,21 @@ function SkillInspector({
       </aside>
     );
   const progress = evidence(data, node.id),
-    state = skillState(data, node),
-    Icon = skillIcon(node.title),
-    path = routeTo(data, node.id);
+    state = skillState(data, node);
   const parent = data.nodes.find((n) => n.id === node.parentId);
   const blockers = treeBlockers(data, node.treeId);
-  const sessions = data.sessions
-    .filter((s) => s.nodeId === node.id)
-    .sort((a, b) => b.at.localeCompare(a.at));
-  const reviews = data.reviews
-    .filter((r) => r.nodeId === node.id)
-    .sort((a, b) => b.at.localeCompare(a.at));
+  const tree = data.trees.find((t) => t.id === node.treeId);
+  const siblings = data.nodes.filter((n) => n.treeId === node.treeId);
+  const description =
+    node.note.trim() ||
+    node.content
+      .replace(/^#+\s.*$/gm, " ")
+      .replace(/学完要能做到什么/g, " ")
+      .replace(/[#>*`_\-]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim()
+      .slice(0, 90) ||
+    "暂无笔记。";
   return (
     <aside className="skill-inspector">
       <div className="inspector-top">
@@ -630,317 +720,88 @@ function SkillInspector({
           <Pencil size={15} />
         </button>
       </div>
-      <div className={`inspector-emblem ${state}`}>
-        <Icon size={30} strokeWidth={1.5} />
-        {progress.completed && (
-          <span>
-            <Check size={11} />
+      <div className="inspector-summary">
+        <span className="inspector-eyebrow">
+          {tree?.title ?? "学习树"}
+        </span>
+        <div className="inspector-title-row">
+          <h2>{node.title}</h2>
+          <span className={`state-pill ${state}`}>
+            {state === "locked" ? (
+              <LockKeyhole size={11} />
+            ) : progress.completed ? (
+              <ShieldCheck size={12} />
+            ) : (
+              <Sparkles size={12} />
+            )}
+            {skillLabels[state]}
           </span>
-        )}
+        </div>
+        <p className="inspector-description">{description}</p>
       </div>
-      <div className={`state-pill ${state}`}>
-        {state === "locked" ? (
-          <LockKeyhole size={11} />
-        ) : progress.completed ? (
-          <ShieldCheck size={12} />
-        ) : (
-          <Sparkles size={12} />
-        )}{" "}
-        {skillLabels[state]}
+      <div className="inspector-progress">
+        <div className="inspector-progress-head">
+          <span>学习进度</span>
+          <span>{progress.rank} / 3</span>
+        </div>
+        <div className="inspector-progress-track">
+          <i style={{ width: `${(progress.rank / 3) * 100}%` }} />
+        </div>
       </div>
-      <h2>{node.title}</h2>
-      <div className="rank-milestones">
-        {[
-          { label: "学习", icon: BookOpen },
-          { label: "验证", icon: ShieldCheck },
-          { label: "巩固", icon: Trophy },
-        ].map((m, i) => (
-          <Fragment key={m.label}>
-            {i > 0 && (
-              <ArrowRight
-                size={14}
-                strokeWidth={1.5}
-                aria-hidden="true"
-                className={`milestone-arrow ${
-                  progress.rank >= i + 1 ? "earned" : ""
-                }`}
-              />
-            )}
-            <div className={progress.rank >= i + 1 ? "earned" : ""}>
-              <span>
-                {progress.rank >= i + 1 ? (
-                  <Check size={12} />
-                ) : (
-                  <m.icon size={12} />
-                )}
-              </span>
-              <small>{m.label}</small>
-            </div>
-          </Fragment>
-        ))}
-      </div>
-      <div className="inspector-tabs">
-        {[
-          ["mission", "学习任务"],
-          ["notes", "笔记"],
-          ["history", "历程"],
-        ].map(([key, label]) => (
-          <button
-            key={key}
-            className={tab === key ? "active" : ""}
-            onClick={() => setTab(key)}
-          >
-            {label}
-            {key === "history" && (
-              <small>{sessions.length + reviews.length}</small>
-            )}
-          </button>
-        ))}
-      </div>
-      <div className="inspector-body">
-        {tab === "mission" ? (
-          <>
-            <div className="mission-title highlight">
-              <Target size={14} />
-              <h3>学习任务</h3>
-            </div>
-            <p className="challenge-copy">
-              {node.question ||
-                `用自己的话解释「${node.title}」，然后完成一次自测。`}
-            </p>
-            {progress.markedLearned && (
-              <p className="criteria-note">
-                已标记为已学，已计入进度。你仍可继续阅读或测验。
-              </p>
-            )}
-            <p className="requirements-title">解锁要求</p>
-            <div className="requirements">
-              <div className={progress.questions >= 5 ? "met" : ""}>
-                <span>
-                  {progress.questions >= 5 ? <Check size={12} /> : <span />}
-                </span>
-                <p>近期完成至少 5 道计分题</p>
-                <b>{Math.min(progress.questions, 5)}/5</b>
-              </div>
-              <div className={progress.verified ? "met" : ""}>
-                <span>
-                  {progress.verified ? <Check size={12} /> : <span />}
-                </span>
-                <p>近期加权正确率达到 80%</p>
-                <b>{progress.score === null ? "—" : `${progress.score}%`}</b>
-              </div>
-            </div>
-            <div className="verification-meter">
-              <i style={{ width: `${progress.score ?? 0}%` }} />
-              <span style={{ left: "80%" }} />
-            </div>
-            <p className="criteria-note">
-              取最近 5 次有成绩的自测；标准自评不计入正确率。
-            </p>
-            {!!blockers.length && (
-              <div className="prerequisite">
-                <span>
-                  <GitBranch size={13} />
-                  前置学习树
-                </span>
-                <div className="route-crumbs">
-                  {blockers.map((tree) => (
-                    <button key={tree.id} onClick={() => onOpenTree(tree.id)}>
-                      <LockKeyhole size={11} />
-                      {tree.title}
-                      <ChevronRight size={11} />
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-            {parent && (
-              <div className="prerequisite">
-                <span>
-                  <GitBranch size={13} />
-                  前置路线
-                </span>
-                <div className="route-crumbs">
-                  {path.slice(0, -1).map((p) => (
-                    <button
-                      key={p.id}
-                      onClick={() => actions.select(p.id)}
-                      className={evidence(data, p.id).completed ? "passed" : ""}
-                    >
-                      {evidence(data, p.id).completed ? (
-                        <Check size={11} />
-                      ) : (
-                        <LockKeyhole size={10} />
-                      )}{" "}
-                      {p.title}
-                      <ChevronRight size={11} />
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-            {progress.verified && node.question && node.answer && (
-              <button
-                className="recall-callout"
-                onClick={() => actions.navigate("reviews")}
-              >
-                <RotateIcon />
-                <span>
-                  下一次主动回忆<strong>{dueText(node.card.due)}</strong>
-                </span>
-                <ArrowRight size={14} />
-              </button>
-            )}
-            <div className="inspector-metrics">
-              <div>
-                <strong>
-                  {progress.minutes}
-                  <small> 分钟</small>
-                </strong>
-                <span>累计学习</span>
-              </div>
-              <div>
-                <strong>
-                  {sessions.length}
-                  <small> 次</small>
-                </strong>
-                <span>学习记录</span>
-              </div>
-            </div>
-          </>
-        ) : tab === "notes" ? (
-          <>
-            <div className="mission-title">
-              <BookOpen size={14} />
-              <h3>我的理解</h3>
-            </div>
-            <p className="note-content">
-              {node.note || "记下一个解释、一处困惑，或者你自己的例子。"}
-            </p>
-            {node.resource && (
-              <a
-                href={node.resource}
-                target="_blank"
-                rel="noreferrer"
-                className="resource-link"
-              >
-                打开学习资料
-                <ArrowDownRight size={14} />
-              </a>
-            )}
+      <div className="inspector-topics">
+        <span className="inspector-section-label">知识点</span>
+        {siblings.map((item) => {
+          const itemState = skillState(data, item);
+          const done = evidence(data, item.id).completed;
+          return (
             <button
-              className="button small"
-              onClick={() => actions.topic(node.treeId, node)}
+              key={item.id}
+              className={`${item.id === node.id ? "active" : ""} ${done ? "done" : ""}`}
+              onClick={() => actions.select(item.id)}
             >
-              <Pencil size={13} />
-              编辑笔记和回忆题
+              <span className="topic-state">
+                {done ? (
+                  <Check size={11} />
+                ) : itemState === "locked" ? (
+                  <LockKeyhole size={10} />
+                ) : null}
+              </span>
+              <span>{item.title}</span>
+              {item.id === node.id && <ArrowRight size={12} />}
             </button>
-          </>
-        ) : (
-          <div className="node-timeline">
-            {[
-              ...(node.learnedAt
-                ? [
-                    {
-                      id: `learned-${node.id}`,
-                      at: node.learnedAt,
-                      title: "标记为已学",
-                      detail: "跳过本节点学习，推进学习进度。",
-                    },
-                  ]
-                : []),
-              ...sessions.map((s) => ({
-                id: s.id,
-                at: s.at,
-                title: `学习 ${s.minutes} 分钟`,
-                detail: s.total
-                  ? `自测 ${s.correct}/${s.total} · ${s.note}`
-                  : s.note,
-              })),
-              ...reviews.map((r) => ({
-                id: r.id,
-                at: r.at,
-                title: "完成主动回忆",
-                detail: ["", "没想起来", "有些吃力", "基本记得", "轻松记得"][
-                  r.rating
-                ],
-              })),
-            ]
-              .sort((a, b) => b.at.localeCompare(a.at))
-              .map((r) => (
-                <article key={r.id}>
-                  <i />
-                  <time>{dateText(r.at, true)}</time>
-                  <strong>{r.title}</strong>
-                  <p>{r.detail}</p>
-                </article>
-              ))}
-            {!sessions.length && !reviews.length && !node.learnedAt && (
-              <p className="empty-history">
-                暂无学习或复习记录。
-              </p>
-            )}
-          </div>
-        )}
+          );
+        })}
       </div>
       <div className="inspector-actions">
         {state === "locked" && (parent || blockers.length) ? (
-          <>
-            <button
-              className="button primary"
-              onClick={() =>
-                blockers[0]
-                  ? onOpenTree(blockers[0].id)
-                  : parent && actions.select(parent.id)
-              }
-            >
-              <LockKeyhole size={14} />
-              {blockers.length ? "前往前置学习树" : "前往前置节点"}
-            </button>
-            <button className="text-button" onClick={() => onLearn(node.id)}>
-              提前学习此节点
-              <ArrowRight size={12} />
-            </button>
-          </>
-        ) : (
-          <>
-            <button className="button primary" onClick={() => onLearn(node.id)}>
-              <Play size={14} fill="currentColor" />
-              开始学习
-              <ArrowRight size={14} />
-            </button>
-            <button className="button" onClick={() => actions.study(node.id)}>
-              <Plus size={14} />
-              补记学习记录
-            </button>
-          </>
-        )}
-        <button
-          className="button"
-          disabled={marking || progress.completed}
-          onClick={async () => {
-            if (marking) return;
-            setMarking(true);
-            try {
-              await actions.markLearned(node.id);
-            } finally {
-              setMarking(false);
+          <button
+            className="button primary"
+            onClick={() =>
+              blockers[0]
+                ? onOpenTree(blockers[0].id)
+                : parent && actions.select(parent.id)
             }
-          }}
-        >
-          <Check size={14} />
-          {marking
-            ? "正在保存…"
-            : progress.markedLearned
-              ? "已标记为已学"
-              : progress.completed
-                ? "已完成"
-                : "标记为已学"}
+          >
+            <LockKeyhole size={14} />
+            {blockers.length ? "前往前置学习树" : "前往前置节点"}
+          </button>
+        ) : (
+          <button className="button primary" onClick={() => onLearn(node.id)}>
+            <Play size={14} fill="currentColor" />
+            {progress.rank ? "继续学习" : "开始学习"}
+            <ArrowRight size={14} />
+          </button>
+        )}
+        <button className="button" onClick={() => actions.study(node.id)}>
+          <Plus size={14} />
+          补记学习记录
         </button>
+        <div className="inspector-footnote">
+          <span>本地 PostgreSQL</span>
+          <span>自动保存</span>
+        </div>
       </div>
     </aside>
+
   );
-}
-function RotateIcon() {
-  return <Clock3 size={17} />;
 }
