@@ -17,7 +17,7 @@
 .constellation-workspace {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 320px;
-  grid-template-rows: auto auto minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
   height: 100%;
   width: 100%;
   padding: 16px 20px 20px;
@@ -25,6 +25,24 @@
   overflow: hidden;
   box-sizing: border-box;
   background: var(--background);
+}
+.tree-floating-title {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 15;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: rgb(255 255 255 / 0.94);
+  box-shadow: 0 4px 14px rgb(22 38 61 / 0.08);
+  backdrop-filter: blur(8px);
+}
+.tree-floating-title strong {
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  letter-spacing: -0.02em;
 }
 .tree-hero {
   grid-column: 1 / -1;
@@ -1292,4 +1310,22 @@
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
   overflow: hidden;
+}
+.skill-inspector {
+  position: relative;
+}
+.inspector-edit {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  z-index: 3;
+}
+.inspector-summary {
+  margin-top: 4px;
+  padding-right: 22px;
+}
+@media (max-width: 760px) {
+  .tree-floating-title {
+    display: none;
+  }
 }

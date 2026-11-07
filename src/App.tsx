@@ -9,11 +9,13 @@ import {
   ChevronDown,
   ChevronRight,
   CircleHelp,
+  FileUp,
   Home as HomeIcon,
   Leaf,
   LogOut,
   Menu,
   Network,
+  Plus,
   RotateCcw,
   Search,
   Settings2,
@@ -695,7 +697,6 @@ function WorkspaceApp({
               <Network size={16} />
             </span>
             <span>
-              <small>当前项目</small>
               <strong>{sidebarProject.title}</strong>
             </span>
             <ChevronDown size={14} />
@@ -712,7 +713,6 @@ function WorkspaceApp({
             </select>
           </div>
         )}
-        <span className="nav-label">WORKSPACE</span>
         <nav>
           {nav.map((item) => (
             <button
@@ -729,7 +729,6 @@ function WorkspaceApp({
         </nav>
         {page === "trees" && activeStage && activeStageProgress && (
           <div className="sidebar-route">
-            <span>当前节点</span>
             <strong>{activeStage.title}</strong>
             <small>
               {activeStageProgress.completed} / {activeStageProgress.total} 节点已完成
@@ -790,6 +789,24 @@ function WorkspaceApp({
             </strong>
           </div>
           <div className="header-actions">
+            {page === "trees" && currentTree && (
+              <div className="topbar-tree-actions">
+                <button
+                  className="topbar-action"
+                  onClick={() => navigate("settings")}
+                >
+                  <FileUp size={14} />
+                  导入课程
+                </button>
+                <button
+                  className="topbar-action primary"
+                  onClick={() => actions.tree(undefined, currentTree.id)}
+                >
+                  <Plus size={14} />
+                  添加子树
+                </button>
+              </div>
+            )}
             <div className="search-wrap">
               <Search size={16} />
               <input

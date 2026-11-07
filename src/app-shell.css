@@ -2439,3 +2439,36 @@ select {
   font-size: 11px;
   font-weight: var(--weight-medium);
 }
+.topbar-tree-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-right: 4px;
+}
+.topbar-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 30px;
+  padding: 0 9px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  color: var(--text-secondary);
+  background: var(--card);
+  font-size: 11px;
+  white-space: nowrap;
+}
+.topbar-action:hover {
+  border-color: var(--blue-7);
+  color: var(--text-primary);
+}
+.topbar-action.primary {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+@media (max-width: 760px) {
+  .topbar-tree-actions {
+    display: none;
+  }
+}

@@ -8,7 +8,6 @@ import {
   FileUp,
   Check,
   ChevronRight,
-  Clock3,
   Crosshair,
   GitBranch,
   Layers3,
@@ -19,7 +18,6 @@ import {
   Play,
   Plus,
   Route,
-  RotateCcw,
   ShieldCheck,
   Sparkles,
   Target,
@@ -27,7 +25,6 @@ import {
 } from "lucide-react";
 import type { Data, Topic, Tree } from "./domain";
 import { Empty } from "./components";
-import { dueTopics, weeklyActivity } from "./domain";
 import {
   evidence,
   nextSkill,
@@ -123,34 +120,6 @@ export function Trees({
   const projectProgress = tree
     ? treeProgress(data, tree.id)
     : { total: 0, verified: 0, completed: 0, complete: false };
-  const projectTreeIds = new Set<string>();
-  if (project) {
-    const queue = [project.id];
-    while (queue.length) {
-      const id = queue.shift()!;
-      if (projectTreeIds.has(id)) continue;
-      projectTreeIds.add(id);
-      data.trees
-        .filter((item) => item.parentTreeId === id)
-        .forEach((item) => queue.push(item.id));
-    }
-  }
-  const wholeProject = project
-    ? treeProgress(data, project.id)
-    : projectProgress;
-  const projectDue = dueTopics(data).filter((node) =>
-    projectTreeIds.has(node.treeId),
-  ).length;
-  const projectStages = project
-    ? data.trees.filter((item) => item.parentTreeId === project.id).length
-    : childTrees.length;
-  const weekMinutes = weeklyActivity(data).reduce(
-    (sum, day) => sum + day.minutes,
-    0,
-  );
-  const progressPercent = wholeProject.total
-    ? Math.round((wholeProject.completed / wholeProject.total) * 100)
-    : 0;
   useEffect(() => {
     setRouteOnly(false);
     setMenuOpen(false);
@@ -181,68 +150,12 @@ export function Trees({
     <div
       className={`constellation-workspace mobile-${mobileView}`}
     >
-      {project && (
-        <>
-          <header className="tree-hero">
-            <div>
-              <span className="tree-eyebrow">学习树</span>
-              <h1>{project.title}</h1>
-              <p>
-                {projectStages} 个阶段 · {wholeProject.total} 个知识点
-              </p>
-            </div>
-            <div className="tree-hero-actions">
-              <button
-                className="button"
-                onClick={() => actions.navigate("settings")}
-              >
-                <FileUp size={15} />
-                导入课程
-              </button>
-              <button
-                className="button primary"
-                onClick={() => actions.tree(undefined, tree?.id)}
-              >
-                <Plus size={15} />
-                添加子树
-              </button>
-            </div>
-          </header>
-          <section className="tree-metrics" aria-label="学习树概览">
-            <div className="tree-stat">
-              <span>
-                总进度 <Route size={15} />
-              </span>
-              <strong>{progressPercent}%</strong>
-            </div>
-            <div className="tree-stat">
-              <span>
-                已学节点 <Check size={15} />
-              </span>
-              <strong>
-                {wholeProject.completed}
-                <em> / {wholeProject.total}</em>
-              </strong>
-            </div>
-            <div className="tree-stat">
-              <span>
-                待复习 <RotateCcw size={15} />
-              </span>
-              <strong>{projectDue}</strong>
-            </div>
-            <div className="tree-stat">
-              <span>
-                本周学习 <Clock3 size={15} />
-              </span>
-              <strong>
-                {weekMinutes}
-                <em> 分钟</em>
-              </strong>
-            </div>
-          </section>
-        </>
-      )}
       <section className="constellation-stage" aria-label="项目技能地图">
+        {project && (
+          <div className="tree-floating-title">
+            <strong>{project.title}</strong>
+          </div>
+        )}
         <div className="project-navigation" ref={navigationRef}>
           <button
             className="project-switcher"
@@ -693,7 +606,6 @@ function SkillInspector({
     state = skillState(data, node);
   const parent = data.nodes.find((n) => n.id === node.parentId);
   const blockers = treeBlockers(data, node.treeId);
-  const tree = data.trees.find((t) => t.id === node.treeId);
   const siblings = data.nodes.filter((n) => n.treeId === node.treeId);
   const description =
     node.note.trim() ||
@@ -707,23 +619,14 @@ function SkillInspector({
     "暂无笔记。";
   return (
     <aside className="skill-inspector">
-      <div className="inspector-top">
-        <span className="command-title">
-          <Crosshair size={13} />
-          节点详情
-        </span>
-        <button
-          className="icon-button"
-          aria-label="编辑知识点"
-          onClick={() => actions.topic(node.treeId, node)}
-        >
-          <Pencil size={15} />
-        </button>
-      </div>
+      <button
+        className="inspector-edit icon-button"
+        aria-label="编辑知识点"
+        onClick={() => actions.topic(node.treeId, node)}
+      >
+        <Pencil size={15} />
+      </button>
       <div className="inspector-summary">
-        <span className="inspector-eyebrow">
-          {tree?.title ?? "学习树"}
-        </span>
         <div className="inspector-title-row">
           <h2>{node.title}</h2>
           <span className={`state-pill ${state}`}>
