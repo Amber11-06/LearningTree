@@ -53,7 +53,30 @@ function SkillNodeView({ data }: NodeProps<SkillNode>) {
       <div
         className={`skill-node subtree-node ${data.state} ${data.dim ? "is-dim" : ""}`}
       >
-        <Handle type="target" position={Position.Left} />
+        <Handle
+          type="target"
+          position={Position.Left}
+          id="target-left"
+          className="edge-handle"
+        />
+        <Handle
+          type="target"
+          position={Position.Right}
+          id="target-right"
+          className="edge-handle"
+        />
+        <Handle
+          type="target"
+          position={Position.Top}
+          id="target-top"
+          className="edge-handle"
+        />
+        <Handle
+          type="target"
+          position={Position.Bottom}
+          id="target-bottom"
+          className="edge-handle"
+        />
         <span className="subtree-head">
           {hasIndex && <small>{rawIndex}</small>}
           <i className="subtree-dot" />
@@ -71,7 +94,30 @@ function SkillNodeView({ data }: NodeProps<SkillNode>) {
           </span>
           <span>{percentage}%</span>
         </span>
-        <Handle type="source" position={Position.Right} />
+        <Handle
+          type="source"
+          position={Position.Right}
+          id="source-right"
+          className="edge-handle"
+        />
+        <Handle
+          type="source"
+          position={Position.Left}
+          id="source-left"
+          className="edge-handle"
+        />
+        <Handle
+          type="source"
+          position={Position.Top}
+          id="source-top"
+          className="edge-handle"
+        />
+        <Handle
+          type="source"
+          position={Position.Bottom}
+          id="source-bottom"
+          className="edge-handle"
+        />
       </div>
     );
   }

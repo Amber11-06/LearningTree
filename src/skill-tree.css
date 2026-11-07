@@ -1,4 +1,4 @@
-.workspace-heading {
+﻿.workspace-heading {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -2252,4 +2252,40 @@
 }
 .skill-map .subtree-node.locked .subtree-foot {
   color: var(--text-secondary);
+}
+.skill-map .react-flow__edges {
+  z-index: 0;
+}
+.skill-map .react-flow__nodes {
+  z-index: 1;
+}
+.skill-map .skill-node.subtree-node {
+  box-shadow:
+    0 0 0 4px var(--map-background),
+    0 2px 6px var(--shadow-color);
+}
+.skill-map .react-flow__edges {
+  z-index: 0 !important;
+}
+.skill-map .react-flow__nodes {
+  z-index: 2 !important;
+}
+.skill-map .react-flow__node {
+  z-index: 2 !important;
+}
+.skill-map .edge-handle {
+  width: 6px;
+  height: 6px;
+  border: 0;
+  background: transparent;
+  opacity: 0;
+}
+.skill-map .subtree-node .react-flow__handle-top {
+  top: 0;
+  left: 50%;
+}
+.skill-map .subtree-node .react-flow__handle-bottom {
+  top: auto;
+  bottom: 0;
+  left: 50%;
 }

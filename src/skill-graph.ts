@@ -88,13 +88,13 @@ export function buildSkillGraph(
   if (!topics.length && children.length > 2) {
     const positions = [
       [24, 112],
-      [300, 34],
-      [300, 172],
+      [300, 30],
+      [300, 198],
       [576, 70],
-      [576, 220],
-      [300, 312],
-      [24, 256],
-      [24, 396],
+      [576, 250],
+      [300, 350],
+      [24, 280],
+      [24, 430],
     ];
     children.forEach((child, index) => {
       const [x, y] = positions[index] ?? [
@@ -221,16 +221,39 @@ export function buildSkillGraph(
   if (manualPositions.size && children.length > 1) {
     const sequenceEdges: Edge[] = children.slice(0, -1).map((child, index) => {
       const next = children[index + 1];
+      const from = manualPositions.get(child.id)!;
+      const to = manualPositions.get(next.id)!;
+      const dx = to.x - from.x;
+      const dy = to.y - from.y;
+      const horizontal = Math.abs(dx) >= Math.abs(dy);
+      const forward = horizontal ? dx >= 0 : dy >= 0;
+      const sourceHandle = horizontal
+        ? forward
+          ? "source-right"
+          : "source-left"
+        : forward
+          ? "source-bottom"
+          : "source-top";
+      const targetHandle = horizontal
+        ? forward
+          ? "target-left"
+          : "target-right"
+        : forward
+          ? "target-top"
+          : "target-bottom";
       return {
         id: `sequence:${child.id}:${next.id}`,
         source: `tree:${child.id}`,
         target: `tree:${next.id}`,
+        sourceHandle,
+        targetHandle,
         type: "circuit",
         style: {
-          stroke: "var(--edge-muted)",
-          strokeWidth: 1.2,
-          strokeDasharray: "4 8",
-          opacity: 0.55,
+          stroke: "#4F6877",
+          strokeWidth: 2,
+          strokeDasharray: "8 6",
+          strokeLinecap: "round",
+          opacity: 0.9,
         } as CSSProperties,
       };
     });
