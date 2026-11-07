@@ -9,13 +9,9 @@ import {
   ChevronRight,
   Clock3,
   FileUp,
-  Flame,
   Leaf,
-  Network,
   Plus,
   RotateCcw,
-  Sprout,
-  Target,
   Trash2,
 } from "lucide-react";
 import {
@@ -24,14 +20,13 @@ import {
   hydrateCard,
   nodeScore,
   scheduler,
-  topicStatus,
   weeklyActivity,
   type Data,
   type Topic,
   type Tree,
   type Session,
 } from "./domain";
-import { dateText, dueText, Empty, Status, TreeGraph } from "./components";
+import { dateText, dueText, Empty, Status } from "./components";
 import { type Grade } from "ts-fsrs";
 
 export type Page =
@@ -40,6 +35,7 @@ export interface Actions {
   navigate: (page: Page) => void;
   study: (id?: string) => void;
   learn: (id: string) => void;
+  startReview: (id: string) => void;
   saveNote: (id: string, note: string) => Promise<boolean>;
   recordQuiz: (session: Session) => Promise<boolean>;
   tree: (tree?: Tree, parentTreeId?: string) => void;
@@ -59,300 +55,7 @@ export interface Actions {
   settings: (settings: Data["settings"]) => Promise<boolean>;
 }
 type Props = { data: Data; actions: Actions };
-export function Home({
-  data,
-  actions,
-  treeId,
-  setTreeId,
-}: Props & { treeId: string; setTreeId: (id: string) => void }) {
-  const week = weeklyActivity(data),
-    today = week[6],
-    due = dueTopics(data),
-    signals = feedback(data);
-  const tree = data.trees.find((t) => t.id === treeId) ?? data.trees[0];
-  const strong = data.nodes.filter(
-    (n) => topicStatus(data, n.id) === "strong",
-  ).length;
-  const totalMinutes = week.reduce((sum, day) => sum + day.minutes, 0);
-  const studiedDays = week.filter((d) => d.minutes > 0 || d.reviews > 0).length;
-  const recent = [...data.sessions]
-    .sort((a, b) => b.at.localeCompare(a.at))
-    .slice(0, 3);
-  return (
-    <div className="home-page">
-      <section className="welcome">
-        <div>
-          <div className="eyebrow">
-            <span />
-            学习概览
-          </div>
-          <h1>今天的学习进度</h1>
-          <button className="button primary" onClick={() => actions.study()}>
-            <Plus size={17} />
-            记录一次学习
-          </button>
-        </div>
-      </section>
-      <section className="stats-grid" aria-label="学习概览">
-        <div className="stat">
-          <span className="stat-icon green">
-            <Sprout size={21} />
-          </span>
-          <div>
-            <span>学习树</span>
-            <strong>
-              {data.trees.length}
-              <small>棵</small>
-            </strong>
-          </div>
-          <span className="stat-foot">
-            {data.nodes.length} 个知识点
-          </span>
-        </div>
-        <div className="stat">
-          <span className="stat-icon blue">
-            <Clock3 size={21} />
-          </span>
-          <div>
-            <span>近 7 天学习</span>
-            <strong>
-              {totalMinutes}
-              <small>分钟</small>
-            </strong>
-          </div>
-          <span className="stat-foot">今天已学习 {today.minutes} 分钟</span>
-        </div>
-        <button
-          className="stat stat-button"
-          onClick={() => actions.navigate("reviews")}
-        >
-          <span className="stat-icon amber">
-            <RotateCcw size={21} />
-          </span>
-          <div>
-            <span>待复习</span>
-            <strong>
-              {due.length}
-              <small>个</small>
-            </strong>
-          </div>
-          <span className="stat-foot">
-            进入复习 <ArrowUpRight size={14} />
-          </span>
-        </button>
-        <div className="stat">
-          <span className="stat-icon sage">
-            <Target size={21} />
-          </span>
-          <div>
-            <span>掌握知识点</span>
-            <strong>
-              {strong}
-              <small>个知识点</small>
-            </strong>
-          </div>
-          <span className="stat-foot">最近自测正确率 ≥ 80%</span>
-        </div>
-      </section>
-      <div className="dashboard-grid">
-        <section className="panel tree-panel">
-          <div className="panel-heading">
-            <div>
-              <h2>
-                <Network size={18} />
-                学习树
-              </h2>
-              <p>
-                {data.trees.length} 条路线 · {data.nodes.length} 个知识点
-              </p>
-            </div>
-            <button
-              className="text-button"
-              onClick={() => actions.navigate("trees")}
-            >
-              管理学习树
-              <ArrowUpRight size={15} />
-            </button>
-          </div>
-          {tree ? (
-            <>
-              <div className="tree-selector">
-                <select
-                  aria-label="选择展示的学习树"
-                  value={tree.id}
-                  onChange={(e) => setTreeId(e.target.value)}
-                >
-                  {data.trees.map((t) => (
-                    <option value={t.id} key={t.id}>
-                      {t.title}
-                    </option>
-                  ))}
-                </select>
-                <span>
-                  {data.nodes.filter((n) => n.treeId === tree.id).length}{" "}
-                  个知识点
-                </span>
-              </div>
-              <TreeGraph
-                data={data}
-                tree={tree}
-                onSelect={actions.select}
-                onOpenTree={(id) => {
-                  setTreeId(id);
-                  actions.navigate("trees");
-                }}
-                compact
-              />
-              <div className="tree-bottom">
-                <span>
-                  <Leaf size={15} />
-                  点击知识点查看详情
-                </span>
-                <button
-                  className="text-button"
-                  onClick={() => actions.navigate("trees")}
-                >
-                  展开完整学习树
-                  <ArrowRight size={15} />
-                </button>
-              </div>
-            </>
-          ) : (
-            <Empty
-              title="暂无学习树"
-              action="创建学习树"
-              onAction={() => actions.tree()}
-            >
-              创建第一棵学习树。
-            </Empty>
-          )}
-        </section>
-        <aside className="dashboard-aside">
-          <div className="week-card">
-            <span className="mini-label">
-              <Flame size={15} />
-              近 7 天记录
-            </span>
-            <div className="week-days">
-              {week.map((day) => (
-                <div key={day.date.toISOString()}>
-                  <span>
-                    {
-                      ["日", "一", "二", "三", "四", "五", "六"][
-                        day.date.getDay()
-                      ]
-                    }
-                  </span>
-                  <i className={day.minutes || day.reviews ? "done" : ""}>
-                    {day.minutes || day.reviews ? <Check size={15} /> : <span />}
-                  </i>
-                </div>
-              ))}
-            </div>
-            <p>
-              最近 7 天，有 <strong>{studiedDays} 天</strong> 有学习记录
-            </p>
-          </div>
-          <section className="next-step">
-            <div className="mini-label">
-              <Leaf size={17} />
-              下一步
-            </div>
-            <h2>{signals[0].title}</h2>
-            <p>{signals[0].detail}</p>
-            <button onClick={() => actSignal(signals[0], actions)}>
-              {signals[0].action}
-              <ArrowUpRight size={18} />
-            </button>
-            <div className="leaf-art" aria-hidden="true">
-              <svg viewBox="0 0 120 90">
-                <path d="M51 90Q52 40 91 10M56 66C20 77 14 48 20 32C47 32 61 43 56 66M66 43C61 15 81 5 107 8C111 28 94 46 66 43" />
-              </svg>
-            </div>
-          </section>
-          <section className="panel daily-goal">
-            <div className="row-between">
-              <h3>今日目标</h3>
-              <span>
-                {Math.min(
-                  100,
-                  Math.round(
-                    (today.minutes / data.settings.dailyMinutes) * 100,
-                  ),
-                )}
-                %
-              </span>
-            </div>
-            <p>
-              <strong>{today.minutes}</strong> / {data.settings.dailyMinutes}{" "}
-              分钟
-            </p>
-            <div className="progress-track">
-              <i
-                style={{
-                  width: `${Math.min(100, (today.minutes / data.settings.dailyMinutes) * 100)}%`,
-                }}
-              />
-            </div>
-            <span>
-              {today.minutes >= data.settings.dailyMinutes
-                ? "今日目标已完成"
-                : `还差 ${data.settings.dailyMinutes - today.minutes} 分钟`}
-            </span>
-          </section>
-        </aside>
-      </div>
-      <section className="panel recent-panel">
-        <div className="panel-heading">
-          <div>
-            <h2>
-              <BookOpen size={18} />
-              最近记录
-            </h2>
-          </div>
-          <button
-            className="text-button"
-            onClick={() => actions.navigate("journal")}
-          >
-            全部记录
-            <ArrowUpRight size={15} />
-          </button>
-        </div>
-        {recent.length ? (
-          recent.map((s) => (
-            <button
-              className="recent-row"
-              key={s.id}
-              onClick={() => actions.select(s.nodeId)}
-            >
-              <span className="recent-leaf">
-                <Leaf size={17} />
-              </span>
-              <div>
-                <strong>
-                  {data.nodes.find((n) => n.id === s.nodeId)?.title}
-                </strong>
-                <p>{s.note || "无笔记"}</p>
-              </div>
-              <span className="recent-score">
-                {s.total
-                  ? `自测 ${Math.round(((s.correct ?? 0) / s.total) * 100)}%`
-                  : "学习记录"}
-              </span>
-              <span className="muted">{s.minutes} 分钟</span>
-              <time>{dateText(s.at)}</time>
-              <ChevronRight size={16} />
-            </button>
-          ))
-        ) : (
-          <Empty title="暂无学习记录">
-            完成一次学习后，记录会显示在这里。
-          </Empty>
-        )}
-      </section>
-    </div>
-  );
-}
+export { Home } from "./LearningOverview";
 function actSignal(
   signal: ReturnType<typeof feedback>[number],
   actions: Actions,
@@ -362,8 +65,12 @@ function actSignal(
   else actions.study(signal.nodeId);
 }
 export { Trees } from "./SkillWorkspace";
-export function Reviews({ data, actions }: Props) {
-  const [chosen, setChosen] = useState<string | null>(null);
+export function Reviews({
+  data,
+  actions,
+  initialNodeId,
+}: Props & { initialNodeId?: string | null }) {
+  const [chosen, setChosen] = useState<string | null>(initialNodeId ?? null);
   const [done, setDone] = useState(0);
   const due = dueTopics(data);
   const current = due.find((n) => n.id === chosen) ?? due[0];
@@ -372,11 +79,7 @@ export function Reviews({ data, actions }: Props) {
     .sort((a, b) => a.card.due.localeCompare(b.card.due));
   return (
     <>
-      <PageHeading
-        eyebrow="复习"
-        title="复习挑战"
-        description="按到期时间复习；先回忆，再自评。"
-      >
+      <PageHeading title="复习挑战">
         <span className="pill">
           <RotateCcw size={15} />
           {due.length} 个待复习 · 本轮已完成 {done} 个
@@ -536,11 +239,7 @@ export function Feedback({ data, actions }: Props) {
   );
   return (
     <>
-      <PageHeading
-        eyebrow="学习反馈"
-        title="学习反馈"
-        description="基于最近最多 5 次自测与学习记录。"
-      />
+      <PageHeading title="学习反馈" />
       <div className="feedback-signals">
         {signals.map((s) => (
           <section className="panel signal" key={s.title}>
@@ -761,11 +460,7 @@ export function Journal({ data, actions }: Props) {
     .sort((a, b) => b.at.localeCompare(a.at));
   return (
     <>
-      <PageHeading
-        eyebrow="学习记录"
-        title="学习日志"
-        description="按时间查看学习与复习记录。"
-      >
+      <PageHeading title="学习日志">
         <button className="button primary" onClick={() => actions.study()}>
           <Plus size={17} />
           记录学习
@@ -876,11 +571,7 @@ export function Settings({ data, actions }: Props) {
   const [saving, setSaving] = useState(false);
   return (
     <>
-      <PageHeading
-        eyebrow="设置"
-        title="偏好与数据"
-        description="学习记录保存在本机 PostgreSQL；课程包管理内容，完整备份包含全部进度。"
-      />
+      <PageHeading title="偏好与数据" />
       <div className="settings-layout">
         <section className="panel settings-panel">
           <h2>学习偏好</h2>
@@ -1036,7 +727,8 @@ export function Settings({ data, actions }: Props) {
           <p>
             反馈由实际学习记录和明确规则生成；自测正确率、主观信心和复习自评分开记录。复习采用
             FSRS 算法安排时间。课程和学习数据通过本机 FastAPI 写入
-            PostgreSQL，账号与数据按登录用户隔离，不调用 AI。请定期导出完整备份。
+            PostgreSQL，账号与数据按登录用户隔离，不调用
+            AI。请定期导出完整备份。
           </p>
         </div>
       </section>
@@ -1044,25 +736,16 @@ export function Settings({ data, actions }: Props) {
   );
 }
 function PageHeading({
-  eyebrow,
   title,
-  description,
   children,
 }: {
-  eyebrow: string;
   title: string;
-  description: string;
   children?: React.ReactNode;
 }) {
   return (
     <section className="page-heading">
-      <div>
-        <div className="eyebrow">
-          <span />
-          {eyebrow}
-        </div>
+      <div className="page-title-float">
         <h1>{title}</h1>
-        <p>{description}</p>
       </div>
       {children}
     </section>

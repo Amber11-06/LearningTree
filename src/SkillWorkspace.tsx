@@ -152,7 +152,7 @@ export function Trees({
     >
       <section className="constellation-stage" aria-label="项目技能地图">
         {project && (
-          <div className="tree-floating-title">
+          <div className="page-title-float tree-floating-title">
             <strong>{project.title}</strong>
           </div>
         )}

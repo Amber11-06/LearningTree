@@ -157,8 +157,7 @@ export default function App() {
       </div>
     );
 
-  if (!user)
-    return <AuthScreen onAuthenticated={(value) => setUser(value)} />;
+  if (!user) return <AuthScreen onAuthenticated={(value) => setUser(value)} />;
 
   return <WorkspaceApp user={user} onSessionEnd={endSession} />;
 }
@@ -401,6 +400,10 @@ function WorkspaceApp({
         setTreeId(node.treeId);
         navigate("learn");
       }
+    },
+    startReview: (id) => {
+      setSelectedId(id);
+      navigate("reviews");
     },
     saveNote: (id, note) =>
       commit(
@@ -656,7 +659,7 @@ function WorkspaceApp({
     : null;
   return (
     <div
-      className={`app-shell ${page === "trees" ? "tree-page" : ""} ${page === "learn" ? "learning-page" : ""}`}
+      className={`app-shell ${page === "trees" ? "tree-page" : page === "home" ? "overview-shell" : ""} ${page === "learn" ? "learning-page" : ""}`}
     >
       {(saving || remoteChanged) && (
         <div className="database-status" role="status">
@@ -731,7 +734,8 @@ function WorkspaceApp({
           <div className="sidebar-route">
             <strong>{activeStage.title}</strong>
             <small>
-              {activeStageProgress.completed} / {activeStageProgress.total} 节点已完成
+              {activeStageProgress.completed} / {activeStageProgress.total}{" "}
+              节点已完成
             </small>
           </div>
         )}
@@ -891,14 +895,7 @@ function WorkspaceApp({
               />
             </Suspense>
           )}
-          {page === "home" && (
-            <Home
-              data={data}
-              actions={actions}
-              treeId={treeId}
-              setTreeId={setTreeId}
-            />
-          )}
+          {page === "home" && <Home data={data} actions={actions} />}
           {page === "trees" && (
             <Trees
               data={data}
@@ -911,7 +908,9 @@ function WorkspaceApp({
               selectedId={selectedId}
             />
           )}
-          {page === "reviews" && <Reviews data={data} actions={actions} />}
+          {page === "reviews" && (
+            <Reviews data={data} actions={actions} initialNodeId={selectedId} />
+          )}
           {page === "feedback" && <Feedback data={data} actions={actions} />}
           {page === "journal" && <Journal data={data} actions={actions} />}
           {page === "settings" && (
