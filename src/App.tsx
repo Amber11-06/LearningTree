@@ -661,6 +661,11 @@ function WorkspaceApp({
     <div
       className={`app-shell ${page === "trees" ? "tree-page" : page === "home" ? "overview-shell" : ""} ${page === "learn" ? "learning-page" : ""}`}
     >
+      <div className="app-aurora" aria-hidden="true">
+        <i />
+        <i />
+        <i />
+      </div>
       {(saving || remoteChanged) && (
         <div className="database-status" role="status">
           {saving ? (

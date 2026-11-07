@@ -1319,20 +1319,7 @@
     0 24px 48px -36px rgb(51 76 100 / 0.7),
     inset 0 1px 0 rgb(255 255 255 / 0.16);
 }
-.overview-hero-beam {
-  position: absolute;
-  inset: -55%;
-  z-index: 0;
-  background: conic-gradient(
-    from 0deg,
-    transparent 0deg 278deg,
-    rgb(207 229 243 / 0.3) 300deg,
-    transparent 326deg 360deg
-  );
-  animation: overview-hero-beam 9s linear infinite;
-  pointer-events: none;
-}
-.overview-hero > *:not(.overview-hero-beam):not(.overview-hero-book) {
+.overview-hero > *:not(.overview-hero-book) {
   position: relative;
   z-index: 1;
 }
@@ -1434,11 +1421,6 @@
     transform: scaleX(1);
   }
 }
-@keyframes overview-hero-beam {
-  to {
-    transform: rotate(360deg);
-  }
-}
 @keyframes overview-number-in {
   from {
     opacity: 0;
@@ -1458,7 +1440,6 @@
   .learning-overview,
   .overview-title h1,
   .overview-title h1::after,
-  .overview-hero-beam,
   .overview-hero-number > strong,
   .overview-ring-value,
   .overview-main > *,

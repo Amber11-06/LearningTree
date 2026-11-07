@@ -209,7 +209,6 @@ export function Home({ data, actions }: { data: Data; actions: Actions }) {
             </div>
           </div>
           <BookIllustration className="overview-hero-book" />
-          <span className="overview-hero-beam" aria-hidden="true" />
         </section>
 
         <section

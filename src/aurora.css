@@ -1,0 +1,150 @@
+/* Light Monet aurora: a fixed atmospheric layer behind every signed-in page. */
+.app-shell {
+  position: relative;
+  background: transparent !important;
+}
+.app-aurora {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background: linear-gradient(180deg, #fbfdfe 0%, #eff8fb 55%, #f7fbf9 100%);
+}
+.app-aurora i {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+  filter: blur(72px);
+  opacity: 0.64;
+  mix-blend-mode: multiply;
+  will-change: transform;
+}
+.app-aurora i:nth-child(1) {
+  width: 68vw;
+  height: 36vw;
+  left: -14vw;
+  top: -14vw;
+  background: radial-gradient(
+    ellipse at center,
+    #a8d4e7 0%,
+    #d9eef7 48%,
+    transparent 72%
+  );
+  animation: aurora-drift-a 21s ease-in-out infinite alternate;
+}
+.app-aurora i:nth-child(2) {
+  width: 58vw;
+  height: 32vw;
+  right: -10vw;
+  top: 5vh;
+  background: radial-gradient(
+    ellipse at center,
+    #d3e8d8 0%,
+    #edf5dd 48%,
+    transparent 72%
+  );
+  animation: aurora-drift-b 25s ease-in-out infinite alternate;
+}
+.app-aurora i:nth-child(3) {
+  width: 66vw;
+  height: 30vw;
+  left: 16vw;
+  bottom: -17vw;
+  background: radial-gradient(
+    ellipse at center,
+    #f1e2c7 0%,
+    #f8f0df 48%,
+    transparent 72%
+  );
+  animation: aurora-drift-c 23s ease-in-out infinite alternate;
+}
+.app-aurora::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.26;
+  background-image: radial-gradient(
+    rgb(84 112 149 / 0.14) 0.7px,
+    transparent 0.7px
+  );
+  background-size: 22px 22px;
+  mask-image: linear-gradient(to bottom, rgb(0 0 0 / 0.55), transparent 72%);
+}
+.main-shell {
+  position: relative;
+  z-index: 1;
+  background: transparent !important;
+}
+.sidebar,
+.overview-shell .sidebar {
+  background: rgb(252 254 255 / 0.72) !important;
+  backdrop-filter: blur(18px) saturate(115%);
+}
+.topbar,
+.overview-shell .topbar {
+  background: rgb(255 255 255 / 0.58) !important;
+  backdrop-filter: blur(16px) saturate(115%);
+}
+.main-content,
+.overview-shell .main-content,
+.app-footer,
+.overview-shell .app-footer {
+  background: transparent !important;
+}
+.overview-main,
+.overview-aside {
+  background: transparent;
+}
+.tree-page .constellation-workspace {
+  background: transparent !important;
+}
+.constellation-stage {
+  background: rgb(248 251 253 / 0.7) !important;
+  backdrop-filter: blur(12px) saturate(110%);
+}
+.command-center {
+  background: rgb(255 255 255 / 0.86) !important;
+  backdrop-filter: blur(14px);
+}
+@keyframes aurora-drift-a {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(10vw, 4vh, 0) scale(1.14);
+  }
+}
+@keyframes aurora-drift-b {
+  from {
+    transform: translate3d(0, 0, 0) scale(1.04);
+  }
+  to {
+    transform: translate3d(-8vw, 7vh, 0) scale(1.18);
+  }
+}
+@keyframes aurora-drift-c {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(7vw, -5vh, 0) scale(1.12);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-aurora i {
+    animation: none;
+  }
+}
+@media (max-width: 760px) {
+  .app-aurora i {
+    filter: blur(54px);
+    opacity: 0.52;
+  }
+  .sidebar,
+  .overview-shell .sidebar,
+  .topbar,
+  .overview-shell .topbar {
+    backdrop-filter: none;
+  }
+}
