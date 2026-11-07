@@ -412,6 +412,8 @@ def merge_course_package(data: dict, package: dict, now: datetime | None = None)
             **deepcopy(node),
             "createdAt": (previous or {}).get("createdAt") or timestamp,
         }
+        if previous is not None:
+            merged["note"] = previous.get("note", "")
         if previous and previous.get("learnedAt"):
             merged["learnedAt"] = previous["learnedAt"]
         merged["card"] = (

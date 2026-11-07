@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 
 from .courses import get_builtin_course
 from .models import CourseImport, InstalledBuiltin, User, Workspace, utcnow
+from .relational import load_workspace_data, replace_workspace_data
 from .validation import (
     blank_data,
     merge_course_package,
@@ -30,9 +31,9 @@ def iso_z(value: datetime | None) -> str | None:
     )
 
 
-def serialize_workspace(workspace: Workspace) -> dict[str, Any]:
+def serialize_workspace(db: Session, workspace: Workspace) -> dict[str, Any]:
     return {
-        "data": workspace.data,
+        "data": load_workspace_data(db, workspace),
         "revision": workspace.revision,
         "updatedAt": iso_z(workspace.updated_at),
     }
@@ -57,17 +58,22 @@ def get_or_create_workspace(db: Session, user: User) -> Workspace:
 
 
 def read_workspace(db: Session, user: User) -> dict[str, Any]:
-    return serialize_workspace(get_or_create_workspace(db, user))
+    # Hold a shared lock across the table reads to return one consistent revision.
+    result = serialize_workspace(db, _lock_workspace(db, user, read=True))
+    db.commit()
+    return result
 
 
-def _lock_workspace(db: Session, user: User) -> Workspace:
+def _lock_workspace(db: Session, user: User, read: bool = False) -> Workspace:
     workspace = db.scalar(
-        select(Workspace).where(Workspace.user_id == user.id).with_for_update()
+        select(Workspace).where(Workspace.user_id == user.id)
+        .with_for_update(read=read).execution_options(populate_existing=True)
     )
     if workspace is None:
         workspace = get_or_create_workspace(db, user)
         workspace = db.scalar(
-            select(Workspace).where(Workspace.id == workspace.id).with_for_update()
+            select(Workspace).where(Workspace.id == workspace.id)
+            .with_for_update(read=read).execution_options(populate_existing=True)
         )
     if workspace is None:  # pragma: no cover - defensive
         raise RuntimeError("无法创建工作区")
@@ -114,7 +120,7 @@ def _persist(
     now = utcnow()
     data = validate_data(data)
     data, installed = _install_builtin(db, workspace, data)
-    workspace.data = data
+    replace_workspace_data(db, workspace, data)
     workspace.revision += 1
     workspace.updated_at = now
     revision = workspace.revision
@@ -142,11 +148,13 @@ def _persist(
             )
         )
     try:
+        # Assemble the response while the write lock still protects this revision.
+        result = serialize_workspace(db, workspace)
         db.commit()
     except IntegrityError:
         db.rollback()
         raise
-    return serialize_workspace(workspace)
+    return result
 
 
 def save_workspace(
@@ -164,6 +172,8 @@ def import_course(
         raise RevisionConflict()
     valid_package = validate_course_package(package)
     now = utcnow()
-    current = workspace.data if workspace.data is not None else blank_data()
+    current = load_workspace_data(db, workspace)
+    if current is None:
+        current = blank_data()
     merged = merge_course_package(current, valid_package, now)
     return _persist(db, workspace, merged, expected_revision, imported=valid_package)

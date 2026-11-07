@@ -1,7 +1,7 @@
 """Import the legacy single-user SQLite workspace into PostgreSQL.
 
-The browser-facing data contract is unchanged, so the SQLite tables are
-reconstructed into one JSONB workspace owned by a local account.
+The browser-facing data contract is unchanged. SQLite data is reconstructed
+and written into the relational workspace tables owned by a local account.
 """
 
 from __future__ import annotations
@@ -23,6 +23,7 @@ from backend.app.models import (
     Workspace,
 )
 from backend.app.security import hash_password, normalize_username
+from backend.app.relational import replace_workspace_data
 from backend.app.validation import validate_data
 
 
@@ -163,7 +164,9 @@ def main() -> None:
             db.add(Workspace(user_id=user.id, data=None, revision=0))
             db.flush()
 
-        workspace = db.scalar(select(Workspace).where(Workspace.user_id == user.id))
+        workspace = db.scalar(
+            select(Workspace).where(Workspace.user_id == user.id).with_for_update()
+        )
         if workspace is None:
             workspace = Workspace(user_id=user.id, data=None, revision=0)
             db.add(workspace)
@@ -171,7 +174,7 @@ def main() -> None:
         if workspace.data is not None and not args.replace:
             raise SystemExit("目标账号已有学习数据；如需覆盖请加 --replace。")
 
-        workspace.data = data
+        replace_workspace_data(db, workspace, data)
         workspace.revision = revision
         workspace.updated_at = updated_at or datetime.now(timezone.utc)
 

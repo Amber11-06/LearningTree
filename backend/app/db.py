@@ -1,6 +1,6 @@
 from collections.abc import Generator
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
 from .config import get_settings
@@ -26,5 +26,12 @@ def get_db() -> Generator[Session, None, None]:
 def init_db() -> None:
     # Importing the models registers them on Base.metadata.
     from . import models  # noqa: F401
+    from .relational import migrate_legacy_workspaces
 
-    Base.metadata.create_all(bind=engine)
+    with engine.begin() as connection:
+        # Serialize schema creation/migration across API workers and CLI tools.
+        connection.execute(text("SELECT pg_advisory_xact_lock(7421936801)"))
+        Base.metadata.create_all(bind=connection)
+        with Session(bind=connection) as db:
+            migrate_legacy_workspaces(db)
+            db.commit()

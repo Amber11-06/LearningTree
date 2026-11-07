@@ -10,7 +10,7 @@
 | ------ | ----------------------------------------------------- |
 | 前端   | React 19、TypeScript、Vite 8、React Flow、Zod         |
 | 后端   | FastAPI、Uvicorn、SQLAlchemy 2、Pydantic              |
-| 数据库 | PostgreSQL（工作区 JSONB + 账号/会话/导入记录关系表） |
+| 数据库 | PostgreSQL（科技树、知识节点、笔记、学习与复习记录独立表） |
 | 认证   | 本地用户名/密码、Argon2id、HttpOnly 会话 Cookie       |
 | 测试   | Vitest（前端领域逻辑）、pytest（FastAPI 接口）        |
 
@@ -35,7 +35,7 @@ npm run dev
 
 打开 http://127.0.0.1:5173 ，首次使用点击「注册」创建本地账号。`npm run dev` 同时启动 FastAPI 和 Vite；Vite 将 `/api` 代理到 `http://127.0.0.1:8000`。学习数据保存在 PostgreSQL 中，每个账号有独立工作区。
 
-已有 SQLite 数据可迁移，见 [迁移说明](docs/fastapi-postgres.md#从旧-sqlite-迁移)。
+已有 PostgreSQL JSONB 工作区会在后端启动时自动拆表迁移，见 [升级说明](docs/fastapi-postgres.md#从旧-postgresql-jsonb-工作区升级)。旧 SQLite 数据也可按 [迁移说明](docs/fastapi-postgres.md#从旧-sqlite-迁移) 导入。
 
 ```powershell
 npm test           # 数据一致性、反馈规则、FSRS 调度测试
@@ -115,6 +115,7 @@ npm run import:course -- courses/builtin/frontend-tech-tree.json
 | `backend/app/main.py`       | FastAPI 应用、路由、异常和静态资源         |
 | `backend/app/auth.py`       | 注册、登录、退出、当前用户                 |
 | `backend/app/workspace.py`  | 工作区读写、revision、内置课程安装         |
+| `backend/app/relational.py` | 业务表读写、工作区组装和旧 JSONB 数据迁移 |
 | `backend/app/validation.py` | 数据契约、关系校验和课程合并               |
 | `backend/app/models.py`     | SQLAlchemy 表模型                          |
 | `backend/scripts/`          | SQLite 迁移、命令行课程导入                |
