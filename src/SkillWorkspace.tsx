@@ -120,6 +120,9 @@ export function Trees({
   const projectProgress = tree
     ? treeProgress(data, tree.id)
     : { total: 0, verified: 0, completed: 0, complete: false };
+  const projectNodes = data.nodes.filter((node) =>
+    treePath.some((item) => item.id === node.treeId),
+  );
   useEffect(() => {
     setRouteOnly(false);
     setMenuOpen(false);
@@ -147,18 +150,48 @@ export function Trees({
     };
   }, []);
   return (
-    <div
-      className={`constellation-workspace mobile-${mobileView}`}
-    >
+    <>
+      <header className="tree-page-hero">
+        <div className="tree-hero-copy">
+          <span className="tree-hero-eyebrow">
+            <i />
+            路线 · {project?.title ?? "技能树"}
+            <b>
+              {treePath.length} 个阶段 · {projectNodes.length} 个知识点
+            </b>
+          </span>
+          <h1>{project?.title ?? "技能树"}</h1>
+        </div>
+        <div className="tree-hero-actions">
+          <span className="tree-hero-status">
+            <i /> 自动保存
+          </span>
+          <label className="tree-hero-import">
+            <FileUp size={14} />
+            导入课程
+            <input
+              type="file"
+              accept=".json,application/json"
+              onChange={(event) => {
+                const file = event.target.files?.[0];
+                if (file) void actions.importCourse(file);
+                event.target.value = "";
+              }}
+            />
+          </label>
+          <button
+            className="button primary"
+            onClick={() => actions.tree(undefined, project?.id)}
+          >
+            <Plus size={14} />
+            添加子树
+          </button>
+        </div>
+      </header>
+      <div
+        className={`constellation-workspace mobile-${mobileView}`}
+      >
       <section className="constellation-stage" aria-label="项目技能地图">
-        {project && (
-          <div className="tree-floating-title page-title-wrap">
-            <span className="page-title-mark" aria-hidden="true" />
-            <div className="page-title-float">
-              <strong>{project.title}</strong>
-            </div>
-          </div>
-        )}
         <div className="project-navigation" ref={navigationRef}>
           <button
             className="project-switcher"
@@ -580,6 +613,7 @@ export function Trees({
         />
       </section>
     </div>
+    </>
   );
 }
 function SkillInspector({
@@ -610,16 +644,6 @@ function SkillInspector({
   const parent = data.nodes.find((n) => n.id === node.parentId);
   const blockers = treeBlockers(data, node.treeId);
   const siblings = data.nodes.filter((n) => n.treeId === node.treeId);
-  const description =
-    node.note.trim() ||
-    node.content
-      .replace(/^#+\s.*$/gm, " ")
-      .replace(/学完要能做到什么/g, " ")
-      .replace(/[#>*`_\-]/g, " ")
-      .replace(/\s+/g, " ")
-      .trim()
-      .slice(0, 90) ||
-    "暂无笔记。";
   return (
     <aside className="skill-inspector">
       <button
@@ -643,15 +667,19 @@ function SkillInspector({
             {skillLabels[state]}
           </span>
         </div>
-        <p className="inspector-description">{description}</p>
-      </div>
-      <div className="inspector-progress">
-        <div className="inspector-progress-head">
-          <span>学习进度</span>
-          <span>{progress.rank} / 3</span>
-        </div>
-        <div className="inspector-progress-track">
-          <i style={{ width: `${(progress.rank / 3) * 100}%` }} />
+        <div className="inspector-ring" aria-label={`掌握度 ${Math.round((progress.rank / 3) * 100)}%`}>
+          <svg viewBox="0 0 72 72" aria-hidden="true">
+            <circle className="track" cx="36" cy="36" r="30" />
+            <circle
+              className="value"
+              cx="36"
+              cy="36"
+              r="30"
+              pathLength="100"
+              strokeDasharray={`${Math.round((progress.rank / 3) * 100)} 100`}
+            />
+          </svg>
+          <b>{Math.round((progress.rank / 3) * 100)}%</b>
         </div>
       </div>
       <div className="inspector-topics">

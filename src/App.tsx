@@ -744,14 +744,7 @@ function WorkspaceApp({
             </small>
           </div>
         )}
-        <div className="sidebar-grow">
-          <div className="sidebar-note">
-            <Network size={18} />
-            <p>
-              {data.trees.length} 条学习路线 · {data.nodes.length} 个节点
-            </p>
-          </div>
-        </div>
+        <div className="sidebar-grow" />
         <button
           className={`settings-nav ${page === "settings" ? "active" : ""}`}
           onClick={() => navigate("settings")}

@@ -326,6 +326,15 @@ function MapView({
         if (event.key === "-") changeZoom("out");
       }}
     >
+      <svg className="skill-edge-defs" aria-hidden="true" focusable="false">
+        <defs>
+          <linearGradient id="skill-edge-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#a7c5da" />
+            <stop offset="50%" stopColor="#547095" />
+            <stop offset="100%" stopColor="#8fb6d2" />
+          </linearGradient>
+        </defs>
+      </svg>
       <ReactFlow<SkillNode>
         nodes={graph.nodes}
         edges={visibleEdges}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ArrowDownToLine,
   ArrowRight,
@@ -10,13 +10,11 @@ import {
   Clock3,
   FileUp,
   Leaf,
-  Plus,
   RotateCcw,
   Trash2,
 } from "lucide-react";
 import {
   dueTopics,
-  feedback,
   hydrateCard,
   nodeScore,
   scheduler,
@@ -56,14 +54,6 @@ export interface Actions {
 }
 type Props = { data: Data; actions: Actions };
 export { Home } from "./LearningOverview";
-function actSignal(
-  signal: ReturnType<typeof feedback>[number],
-  actions: Actions,
-) {
-  if (signal.kind === "review") actions.navigate("reviews");
-  else if (signal.kind === "create") actions.tree();
-  else actions.study(signal.nodeId);
-}
 export { Trees } from "./SkillWorkspace";
 export function Reviews({
   data,
@@ -72,22 +62,24 @@ export function Reviews({
 }: Props & { initialNodeId?: string | null }) {
   const [chosen, setChosen] = useState<string | null>(initialNodeId ?? null);
   const [done, setDone] = useState(0);
+  const [revealSignal, setRevealSignal] = useState(0);
   const due = dueTopics(data);
   const current = due.find((n) => n.id === chosen) ?? due[0];
+  const currentIndex = current ? due.findIndex((n) => n.id === current.id) : -1;
+  const currentTree = current
+    ? data.trees.find((tree) => tree.id === current.treeId)
+    : undefined;
+  useEffect(() => {
+    setRevealSignal(0);
+  }, [current?.id]);
   const future = data.nodes
     .filter((n) => n.question && n.answer && new Date(n.card.due) > new Date())
     .sort((a, b) => a.card.due.localeCompare(b.card.due));
   return (
     <>
-      <PageHeading title="复习挑战">
-        <span className="pill">
-          <RotateCcw size={15} />
-          {due.length} 个待复习 · 本轮已完成 {done} 个
-        </span>
-      </PageHeading>
+      <PageHeading title="复习挑战" />
       <div className="review-layout">
         <section className="panel review-queue">
-          <h2>待复习</h2>
           {due.map((n) => (
             <button
               className={current?.id === n.id ? "active" : ""}
@@ -122,6 +114,7 @@ export function Reviews({
           <ReviewCard
             key={current.id}
             node={current}
+            revealSignal={revealSignal}
             onRate={async (rating, response) => {
               if (await actions.review(current.id, rating, response)) {
                 setDone((n) => n + 1);
@@ -137,38 +130,68 @@ export function Reviews({
               onAction={() =>
                 data.nodes.length ? actions.navigate("trees") : actions.tree()
               }
-            >
-              {done
-                ? `已复习 ${done} 个知识点，新的复习时间已安排。`
-                : "为知识点填写回忆题和答案后，到期时会出现在这里。"}
-            </Empty>
+            />
           </section>
         )}
+        {current && (
+          <aside className="panel review-context">
+            <span className="context-label">QUESTION CONTEXT</span>
+            <h3>{current.title}</h3>
+            <div className="context-orbit">
+              <span className="context-core">
+                <RotateCcw size={19} />
+              </span>
+            </div>
+            <div className="context-meta">
+              <div>
+                <span>所属路线</span>
+                <b>{currentTree?.title ?? "学习树"}</b>
+              </div>
+              <div>
+                <span>队列位置</span>
+                <b>
+                  {currentIndex + 1} / {due.length}
+                </b>
+              </div>
+            </div>
+            <div className="context-actions">
+              <button onClick={() => setRevealSignal((value) => value + 1)}>
+                查看参考答案
+              </button>
+              <button
+                className="ghost"
+                onClick={() => {
+                  const next = due[(currentIndex + 1) % due.length];
+                  if (next) setChosen(next.id);
+                }}
+              >
+                稍后再复习
+              </button>
+            </div>
+          </aside>
+        )}
       </div>
-      <p className="page-foot">
-        复习时间由 FSRS 依据历史自评安排，目标记忆保持率为
-        90%。自评不计入自测正确率。
-      </p>
     </>
   );
 }
 function ReviewCard({
   node,
+  revealSignal = 0,
   onRate,
 }: {
   node: Topic;
+  revealSignal?: number;
   onRate: (rating: Grade, response: string) => Promise<void>;
 }) {
   const [revealed, setRevealed] = useState(false),
     [response, setResponse] = useState("");
   const [saving, setSaving] = useState(false);
   const preview = scheduler.repeat(hydrateCard(node.card), new Date());
+  useEffect(() => {
+    if (revealSignal) setRevealed(true);
+  }, [revealSignal]);
   return (
     <section className="panel review-card">
-      <span className="eyebrow">
-        <span />
-        主动回忆
-      </span>
       <h2>{node.title}</h2>
       <div className="recall-question">{node.question}</div>
       <label>
@@ -197,7 +220,6 @@ function ReviewCard({
             <p className="preserve">{node.answer}</p>
           </div>
           <h3>自评</h3>
-          <p className="muted">按实际表现选择，下次复习时间会随之调整。</p>
           <div className="ratings">
             {([1, 2, 3, 4] as Grade[]).map((rating, i) => (
               <button
@@ -229,7 +251,6 @@ function ReviewCard({
 export function Feedback({ data, actions }: Props) {
   const week = weeklyActivity(data),
     max = Math.max(data.settings.dailyMinutes, ...week.map((x) => x.minutes));
-  const signals = feedback(data);
   const scored = [...data.sessions]
     .filter((s) => s.total !== null)
     .sort((a, b) => a.at.localeCompare(b.at))
@@ -240,31 +261,16 @@ export function Feedback({ data, actions }: Props) {
   return (
     <>
       <PageHeading title="学习反馈" />
-      <div className="feedback-signals">
-        {signals.map((s) => (
-          <section className="panel signal" key={s.title}>
-            <span className="signal-icon">
-              <Leaf size={20} />
-            </span>
-            <h3>{s.title}</h3>
-            <button
-              className="button primary signal-action"
-              onClick={() => actSignal(s, actions)}
-            >
-              {s.action}
-              <ArrowUpRight size={16} />
-            </button>
-          </section>
-        ))}
-      </div>
       <div className="charts-grid">
         <section className="panel chart-panel">
           <div className="panel-heading">
-            <div>
-              <h2>自测趋势</h2>
-              <p>最近 {scored.length} 次自测的正确率</p>
+            <h2>自测趋势</h2>
+            <div className="chart-head-actions">
+              <ChartNoAxesCombined size={18} />
+              <button className="chart-action" onClick={() => actions.study()}>
+                记录自测
+              </button>
             </div>
-            <ChartNoAxesCombined size={18} />
           </div>
           {scored.length ? (
             <>
@@ -356,9 +362,6 @@ export function Feedback({ data, actions }: Props) {
                   {dateText(scored[scored.length - 1].at)}
                 </text>
               </svg>
-              <p className="chart-note">
-                各次自测的题目和难度可能不同，趋势仅供反思。
-              </p>
             </>
           ) : (
             <Empty title="还没有自测数据" />
@@ -366,11 +369,13 @@ export function Feedback({ data, actions }: Props) {
         </section>
         <section className="panel chart-panel">
           <div className="panel-heading">
-            <div>
-              <h2>近 7 天学习时长</h2>
-              <p>单位：分钟</p>
+            <h2>近 7 天学习时长</h2>
+            <div className="chart-head-actions">
+              <Clock3 size={18} />
+              <button className="chart-action" onClick={() => actions.study()}>
+                记录学习
+              </button>
             </div>
-            <Clock3 size={18} />
           </div>
           <div className="bar-chart">
             {week.map((d) => (
@@ -392,48 +397,47 @@ export function Feedback({ data, actions }: Props) {
               </div>
             ))}
           </div>
-          <p className="chart-note">
-            绿色表示达到每日 {data.settings.dailyMinutes} 分钟目标。
-          </p>
         </section>
       </div>
       <section className="panel">
         <div className="panel-heading">
-          <div>
-            <h2>知识点反馈</h2>
-            <p>
-              各知识点最近最多 5 次自测，按题数加权；无自测时不推断掌握程度。
-            </p>
-          </div>
+          <h2>知识点反馈</h2>
+          <button
+            className="chart-action"
+            onClick={() => actions.navigate("trees")}
+          >
+            查看全部
+          </button>
         </div>
         {studied.length ? (
-          <div className="feedback-table">
-            <div className="table-head">
-              <span>知识点</span>
-              <span>近期自测</span>
-              <span>学习次数</span>
-              <span>状态</span>
-            </div>
-            {studied
+          <div className="kf-grid">
+            {[...studied]
               .sort(
                 (a, b) =>
                   (nodeScore(data, a.id) ?? 101) -
                   (nodeScore(data, b.id) ?? 101),
               )
-              .map((n) => (
-                <button key={n.id} onClick={() => actions.select(n.id)}>
-                  <strong>{n.title}</strong>
-                  <span>
-                    {nodeScore(data, n.id) === null
-                      ? "数据不足"
-                      : `${nodeScore(data, n.id)}%`}
-                  </span>
-                  <span>
-                    {data.sessions.filter((s) => s.nodeId === n.id).length} 次
-                  </span>
-                  <Status data={data} node={n} />
-                </button>
-              ))}
+              .map((n) => {
+                const score = nodeScore(data, n.id);
+                return (
+                  <button
+                    className="kf-card"
+                    key={n.id}
+                    onClick={() => actions.select(n.id)}
+                  >
+                    <i className="kf-dot" />
+                    <div>
+                      <strong>{n.title}</strong>
+                      <small>
+                        {score === null ? "数据不足" : `自测 ${score}%`} ·{" "}
+                        {data.sessions.filter((s) => s.nodeId === n.id).length}{" "}
+                        次学习
+                      </small>
+                    </div>
+                    <Status data={data} node={n} />
+                  </button>
+                );
+              })}
           </div>
         ) : (
           <Empty
@@ -448,6 +452,7 @@ export function Feedback({ data, actions }: Props) {
 }
 export function Journal({ data, actions }: Props) {
   const [filter, setFilter] = useState("all");
+  const week = weeklyActivity(data);
   const sessions = data.sessions.map((s) => ({ ...s, kind: "study" as const }));
   const reviews = data.reviews.map((r) => ({ ...r, kind: "review" as const }));
   const records = [...sessions, ...reviews]
@@ -455,12 +460,7 @@ export function Journal({ data, actions }: Props) {
     .sort((a, b) => b.at.localeCompare(a.at));
   return (
     <>
-      <PageHeading title="学习日志">
-        <button className="button primary" onClick={() => actions.study()}>
-          <Plus size={17} />
-          记录学习
-        </button>
-      </PageHeading>
+      <PageHeading title="学习日志" />
       <div className="journal-toolbar">
         <div className="segmented">
           {[
@@ -547,11 +547,47 @@ export function Journal({ data, actions }: Props) {
             </article>
           ))
         ) : (
-          <Empty
-            title="暂无学习记录"
-            action="记录第一次学习"
-            onAction={() => actions.study()}
-          />
+          <>
+            <div className="journal-empty">
+            <div className="journal-orbit" aria-hidden="true">
+              <div className="journal-orbit-core">
+                <span>
+                  <BookOpen size={30} />
+                </span>
+              </div>
+              <span className="journal-orbit-tag one">今天学到的</span>
+              <span className="journal-orbit-tag two">一次回忆</span>
+              <span className="journal-orbit-tag three">一个小问题</span>
+            </div>
+            <div className="journal-copy">
+              <h2>
+                还没有<em>学习记录</em>
+              </h2>
+              <div className="journal-actions">
+                <button onClick={() => actions.study()}>
+                  记录第一次学习 →
+                </button>
+                <button
+                  className="ghost"
+                  onClick={() => actions.navigate("trees")}
+                >
+                  查看学习树
+                </button>
+              </div>
+            </div>
+          </div>
+          <div className="journal-week">
+            {week.map((day, index) => (
+              <div
+                className={index === week.length - 1 ? "today" : ""}
+                key={day.date.toISOString()}
+              >
+                周{["一", "二", "三", "四", "五", "六", "日"][index]}
+                <strong>{day.minutes ? `${day.minutes}m` : "—"}</strong>
+              </div>
+            ))}
+          </div>
+          </>
         )}
       </section>
     </>
