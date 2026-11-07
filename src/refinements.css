@@ -862,3 +862,18 @@
     animation: none;
   }
 }
+
+/* Learning overview: reveal the shared aurora and align the aside with the date row. */
+.learning-overview {
+  background: transparent !important;
+}
+.overview-aside {
+  padding: 98px 16px 22px !important;
+  background: transparent !important;
+  border-left-color: rgb(84 112 149 / 0.12) !important;
+}
+@media (max-width: 1100px) {
+  .overview-aside {
+    padding-top: 32px !important;
+  }
+}
