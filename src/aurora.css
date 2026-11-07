@@ -9,7 +9,7 @@
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
-  background: linear-gradient(180deg, #fbfdfe 0%, #eff8fb 55%, #f7fbf9 100%);
+  background: linear-gradient(180deg, #fbfdfe 0%, #eff8fb 55%, #f7fbff 100%);
 }
 .app-aurora i {
   position: absolute;

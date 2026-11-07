@@ -214,7 +214,8 @@
   color: #7f94a3;
 }
 .review-card {
-  height: calc(100dvh - 185px);
+  height: auto !important;
+  min-height: calc(100dvh - 185px);
   overflow: auto;
   border-color: rgb(84 112 149 / 0.17);
   border-radius: 15px;
@@ -357,7 +358,7 @@
 .journal-list {
   border: 1px solid rgb(84 112 149 / 0.17) !important;
   border-radius: 15px !important;
-  background: rgb(255 255 255 / 0.82) !important;
+  background: rgb(255 255 255 / 0.94) !important;
   box-shadow:
     0 16px 34px -30px rgb(51 76 100 / 0.55),
     inset 0 1px 0 rgb(255 255 255 / 0.9) !important;
@@ -372,6 +373,7 @@
 @media (max-width: 980px) {
   .review-card {
     height: auto;
+    min-height: 0;
   }
 }
 
