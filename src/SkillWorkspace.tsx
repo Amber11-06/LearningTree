@@ -120,21 +120,6 @@ export function Trees({
   const projectProgress = tree
     ? treeProgress(data, tree.id)
     : { total: 0, verified: 0, completed: 0, complete: false };
-  const projectTreeIds = new Set(
-    data.trees
-      .filter(
-        (item) =>
-          item.id === project?.id || item.parentTreeId === project?.id,
-      )
-      .map((item) => item.id),
-  );
-  const stageCount = Math.max(
-    1,
-    data.trees.filter((item) => item.parentTreeId === project?.id).length,
-  );
-  const projectNodes = data.nodes.filter((node) =>
-    projectTreeIds.has(node.treeId),
-  );
   useEffect(() => {
     setRouteOnly(false);
     setMenuOpen(false);
@@ -164,40 +149,11 @@ export function Trees({
   return (
     <>
       <header className="tree-page-hero">
-        <div className="tree-hero-copy">
-          <span className="tree-hero-eyebrow">
-            <i />
-            路线 · {project?.title ?? "技能树"}
-            <b>
-              {stageCount} 个阶段 · {projectNodes.length} 个知识点
-            </b>
-          </span>
-          <h1>{project?.title ?? "技能树"}</h1>
-        </div>
-        <div className="tree-hero-actions">
-          <span className="tree-hero-status">
-            <i /> 自动保存
-          </span>
-          <label className="tree-hero-import">
-            <FileUp size={14} />
-            导入课程
-            <input
-              type="file"
-              accept=".json,application/json"
-              onChange={(event) => {
-                const file = event.target.files?.[0];
-                if (file) void actions.importCourse(file);
-                event.target.value = "";
-              }}
-            />
-          </label>
-          <button
-            className="button primary"
-            onClick={() => actions.tree(undefined, project?.id)}
-          >
-            <Plus size={14} />
-            添加子树
-          </button>
+        <div className="page-title-wrap">
+          <span className="page-title-mark" aria-hidden="true" />
+          <div className="page-title-float">
+            <h1>{project?.title ?? "技能树"}</h1>
+          </div>
         </div>
       </header>
       <div

@@ -8,11 +8,24 @@
 }
 .tree-page-hero {
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
+  align-items: center;
+  justify-content: flex-start;
   gap: 24px;
   flex: none;
-  padding: 22px 2px 16px;
+  padding: 18px 2px 15px;
+}
+.tree-page-hero .page-title-float h1 {
+  font-size: 2rem;
+}
+.topbar-tree-actions {
+  display: flex !important;
+  align-items: center;
+  align-self: center;
+  gap: 6px;
+  margin-right: 8px;
+}
+.topbar-action {
+  font-size: 11px !important;
 }
 .tree-hero-eyebrow {
   display: flex;
@@ -83,9 +96,6 @@
 }
 .tree-hero-import input {
   display: none;
-}
-.topbar-tree-actions {
-  display: none !important;
 }
 .tree-page .constellation-workspace {
   flex: 1;
@@ -208,10 +218,11 @@
 }
 .review-queue > button strong {
   color: #334c64;
-  font-size: 11px;
+  font-size: 13px;
 }
 .review-queue > button small {
   color: #7f94a3;
+  font-size: 10px;
 }
 .review-card-wrap {
   display: flex;
@@ -239,7 +250,7 @@
 .review-card h2 {
   margin: 0;
   color: #476b96;
-  font-size: 15px;
+  font-size: 16px;
 }
 .review-card .recall-question {
   position: relative;
@@ -247,7 +258,7 @@
   margin: 18px 0 4px;
   padding: 0 0 16px;
   color: #16263d;
-  font-size: 27px;
+  font-size: 29px;
   line-height: 1.55;
   font-weight: 600;
   letter-spacing: -0.04em;
@@ -275,14 +286,14 @@
 }
 .context-label {
   color: #7f94a3;
-  font-size: 8px;
+  font-size: 9px;
   font-weight: 600;
   letter-spacing: 0.14em;
 }
 .review-context h3 {
   margin: 10px 0 0;
   color: #16263d;
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 600;
 }
 .context-orbit {
@@ -327,7 +338,7 @@
   display: grid;
   gap: 7px;
   color: #7f94a3;
-  font-size: 9px;
+  font-size: 10px;
 }
 .context-meta > div {
   display: flex;
@@ -346,13 +357,17 @@
   padding-top: 15px;
 }
 .context-actions button {
-  min-height: 36px;
+  display: flex;
+  min-height: 38px;
+  align-items: center;
+  justify-content: center;
   border: 1px solid #476b96;
   border-radius: 7px;
   background: #476b96;
   color: #fff;
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 600;
+  text-align: center;
 }
 .context-actions button.ghost {
   border-color: rgb(84 112 149 / 0.2);
@@ -378,6 +393,13 @@
   border-radius: 10px;
   background: rgb(255 255 255 / 0.64) !important;
   backdrop-filter: blur(10px);
+}
+.journal-toolbar .segmented button {
+  font-size: 11px;
+}
+.journal-toolbar .muted {
+  margin-right: 16px;
+  font-size: 11px;
 }
 @media (max-width: 980px) {
   .review-card-wrap {
@@ -540,7 +562,7 @@
   border-radius: 4px;
   background: rgb(255 255 255 / 0.8);
   color: #7f94a3;
-  font-size: 8px;
+  font-size: 9px;
 }
 .journal-orbit-tag.one {
   top: 76px;
@@ -561,7 +583,7 @@
 .journal-copy h2 {
   margin: 0;
   color: #16263d;
-  font-size: 34px;
+  font-size: 38px;
   line-height: 1.18;
   font-weight: 650;
   letter-spacing: -0.05em;
@@ -577,13 +599,13 @@
   margin-top: 22px;
 }
 .journal-actions button {
-  min-height: 38px;
-  padding: 0 16px;
+  min-height: 40px;
+  padding: 0 17px;
   border: 1px solid #476b96;
   border-radius: 7px;
   background: #476b96;
   color: #fff;
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 600;
 }
 .journal-actions button.ghost {
@@ -602,14 +624,14 @@
 }
 .journal-week div {
   color: #8ba0af;
-  font-size: 8px;
+  font-size: 9px;
   text-align: center;
 }
 .journal-week strong {
   display: block;
   margin-top: 7px;
   color: #7e9cb5;
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 600;
 }
 .journal-week div.today strong {
