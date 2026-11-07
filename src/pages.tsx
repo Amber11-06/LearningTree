@@ -111,17 +111,19 @@ export function Reviews({
           )}
         </section>
         {current ? (
-          <ReviewCard
-            key={current.id}
-            node={current}
-            revealSignal={revealSignal}
-            onRate={async (rating, response) => {
-              if (await actions.review(current.id, rating, response)) {
-                setDone((n) => n + 1);
-                setChosen(null);
-              }
-            }}
-          />
+          <div className="review-card-wrap">
+            <ReviewCard
+              key={current.id}
+              node={current}
+              revealSignal={revealSignal}
+              onRate={async (rating, response) => {
+                if (await actions.review(current.id, rating, response)) {
+                  setDone((n) => n + 1);
+                  setChosen(null);
+                }
+              }}
+            />
+          </div>
         ) : (
           <section className="panel">
             <Empty
