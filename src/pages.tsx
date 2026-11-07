@@ -87,7 +87,6 @@ export function Home({
             学习概览
           </div>
           <h1>今天的学习进度</h1>
-          <p>查看当前进度、待复习节点和最近学习记录。</p>
           <button className="button primary" onClick={() => actions.study()}>
             <Plus size={17} />
             记录一次学习

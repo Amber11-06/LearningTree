@@ -699,10 +699,6 @@ function SkillInspector({
           <Plus size={14} />
           补记学习记录
         </button>
-        <div className="inspector-footnote">
-          <span>本地 PostgreSQL</span>
-          <span>自动保存</span>
-        </div>
       </div>
     </aside>
 
