@@ -31,12 +31,7 @@
   top: 16px;
   left: 16px;
   z-index: 15;
-}
-.tree-floating-title strong {
-  color: var(--text-primary);
-  font-size: var(--text-sm);
-  font-weight: var(--weight-semibold);
-  letter-spacing: -0.02em;
+  display: flex;
 }
 .tree-hero {
   grid-column: 1 / -1;

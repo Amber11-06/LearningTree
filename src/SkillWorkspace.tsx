@@ -152,8 +152,11 @@ export function Trees({
     >
       <section className="constellation-stage" aria-label="项目技能地图">
         {project && (
-          <div className="page-title-float tree-floating-title">
-            <strong>{project.title}</strong>
+          <div className="tree-floating-title page-title-wrap">
+            <span className="page-title-mark" aria-hidden="true" />
+            <div className="page-title-float">
+              <strong>{project.title}</strong>
+            </div>
           </div>
         )}
         <div className="project-navigation" ref={navigationRef}>
