@@ -172,8 +172,8 @@ function ReviewCard({
       <h2>{node.title}</h2>
       <div className="recall-question">{node.question}</div>
       <label>
-        先写下你的回答 <small>也可以在心里回答</small>
         <textarea
+          aria-label="复习回答"
           rows={4}
           maxLength={4000}
           value={response}
@@ -737,8 +737,11 @@ function PageHeading({
 }) {
   return (
     <section className="page-heading">
-      <div className="page-title-float">
-        <h1>{title}</h1>
+      <div className="page-title-wrap">
+        <span className="page-title-mark" aria-hidden="true" />
+        <div className="page-title-float">
+          <h1>{title}</h1>
+        </div>
       </div>
       {children}
     </section>
