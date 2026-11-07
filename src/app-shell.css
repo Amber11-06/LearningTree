@@ -2696,3 +2696,13 @@ select {
     animation: none;
   }
 }
+.signal .signal-action {
+  align-self: flex-start;
+  margin-top: 14px;
+}
+@media (max-width: 980px) {
+  .signal .signal-action {
+    grid-column: 2;
+    justify-self: start;
+  }
+}

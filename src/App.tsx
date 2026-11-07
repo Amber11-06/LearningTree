@@ -926,10 +926,6 @@ function WorkspaceApp({
             <Leaf size={13} />
             LearningTree <span className="footer-dot">·</span> 用证据记录成长
           </span>
-          <span>
-            <i />
-            学习数据保存在本机 PostgreSQL
-          </span>
         </footer>
       </div>
       {dialog?.kind === "tree" && (

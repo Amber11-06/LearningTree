@@ -88,8 +88,6 @@ export function Home({ data, actions }: { data: Data; actions: Actions }) {
   } = overview;
   const next = pending[0];
   const shownProgress = useCountUp(progress);
-  const momentum =
-    progress >= 100 ? "今日目标达成" : minutes > 0 ? "稳中求进" : "从现在开始";
   const openTask = (task: (typeof pending)[number]) => {
     if (task.kind === "review") actions.startReview(task.node.id);
     else actions.learn(task.node.id);
@@ -418,16 +416,6 @@ export function Home({ data, actions }: { data: Data; actions: Actions }) {
               </strong>
             </div>
           </div>
-          <span className="overview-pill blue">{momentum}</span>
-          <p>
-            {average === null
-              ? "记录你的学习时长，逐步建立属于自己的学习节奏。"
-              : difference! > 0
-                ? `今日目标达成率较近期平均提升 ${difference} 个百分点，继续保持！`
-                : progress >= 100
-                  ? "今天的时长目标已达成，让每一次坚持都有收获。"
-                  : "按自己的节奏稳步推进，每一段专注都算数。"}
-          </p>
         </section>
 
         <section className="overview-card overview-highlights">

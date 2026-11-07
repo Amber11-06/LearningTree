@@ -87,7 +87,7 @@ export function Empty({
   onAction,
 }: {
   title: string;
-  children: ReactNode;
+  children?: ReactNode;
   action?: string;
   onAction?: () => void;
 }) {
@@ -97,7 +97,7 @@ export function Empty({
         <Sprout size={32} />
       </span>
       <h3>{title}</h3>
-      <p>{children}</p>
+      {children && <p>{children}</p>}
       {action && (
         <button className="button primary" onClick={onAction}>
           {action}

@@ -247,9 +247,8 @@ export function Feedback({ data, actions }: Props) {
               <Leaf size={20} />
             </span>
             <h3>{s.title}</h3>
-            <p>{s.detail}</p>
             <button
-              className="text-button"
+              className="button primary signal-action"
               onClick={() => actSignal(s, actions)}
             >
               {s.action}
@@ -362,9 +361,7 @@ export function Feedback({ data, actions }: Props) {
               </p>
             </>
           ) : (
-            <Empty title="还没有自测数据">
-              记录学习时勾选自测结果，看看理解如何变化。
-            </Empty>
+            <Empty title="还没有自测数据" />
           )}
         </section>
         <section className="panel chart-panel">
@@ -443,9 +440,7 @@ export function Feedback({ data, actions }: Props) {
             title="暂无学习记录"
             action="记录学习"
             onAction={() => actions.study()}
-          >
-            完成一次学习或测验后，记录会显示在这里。
-          </Empty>
+          />
         )}
       </section>
     </>
@@ -556,9 +551,7 @@ export function Journal({ data, actions }: Props) {
             title="暂无学习记录"
             action="记录第一次学习"
             onAction={() => actions.study()}
-          >
-            学习记录会按时间显示在这里。
-          </Empty>
+          />
         )}
       </section>
     </>
