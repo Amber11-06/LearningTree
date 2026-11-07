@@ -541,24 +541,6 @@
   position: relative;
   z-index: 1;
 }
-.skill-map .subtree-node::after,
-.skill-map .skill-node::after {
-  content: "";
-  position: absolute;
-  right: 12%;
-  bottom: 0;
-  left: 12%;
-  z-index: 0;
-  height: 34%;
-  background: radial-gradient(
-    ellipse at center,
-    rgb(126 156 181 / 0.26),
-    transparent 70%
-  );
-  filter: blur(7px);
-  animation: node-under-shimmer 5.2s ease-in-out infinite alternate;
-  pointer-events: none;
-}
 @keyframes node-under-glow {
   from {
     box-shadow:
@@ -573,21 +555,9 @@
       inset 0 1px 0 #fff;
   }
 }
-@keyframes node-under-shimmer {
-  from {
-    opacity: 0.45;
-    transform: scaleX(0.86);
-  }
-  to {
-    opacity: 0.85;
-    transform: scaleX(1.05);
-  }
-}
 @media (prefers-reduced-motion: reduce) {
   .skill-map .subtree-node,
-  .skill-map .skill-node,
-  .skill-map .subtree-node::after,
-  .skill-map .skill-node::after {
+  .skill-map .skill-node {
     animation: none;
   }
 }
