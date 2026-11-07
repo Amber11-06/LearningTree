@@ -10,15 +10,32 @@ import {
   CircleHelp,
   Clock3,
   Minus,
-  Plus,
-  Quote,
   RotateCcw,
   Target,
   Trophy,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 import { type Data } from "./domain";
 import { type Actions } from "./pages";
 import { learningOverview } from "./overview-data";
+
+function useCountUp(value: number, duration = 700) {
+  const [display, setDisplay] = useState(0);
+  useEffect(() => {
+    let frame = 0;
+    let started = 0;
+    const animate = (time: number) => {
+      if (!started) started = time;
+      const progress = Math.min(1, (time - started) / duration);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setDisplay(Math.round(value * eased));
+      if (progress < 1) frame = requestAnimationFrame(animate);
+    };
+    frame = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(frame);
+  }, [value, duration]);
+  return display;
+}
 
 function BookIllustration({ className = "" }: { className?: string }) {
   return (
@@ -57,35 +74,6 @@ function BookIllustration({ className = "" }: { className?: string }) {
   );
 }
 
-function MountainIllustration() {
-  return (
-    <svg
-      className="overview-mountains"
-      viewBox="0 0 420 150"
-      preserveAspectRatio="xMidYMax slice"
-      aria-hidden="true"
-    >
-      <path
-        d="M0 120 85 92 145 113 226 60 298 95 365 39 420 84V150H0Z"
-        fill="#ebf0f8"
-      />
-      <path d="m62 150 131-68 72 36 91-102 64 95v39z" fill="#dae5f4" />
-      <path
-        d="m212 150 144-134-26 73 27-13-27 50 33-12 57 36z"
-        fill="#c6d6eb"
-      />
-      <path d="m356 16 11 57-17-11-20 27z" fill="#f9fbfe" />
-      <path
-        d="m356 16 33 116-26-18-33 12 27-50-7-14z"
-        fill="#b8cbe3"
-        opacity=".55"
-      />
-      <path d="M356 17V1" stroke="#9eb1c9" strokeWidth="2" />
-      <path d="m357 1 17 4-17 6z" fill="#d5b575" />
-    </svg>
-  );
-}
-
 export function Home({ data, actions }: { data: Data; actions: Actions }) {
   const now = new Date();
   const overview = learningOverview(data, now);
@@ -99,6 +87,7 @@ export function Home({ data, actions }: { data: Data; actions: Actions }) {
     remaining,
   } = overview;
   const next = pending[0];
+  const shownProgress = useCountUp(progress);
   const momentum =
     progress >= 100 ? "今日目标达成" : minutes > 0 ? "稳中求进" : "从现在开始";
   const openTask = (task: (typeof pending)[number]) => {
@@ -129,6 +118,22 @@ export function Home({ data, actions }: { data: Data; actions: Actions }) {
         ? ArrowUpRight
         : ArrowDownRight;
 
+  useEffect(() => {
+    const cards = Array.from(
+      document.querySelectorAll<HTMLElement>(".learning-overview .overview-card"),
+    );
+    const track = (event: PointerEvent) => {
+      const card = event.currentTarget as HTMLElement;
+      const rect = card.getBoundingClientRect();
+      card.style.setProperty("--spot-x", `${event.clientX - rect.left}px`);
+      card.style.setProperty("--spot-y", `${event.clientY - rect.top}px`);
+    };
+    cards.forEach((card) => card.addEventListener("pointermove", track));
+    return () => {
+      cards.forEach((card) => card.removeEventListener("pointermove", track));
+    };
+  }, []);
+
   return (
     <div className="learning-overview">
       <div className="overview-main">
@@ -136,27 +141,12 @@ export function Home({ data, actions }: { data: Data; actions: Actions }) {
           <div className="overview-title">
             <h1>学习概览</h1>
           </div>
-          <div className="overview-heading-books" aria-hidden="true">
-            <i />
-            <i />
-            <i />
-            <span />
-          </div>
           <div className="overview-date">
             <CalendarDays size={21} />
             <time dateTime={now.toLocaleDateString("sv-SE")}>
               今天 · {dateLabel}
             </time>
             <span>今日学习总结</span>
-            <button
-              className="overview-record"
-              onClick={() => actions.study()}
-              aria-label="记录一次学习"
-              title="记录一次学习"
-            >
-              <Plus size={15} />
-              <span>记录学习</span>
-            </button>
           </div>
         </section>
 
@@ -175,7 +165,7 @@ export function Home({ data, actions }: { data: Data; actions: Actions }) {
               </span>
             </h2>
             <strong>
-              {progress}
+              {shownProgress}
               <small>%</small>
             </strong>
           </div>
@@ -214,13 +204,14 @@ export function Home({ data, actions }: { data: Data; actions: Actions }) {
               />
             </svg>
             <div>
-              <strong>{progress}%</strong>
+              <strong>{shownProgress}%</strong>
               <span>
                 {minutes} / {data.settings.dailyMinutes} 分钟
               </span>
             </div>
           </div>
           <BookIllustration className="overview-hero-book" />
+          <span className="overview-hero-beam" aria-hidden="true" />
         </section>
 
         <section
@@ -258,7 +249,7 @@ export function Home({ data, actions }: { data: Data; actions: Actions }) {
               ))}
             </div>
             <ArrowRight size={15} />
-            <strong>{progress}%</strong>
+            <strong>{shownProgress}%</strong>
           </div>
         </section>
 
@@ -294,24 +285,7 @@ export function Home({ data, actions }: { data: Data; actions: Actions }) {
                   </button>
                 ))}
               </div>
-            ) : (
-              <div className="overview-empty">
-                <span className="overview-empty-icon">
-                  <BookOpen size={28} />
-                </span>
-                <h3>今天的成长，从第一步开始</h3>
-                <p>学习、复习或标记已学后，足迹会出现在这里。</p>
-                <button
-                  className="overview-inline-link"
-                  onClick={() =>
-                    data.nodes.length ? actions.study() : actions.tree()
-                  }
-                >
-                  <Plus size={15} />
-                  {data.nodes.length ? "记录一次学习" : "创建学习树"}
-                </button>
-              </div>
-            )}
+            ) : null}
             {completed.length > 0 && (
               <button
                 className="overview-list-footer"
@@ -360,24 +334,6 @@ export function Home({ data, actions }: { data: Data; actions: Actions }) {
                 </p>
               </div>
             )}
-            <div className="overview-pending-note">
-              <p>
-                {remaining ? (
-                  <>
-                    再学一点，
-                    <br />
-                    让今天的积累更进一步。
-                  </>
-                ) : (
-                  <>
-                    每一份坚持，
-                    <br />
-                    都会成为明天的底气。
-                  </>
-                )}
-              </p>
-              <BookIllustration />
-            </div>
           </section>
         </div>
 
@@ -423,7 +379,7 @@ export function Home({ data, actions }: { data: Data; actions: Actions }) {
             <div>
               <span>今日</span>
               <strong>
-                {progress}
+                {shownProgress}
                 <small>%</small>
               </strong>
             </div>
@@ -498,7 +454,7 @@ export function Home({ data, actions }: { data: Data; actions: Actions }) {
               <Check size={15} />
               <span>
                 今日学习时长 <b>{minutes}</b> 分钟，目标达成{" "}
-                <em>{progress}%</em>
+                <em>{shownProgress}%</em>
               </span>
             </li>
             <li>
@@ -549,32 +505,6 @@ export function Home({ data, actions }: { data: Data; actions: Actions }) {
               </strong>
             </div>
           </div>
-        </section>
-
-        <section className="overview-card overview-quote">
-          <Quote size={27} fill="currentColor" />
-          <p>
-            {progress >= 100 ? (
-              <>
-                今天的努力，已经悄悄生根。
-                <br />
-                带着这份收获，走向更好的明天。
-              </>
-            ) : minutes ? (
-              <>
-                已经走出的每一步，都算数。
-                <br />
-                再坚持一下，完成今天的小目标。
-              </>
-            ) : (
-              <>
-                不必一口气走得很远，
-                <br />
-                每天向前一步，就离目标更近一点。
-              </>
-            )}
-          </p>
-          <MountainIllustration />
         </section>
       </aside>
     </div>

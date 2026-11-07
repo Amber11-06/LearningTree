@@ -2289,3 +2289,31 @@
   bottom: 0;
   left: 50%;
 }
+.skill-map .react-flow__edge-path {
+  animation: skill-edge-flow 1.8s linear infinite;
+}
+.skill-map .subtree-node {
+  transition:
+    transform 240ms ease,
+    border-color 240ms ease,
+    box-shadow 240ms ease;
+}
+.skill-map .subtree-node:hover {
+  transform: translateY(-3px);
+  border-color: rgb(84 112 149 / 0.55);
+  box-shadow:
+    0 0 0 4px var(--map-background),
+    0 16px 30px -22px rgb(51 76 100 / 0.6);
+}
+@keyframes skill-edge-flow {
+  to {
+    stroke-dashoffset: -28;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .skill-map .react-flow__edge-path,
+  .skill-map .subtree-node {
+    animation: none;
+    transition: none;
+  }
+}
