@@ -27,6 +27,7 @@ import {
   Trophy,
 } from "lucide-react";
 import { nextSkill, skillLabels } from "./progression";
+import { CardMeteors } from "./CardMeteors";
 import { buildSkillGraph, type SkillNode } from "./skill-graph";
 import type { Data, Tree } from "./domain";
 import { skillIcon } from "./skill-icons";
@@ -53,6 +54,7 @@ function SkillNodeView({ data }: NodeProps<SkillNode>) {
       <div
         className={`skill-node subtree-node ${data.state} ${data.dim ? "is-dim" : ""}`}
       >
+        <CardMeteors count={4} />
         <Handle
           type="target"
           position={Position.Left}
@@ -125,6 +127,7 @@ function SkillNodeView({ data }: NodeProps<SkillNode>) {
     <div
       className={`skill-node ${data.state} ${data.active ? "is-selected" : ""} ${data.dim ? "is-dim" : ""}`}
     >
+      <CardMeteors count={3} />
       <Handle type="target" position={Position.Left} />
       <div className="skill-emblem">
         <div className="skill-orbit" />

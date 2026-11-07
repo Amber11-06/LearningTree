@@ -536,6 +536,72 @@
     inset 0 1px 0 #fff;
   animation: node-under-glow 4.8s ease-in-out infinite alternate;
 }
+/* Card meteors: a restrained blue meteor trail inside each node. */
+.card-meteors {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+.card-meteors i {
+  position: absolute;
+  top: -16px;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: #7e9cb5;
+  box-shadow:
+    0 0 4px 1px rgb(126 156 181 / 0.8),
+    0 0 10px 2px rgb(126 156 181 / 0.28);
+  transform: rotate(215deg);
+  animation-name: card-meteor;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  opacity: 0;
+}
+.card-meteors i::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 1px;
+  width: 58px;
+  height: 1px;
+  transform: translateY(-50%);
+  background: linear-gradient(
+    90deg,
+    rgb(84 112 149 / 0.55),
+    rgb(126 156 181 / 0.2) 45%,
+    transparent
+  );
+}
+.skill-map .subtree-node > :not(.card-meteors),
+.skill-map .skill-node > :not(.card-meteors) {
+  z-index: 1;
+}
+@keyframes card-meteor {
+  0% {
+    transform: rotate(215deg) translateX(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.95;
+  }
+  65% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: rotate(215deg) translateX(-230px);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .card-meteors {
+    display: none;
+  }
+}
+
 @keyframes node-under-glow {
   from {
     box-shadow:
