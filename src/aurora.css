@@ -1,4 +1,4 @@
-/* Light Monet aurora: a fixed atmospheric layer behind every signed-in page. */
+﻿/* Light Monet aurora: a fixed atmospheric layer behind every signed-in page. */
 .app-shell {
   position: relative;
   background: transparent !important;
@@ -40,8 +40,8 @@
   top: 5vh;
   background: radial-gradient(
     ellipse at center,
-    #d3e8d8 0%,
-    #edf5dd 48%,
+    #c4deee 0%,
+    #e6f2f9 48%,
     transparent 72%
   );
   animation: aurora-drift-b 25s ease-in-out infinite alternate;
@@ -53,8 +53,8 @@
   bottom: -17vw;
   background: radial-gradient(
     ellipse at center,
-    #f1e2c7 0%,
-    #f8f0df 48%,
+    #d5e5f1 0%,
+    #eef6fb 48%,
     transparent 72%
   );
   animation: aurora-drift-c 23s ease-in-out infinite alternate;

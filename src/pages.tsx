@@ -399,7 +399,7 @@ export function Feedback({ data, actions }: Props) {
           </div>
         </section>
       </div>
-      <section className="panel">
+      <section className="panel knowledge-panel">
         <div className="panel-heading">
           <h2>知识点反馈</h2>
           <button

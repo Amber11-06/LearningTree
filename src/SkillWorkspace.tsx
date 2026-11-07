@@ -120,8 +120,20 @@ export function Trees({
   const projectProgress = tree
     ? treeProgress(data, tree.id)
     : { total: 0, verified: 0, completed: 0, complete: false };
+  const projectTreeIds = new Set(
+    data.trees
+      .filter(
+        (item) =>
+          item.id === project?.id || item.parentTreeId === project?.id,
+      )
+      .map((item) => item.id),
+  );
+  const stageCount = Math.max(
+    1,
+    data.trees.filter((item) => item.parentTreeId === project?.id).length,
+  );
   const projectNodes = data.nodes.filter((node) =>
-    treePath.some((item) => item.id === node.treeId),
+    projectTreeIds.has(node.treeId),
   );
   useEffect(() => {
     setRouteOnly(false);
@@ -157,7 +169,7 @@ export function Trees({
             <i />
             路线 · {project?.title ?? "技能树"}
             <b>
-              {treePath.length} 个阶段 · {projectNodes.length} 个知识点
+              {stageCount} 个阶段 · {projectNodes.length} 个知识点
             </b>
           </span>
           <h1>{project?.title ?? "技能树"}</h1>
