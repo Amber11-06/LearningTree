@@ -635,20 +635,6 @@ function SkillInspector({
             {skillLabels[state]}
           </span>
         </div>
-        <div className="inspector-ring" aria-label={`掌握度 ${Math.round((progress.rank / 3) * 100)}%`}>
-          <svg viewBox="0 0 72 72" aria-hidden="true">
-            <circle className="track" cx="36" cy="36" r="30" />
-            <circle
-              className="value"
-              cx="36"
-              cy="36"
-              r="30"
-              pathLength="100"
-              strokeDasharray={`${Math.round((progress.rank / 3) * 100)} 100`}
-            />
-          </svg>
-          <b>{Math.round((progress.rank / 3) * 100)}%</b>
-        </div>
       </div>
       <div className="inspector-topics">
         <span className="inspector-section-label">知识点</span>
@@ -674,30 +660,49 @@ function SkillInspector({
           );
         })}
       </div>
-      <div className="inspector-actions">
-        {state === "locked" && (parent || blockers.length) ? (
-          <button
-            className="button primary"
-            onClick={() =>
-              blockers[0]
-                ? onOpenTree(blockers[0].id)
-                : parent && actions.select(parent.id)
-            }
-          >
-            <LockKeyhole size={14} />
-            {blockers.length ? "前往前置学习树" : "前往前置节点"}
+      <div className="inspector-bottom">
+        <div
+          className="inspector-ring inspector-ring-large"
+          aria-label={`掌握度 ${Math.round((progress.rank / 3) * 100)}%`}
+        >
+          <svg viewBox="0 0 72 72" aria-hidden="true">
+            <circle className="track" cx="36" cy="36" r="30" />
+            <circle
+              className="value"
+              cx="36"
+              cy="36"
+              r="30"
+              pathLength="100"
+              strokeDasharray={`${Math.round((progress.rank / 3) * 100)} 100`}
+            />
+          </svg>
+          <b>{Math.round((progress.rank / 3) * 100)}%</b>
+        </div>
+        <div className="inspector-actions">
+          {state === "locked" && (parent || blockers.length) ? (
+            <button
+              className="button primary"
+              onClick={() =>
+                blockers[0]
+                  ? onOpenTree(blockers[0].id)
+                  : parent && actions.select(parent.id)
+              }
+            >
+              <LockKeyhole size={14} />
+              {blockers.length ? "前往前置学习树" : "前往前置节点"}
+            </button>
+          ) : (
+            <button className="button primary" onClick={() => onLearn(node.id)}>
+              <Play size={14} fill="currentColor" />
+              {progress.rank ? "继续学习" : "开始学习"}
+              <ArrowRight size={14} />
+            </button>
+          )}
+          <button className="button" onClick={() => actions.study(node.id)}>
+            <Plus size={14} />
+            补记学习记录
           </button>
-        ) : (
-          <button className="button primary" onClick={() => onLearn(node.id)}>
-            <Play size={14} fill="currentColor" />
-            {progress.rank ? "继续学习" : "开始学习"}
-            <ArrowRight size={14} />
-          </button>
-        )}
-        <button className="button" onClick={() => actions.study(node.id)}>
-          <Plus size={14} />
-          补记学习记录
-        </button>
+        </div>
       </div>
     </aside>
 

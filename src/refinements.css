@@ -143,7 +143,16 @@
 }
 .inspector-title-row {
   position: relative;
-  padding-right: 76px;
+  padding-right: 0;
+  justify-content: space-between;
+}
+.inspector-title-row h2 {
+  flex: 1;
+  min-width: 0;
+}
+.inspector-title-row .state-pill {
+  flex: none;
+  margin-left: auto;
 }
 .inspector-ring {
   position: absolute;
@@ -154,6 +163,39 @@
   height: 70px;
   place-items: center;
 }
+.inspector-ring.inspector-ring-large {
+  position: relative;
+  top: auto;
+  right: auto;
+  width: 104px;
+  height: 104px;
+  margin: 8px auto 14px;
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 1px rgb(84 112 149 / 0.08),
+    0 0 34px rgb(126 156 181 / 0.26);
+}
+.inspector-ring.inspector-ring-large::before {
+  content: "";
+  position: absolute;
+  inset: -7px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg 246deg,
+    rgb(126 156 181 / 0.6) 280deg,
+    transparent 310deg 360deg
+  );
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 0);
+  mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 0);
+  animation: inspector-orbit 8s linear infinite;
+  pointer-events: none;
+}
+@keyframes inspector-orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
 .inspector-ring svg {
   position: absolute;
   inset: 0;
@@ -161,9 +203,15 @@
   height: 100%;
   transform: rotate(-90deg);
 }
+.inspector-ring.inspector-ring-large svg {
+  width: 100%;
+  height: 100%;
+}
+.inspector-ring.inspector-ring-large circle {
+  stroke-width: 5;
+}
 .inspector-ring circle {
   fill: none;
-  stroke-width: 4;
 }
 .inspector-ring .track {
   stroke: rgb(84 112 149 / 0.13);
@@ -171,7 +219,7 @@
 .inspector-ring .value {
   stroke: #547095;
   stroke-linecap: round;
-  filter: drop-shadow(0 0 4px rgb(84 112 149 / 0.22));
+  filter: drop-shadow(0 0 5px rgb(84 112 149 / 0.28));
 }
 .inspector-ring b {
   position: relative;
@@ -179,6 +227,19 @@
   font-size: 16px;
   font-weight: 600;
   letter-spacing: -0.04em;
+}
+.inspector-ring.inspector-ring-large b {
+  font-size: 22px;
+}
+.inspector-bottom {
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid rgb(84 112 149 / 0.14);
+}
+.command-center .inspector-bottom .inspector-actions {
+  margin-top: 0;
+  padding-bottom: 0;
+  border-top: 0;
 }
 .inspector-summary {
   margin-top: 4px;
@@ -411,7 +472,125 @@
   }
 }
 
-/* Feedback: charts and knowledge cards. */
+/* Overview right column: lower alignment and larger type. */
+.learning-overview {
+  grid-template-columns: minmax(0, 1fr) 360px;
+}
+.overview-aside {
+  padding-top: 32px;
+}
+.overview-aside .overview-card {
+  padding: 20px 18px;
+}
+.overview-aside .overview-card-heading {
+  margin-bottom: 16px;
+}
+.overview-aside .overview-card-heading h2 {
+  font-size: 19px;
+}
+.overview-aside .overview-card-heading h2 > small {
+  font-size: 13px;
+}
+.overview-comparison-values > div > span {
+  font-size: 13px;
+}
+.overview-comparison-values > div > strong {
+  font-size: 31px;
+}
+.overview-comparison-values .overview-change strong > small {
+  font-size: 11px;
+}
+.overview-highlights li {
+  font-size: 14px;
+  line-height: 1.7;
+}
+.overview-highlights li > svg {
+  width: 23px;
+  height: 23px;
+}
+.overview-continuity-values span {
+  font-size: 12px;
+}
+.overview-continuity-values strong {
+  font-size: 27px;
+}
+.overview-continuity-values strong > small {
+  font-size: 14px;
+}
+@media (max-width: 1350px) {
+  .learning-overview {
+    grid-template-columns: minmax(0, 1fr) 320px;
+  }
+}
+
+/* Skill map cards: blue under-glow and slow shimmer. */
+.skill-map .subtree-node,
+.skill-map .skill-node {
+  position: relative;
+  background:
+    radial-gradient(ellipse at 50% 118%, rgb(126 156 181 / 0.2), transparent 60%),
+    linear-gradient(155deg, #fff, #f5f9fc);
+  box-shadow:
+    0 16px 30px -24px rgb(51 76 100 / 0.62),
+    0 0 22px rgb(126 156 181 / 0.2),
+    inset 0 1px 0 #fff;
+  animation: node-under-glow 4.8s ease-in-out infinite alternate;
+}
+.skill-map .subtree-node > *,
+.skill-map .skill-node > * {
+  position: relative;
+  z-index: 1;
+}
+.skill-map .subtree-node::after,
+.skill-map .skill-node::after {
+  content: "";
+  position: absolute;
+  right: 12%;
+  bottom: 0;
+  left: 12%;
+  z-index: 0;
+  height: 34%;
+  background: radial-gradient(
+    ellipse at center,
+    rgb(126 156 181 / 0.26),
+    transparent 70%
+  );
+  filter: blur(7px);
+  animation: node-under-shimmer 5.2s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+@keyframes node-under-glow {
+  from {
+    box-shadow:
+      0 14px 28px -24px rgb(51 76 100 / 0.55),
+      0 0 16px rgb(126 156 181 / 0.14),
+      inset 0 1px 0 #fff;
+  }
+  to {
+    box-shadow:
+      0 18px 34px -24px rgb(51 76 100 / 0.68),
+      0 0 28px rgb(126 156 181 / 0.28),
+      inset 0 1px 0 #fff;
+  }
+}
+@keyframes node-under-shimmer {
+  from {
+    opacity: 0.45;
+    transform: scaleX(0.86);
+  }
+  to {
+    opacity: 0.85;
+    transform: scaleX(1.05);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .skill-map .subtree-node,
+  .skill-map .skill-node,
+  .skill-map .subtree-node::after,
+  .skill-map .skill-node::after {
+    animation: none;
+  }
+}
 .feedback-signals {
   display: none;
 }
