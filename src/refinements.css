@@ -943,3 +943,22 @@
     padding-top: 32px !important;
   }
 }
+
+/* Small typography lift for context metadata, journal filters and empty actions. */
+.context-meta {
+  font-size: 11px;
+}
+.context-meta b {
+  font-size: 11px;
+}
+.journal-toolbar .segmented button {
+  font-size: 12px;
+}
+.journal-toolbar .muted {
+  font-size: 12px;
+}
+.journal-actions button {
+  min-height: 42px;
+  padding: 0 18px;
+  font-size: 11px;
+}
