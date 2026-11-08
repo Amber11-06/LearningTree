@@ -1,0 +1,114 @@
+/* Azure palette: a clearer, more saturated blue with less grey. */
+:root {
+  --slate-1: #ffffff;
+  --slate-2: #f8fcff;
+  --slate-3: #eef6fd;
+  --slate-4: #e6f2fb;
+  --slate-5: #dcecf9;
+  --slate-6: #d2e5f4;
+  --slate-7: #c5dcee;
+  --slate-8: #b4d0e5;
+  --slate-9: #84aac6;
+  --slate-10: #5f86a3;
+  --slate-11: #436781;
+  --slate-12: #16263d;
+
+  --background: #eef6fd;
+  --surface-subtle: #e6f2fb;
+  --secondary: #dcecf9;
+  --secondary-foreground: #3d6480;
+  --border: #c5dcee;
+  --input: #b4d0e5;
+  --sidebar: #f7fbff;
+  --text-secondary: #436781;
+  --muted-foreground: #436781;
+  --primary: #2f6399;
+  --primary-hover: #234b76;
+  --accent: #d9ebf9;
+  --text-accent: #2c5f92;
+}
+
+html,
+body {
+  background: #eef6fd !important;
+}
+
+.app-aurora {
+  background: linear-gradient(180deg, #f8fcff 0%, #e5f3fd 55%, #effaff 100%) !important;
+}
+.app-aurora i:nth-child(1) {
+  background: radial-gradient(
+    ellipse at center,
+    #7fc4ec 0%,
+    #b9def6 48%,
+    transparent 72%
+  ) !important;
+}
+.app-aurora i:nth-child(2) {
+  background: radial-gradient(
+    ellipse at center,
+    #a6d5f0 0%,
+    #d6ebfa 48%,
+    transparent 72%
+  ) !important;
+}
+.app-aurora i:nth-child(3) {
+  background: radial-gradient(
+    ellipse at center,
+    #c4e2f5 0%,
+    #e4f3fd 48%,
+    transparent 72%
+  ) !important;
+}
+
+.overview-shell .sidebar,
+.sidebar {
+  background: rgb(247 252 255 / 0.82) !important;
+}
+.topbar,
+.overview-shell .topbar {
+  background: rgb(250 254 255 / 0.72) !important;
+}
+.overview-shell,
+.learning-overview {
+  background: transparent !important;
+}
+.overview-hero {
+  background: linear-gradient(
+    112deg,
+    #326ba8 0%,
+    #2b609b 48%,
+    #245386 100%
+  ) !important;
+}
+.overview-title h1 {
+  color: #102c47 !important;
+}
+.overview-card,
+.panel {
+  border-color: rgb(90 140 180 / 0.25) !important;
+}
+.overview-comparison-values > div {
+  background: #e5f2fb !important;
+}
+.overview-comparison-values > div:first-child {
+  background: #d9ebf9 !important;
+}
+.overview-continuity-values {
+  background: linear-gradient(110deg, #e1f0fb, #edf7fd) !important;
+}
+.overview-pill,
+.state-pill {
+  background: #e7f3fb !important;
+  color: #356b9b !important;
+}
+.sidebar nav > button.active,
+.settings-nav.active,
+.overview-shell .sidebar nav > button.active {
+  background: linear-gradient(105deg, #2d5680 0%, #3e7bb3 100%) !important;
+}
+.sidebar nav > button.active b,
+.overview-shell .sidebar nav > button.active b {
+  color: #234b76 !important;
+  background: #d9ebf9 !important;
+}
