@@ -811,3 +811,16 @@
     radial-gradient(ellipse at 82% 18%, rgb(175 216 240 / 0.28), transparent 48%),
     linear-gradient(140deg, #e2f2fb 0%, #c9e4f5 48%, #b8d8ee 100%) !important;
 }
+
+/* Let the blue canvas show through the React Flow surface. */
+.tree-page .skill-map {
+  height: 100% !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+.tree-page .skill-map .react-flow,
+.tree-page .skill-map .react-flow__renderer,
+.tree-page .skill-map .react-flow__pane {
+  background: transparent !important;
+}
