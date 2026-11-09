@@ -231,19 +231,18 @@ export function useTreeCamera({
     if (!initialized || !width || !height) return;
     controlCamera();
     const availableWidth = compact ? width : Math.max(360, width - 520);
-    void flow.setViewport(
-      getViewportForBounds(
-        bounds,
-        availableWidth,
-        height,
-        0.1,
-        1,
-        compact ? 0.18 : 0.16,
-      ),
-      {
-        duration: reduced ? 0 : 320,
-      },
+    const viewport = getViewportForBounds(
+      bounds,
+      availableWidth,
+      height,
+      0.1,
+      1,
+      compact ? 0.18 : 0.16,
     );
+    if (!compact) viewport.x -= 180;
+    void flow.setViewport(viewport, {
+      duration: reduced ? 0 : 320,
+    });
   }, [
     initialized,
     width,
