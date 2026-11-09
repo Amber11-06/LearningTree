@@ -88,14 +88,14 @@ export function buildSkillGraph(
   const manualPositions = new Map<string, { x: number; y: number }>();
   if (!topics.length && children.length > 2) {
     const positions = [
-      [30, 225],
-      [225, 55],
-      [430, 220],
-      [680, 45],
-      [860, 250],
-      [715, 470],
-      [420, 430],
-      [145, 545],
+      [20, 220],
+      [165, 52],
+      [325, 215],
+      [500, 42],
+      [650, 250],
+      [565, 462],
+      [340, 425],
+      [120, 540],
     ];
     children.forEach((child, index) => {
       const [x, y] = positions[index] ?? [
