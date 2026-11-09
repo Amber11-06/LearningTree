@@ -63,7 +63,7 @@ export function buildSkillGraph(
     marginy: 56,
   });
   topics.forEach((n) =>
-    graph.setNode(`topic:${n.id}`, { width: 196, height: 96 }),
+    graph.setNode(`topic:${n.id}`, { width: 156, height: 156 }),
   );
   relatedTrees.forEach((t) =>
     graph.setNode(`tree:${t.id}`, { width: 220, height: 116 }),
@@ -119,9 +119,9 @@ export function buildSkillGraph(
     return {
       id: `topic:${n.id}`,
       type: "skill",
-      position: { x: p.x - 98, y: p.y - 48 },
-      width: 196,
-      height: 96,
+      position: { x: p.x - 78, y: p.y - 78 },
+      width: 156,
+      height: 156,
       draggable: false,
       focusable: true,
       ariaLabel: `${n.title}，${skillLabels[skillState(data, n)]}`,

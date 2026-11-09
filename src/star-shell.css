@@ -565,3 +565,143 @@
 .tree-page .react-flow__attribution {
   display: none !important;
 }
+
+/* Shared dark command shell: no topbar, dark sidebar on every page. */
+.topbar,
+.overview-shell .topbar {
+  display: none !important;
+}
+.main-shell,
+.overview-shell .main-shell {
+  margin-left: 236px !important;
+  height: 100dvh;
+  background: transparent !important;
+}
+.main-content,
+.overview-shell .main-content {
+  position: relative;
+}
+.app-shell:not(.tree-page) .tree-side-actions {
+  display: none !important;
+}
+.sidebar,
+.overview-shell .sidebar {
+  width: 236px !important;
+  padding: 24px 18px 18px !important;
+  color: #c9dbe9 !important;
+  background:
+    radial-gradient(circle at 20% 0%, rgb(72 133 180 / 0.25), transparent 35%),
+    linear-gradient(180deg, #0d2033 0%, #0a1928 100%) !important;
+  border-right: 1px solid rgb(137 190 226 / 0.16) !important;
+  backdrop-filter: none !important;
+}
+.brand {
+  padding: 0 4px 22px !important;
+}
+.brand-icon {
+  width: 34px !important;
+  height: 34px !important;
+  border: 1px solid rgb(143 205 242 / 0.42) !important;
+  border-radius: 10px !important;
+  color: #9bd7fa !important;
+  background: rgb(99 172 217 / 0.12) !important;
+  box-shadow: none !important;
+}
+.brand > span:last-child {
+  color: #f1f8fd !important;
+  font-size: 17px !important;
+}
+.brand small {
+  color: #66839a !important;
+  font-size: 7px !important;
+  letter-spacing: 0.16em;
+}
+.sidebar nav {
+  gap: 2px !important;
+  margin-top: 14px !important;
+}
+.sidebar nav > button,
+.settings-nav,
+.overview-shell .sidebar nav > button {
+  min-height: 36px !important;
+  padding: 8px !important;
+  border: 0 !important;
+  border-left: 1px solid transparent !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #819bb0 !important;
+  font-size: 11px !important;
+}
+.sidebar nav > button svg,
+.settings-nav svg {
+  color: currentColor !important;
+}
+.sidebar nav > button.active,
+.settings-nav.active,
+.overview-shell .sidebar nav > button.active {
+  border-left-color: #75c6ed !important;
+  background: transparent !important;
+  color: #e5f5fd !important;
+  box-shadow: none !important;
+}
+.sidebar nav > button.active svg,
+.settings-nav.active svg {
+  color: #83d5f5 !important;
+}
+.sidebar nav > button.active b {
+  color: #82b4ce !important;
+  background: transparent !important;
+}
+.settings-nav {
+  border-top: 1px solid rgb(137 190 226 / 0.14) !important;
+  margin-top: 10px !important;
+}
+.profile {
+  border-top: 1px solid rgb(137 190 226 / 0.14) !important;
+  color: #c3dbe8 !important;
+}
+.profile strong {
+  color: #c3dbe8 !important;
+  font-size: 10px !important;
+}
+.profile span {
+  color: #648198 !important;
+  font-size: 8px !important;
+}
+.profile .avatar {
+  color: #bfe7fa !important;
+  background: rgb(91 169 215 / 0.13) !important;
+  border: 1px solid rgb(135 206 242 / 0.4) !important;
+}
+.profile i {
+  background: #7ec7e9 !important;
+}
+.tree-side-search {
+  padding: 8px 9px !important;
+  border: 1px solid rgb(137 190 226 / 0.22) !important;
+  border-radius: 6px !important;
+  background: #0f2438 !important;
+}
+.tree-side-search input {
+  background: transparent !important;
+  -webkit-text-fill-color: #e1f0fa !important;
+  caret-color: #9bd7fa !important;
+}
+.tree-side-search input::placeholder {
+  -webkit-text-fill-color: #5c7a92 !important;
+}
+@media (max-width: 760px) {
+  .topbar,
+  .overview-shell .topbar {
+    display: flex !important;
+  }
+  .main-shell,
+  .overview-shell .main-shell {
+    margin-left: 0 !important;
+  }
+  .sidebar,
+  .overview-shell .sidebar {
+    width: 210px !important;
+  }
+}

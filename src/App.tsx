@@ -742,8 +742,7 @@ function WorkspaceApp({
             </select>
           </div>
         )}
-        {page === "trees" && (
-          <div className="tree-side-tools">
+        <div className="tree-side-tools">
             <label className="tree-side-search">
               <Search size={14} />
               <input
@@ -796,7 +795,6 @@ function WorkspaceApp({
               </button>
             </div>
           </div>
-        )}
         <nav>
           {nav.map((item) => (
             <button

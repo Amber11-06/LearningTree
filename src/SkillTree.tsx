@@ -144,7 +144,7 @@ function SkillNodeView({ data }: NodeProps<SkillNode>) {
   }
   return (
     <div
-      className={`skill-node ${data.state} ${data.active ? "is-selected" : ""} ${data.dim ? "is-dim" : ""}`}
+      className={`skill-node star-topic ${data.state} ${data.active ? "is-selected" : ""} ${data.dim ? "is-dim" : ""}`}
     >
       <CardMeteors count={3} />
       <Handle type="target" position={Position.Left} />
