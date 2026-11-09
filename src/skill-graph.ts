@@ -138,6 +138,9 @@ export function buildSkillGraph(
       },
     };
   });
+  const selectedTopic = selected
+    ? data.nodes.find((node) => node.id === selected)
+    : undefined;
   relatedTrees.forEach((t) => {
     const p = graph.node(`tree:${t.id}`),
       progress = treeProgress(data, t.id);
@@ -170,7 +173,9 @@ export function buildSkillGraph(
         rank: progress.complete ? 2 : 0,
         score: null,
         active: false,
-        current: t.id === tree.id,
+        current: selectedTopic
+          ? selectedTopic.treeId === t.id
+          : t.id === tree.id,
         dim: false,
         due: false,
       },
