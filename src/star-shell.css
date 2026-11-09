@@ -705,3 +705,101 @@
     width: 210px !important;
   }
 }
+
+/* Match the blue workspace used by the other pages. */
+.tree-page .constellation-stage {
+  background: radial-gradient(
+    ellipse at 35% 5%,
+    #fff 0,
+    var(--surface-subtle) 50%,
+    var(--secondary) 100%
+  ) !important;
+}
+
+/* Larger type in the left rail and the right inspection sheet. */
+.sidebar .brand > span:last-child {
+  font-size: 19px !important;
+}
+.sidebar .brand small {
+  font-size: 8px !important;
+}
+.sidebar .sidebar-project {
+  font-size: 13px !important;
+}
+.sidebar .sidebar-project small {
+  font-size: 10px !important;
+}
+.sidebar .tree-side-search input {
+  font-size: 12px !important;
+}
+.sidebar .tree-side-search input::placeholder {
+  font-size: 12px !important;
+}
+.sidebar .tree-side-search kbd {
+  font-size: 9px !important;
+}
+.sidebar .tree-side-actions button {
+  min-height: 34px !important;
+  font-size: 11px !important;
+}
+.sidebar nav > button,
+.settings-nav {
+  min-height: 40px !important;
+  font-size: 13px !important;
+}
+.sidebar nav > button b {
+  font-size: 10px !important;
+}
+.tree-side-route > span {
+  font-size: 9px !important;
+}
+.tree-side-route strong {
+  font-size: 13px !important;
+}
+.tree-side-route p {
+  font-size: 11px !important;
+}
+.tree-side-meter b {
+  font-size: 10px !important;
+}
+.profile strong {
+  font-size: 12px !important;
+}
+.profile span {
+  font-size: 10px !important;
+}
+.profile .avatar {
+  font-size: 11px !important;
+}
+.tree-page .inspector-title-row h2 {
+  font-size: 34px !important;
+}
+.tree-page .inspector-title-row .state-pill {
+  font-size: 10px !important;
+}
+.tree-page .inspector-description {
+  font-size: 12px !important;
+  line-height: 1.75 !important;
+}
+.tree-page .inspector-section-label {
+  font-size: 10px !important;
+}
+.tree-page .inspector-topics > button {
+  min-height: 38px !important;
+  font-size: 13px !important;
+}
+.tree-page .inspector-topics > button .time {
+  font-size: 9px !important;
+}
+.tree-page .inspector-mastery-head {
+  font-size: 11px !important;
+}
+.tree-page .inspector-mastery-head b {
+  font-size: 11px !important;
+}
+.tree-continue {
+  font-size: 13px !important;
+}
+.tree-route-info {
+  font-size: 9px !important;
+}
