@@ -654,9 +654,30 @@ function WorkspaceApp({
     : currentTree?.parentTreeId
       ? currentTree
       : (fallbackStage ?? currentTree);
-  const activeStageProgress = activeStage
-    ? treeProgress(data, activeStage.id)
-    : null;
+  const projectStages = sidebarProject
+    ? data.trees.filter((tree) => tree.parentTreeId === sidebarProject.id)
+    : [];
+  const routeStages = projectStages.length
+    ? projectStages
+    : sidebarProject
+      ? [sidebarProject]
+      : [];
+  const routeProgress = routeStages.reduce(
+    (total, tree) => {
+      const progress = treeProgress(data, tree.id);
+      return {
+        completed: total.completed + progress.completed,
+        total: total.total + progress.total,
+      };
+    },
+    { completed: 0, total: 0 },
+  );
+  const routePercent = routeProgress.total
+    ? Math.round((routeProgress.completed / routeProgress.total) * 100)
+    : 0;
+  const activeStageIndex = activeStage
+    ? projectStages.findIndex((tree) => tree.id === activeStage.id)
+    : -1;
   return (
     <div
       className={`app-shell ${page === "trees" ? "tree-page" : page === "home" ? "overview-shell" : ""} ${page === "learn" ? "learning-page" : ""}`}
@@ -721,6 +742,61 @@ function WorkspaceApp({
             </select>
           </div>
         )}
+        {page === "trees" && (
+          <div className="tree-side-tools">
+            <label className="tree-side-search">
+              <Search size={14} />
+              <input
+                aria-label="搜索知识点"
+                placeholder="搜索知识点…"
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Escape") setSearch("");
+                }}
+              />
+              {!search && <kbd>⌘ K</kbd>}
+              {search && (
+                <button
+                  className="tree-side-clear"
+                  aria-label="清空搜索"
+                  onClick={() => setSearch("")}
+                >
+                  ×
+                </button>
+              )}
+            </label>
+            {search && (
+              <div className="tree-side-results">
+                {result.length ? (
+                  result.slice(0, 5).map((node) => (
+                    <button key={node.id} onClick={() => select(node.id)}>
+                      <span>{node.title}</span>
+                      <small>
+                        {data.trees.find((tree) => tree.id === node.treeId)?.title}
+                      </small>
+                    </button>
+                  ))
+                ) : (
+                  <p>没有找到相关知识点</p>
+                )}
+              </div>
+            )}
+            <div className="tree-side-actions">
+              <button onClick={() => navigate("settings")}>
+                <FileUp size={12} />
+                导入课程
+              </button>
+              <button
+                className="primary"
+                onClick={() => actions.tree(undefined, currentTree?.id)}
+              >
+                <Plus size={12} />
+                添加节点
+              </button>
+            </div>
+          </div>
+        )}
         <nav>
           {nav.map((item) => (
             <button
@@ -735,13 +811,27 @@ function WorkspaceApp({
             </button>
           ))}
         </nav>
-        {page === "trees" && activeStage && activeStageProgress && (
-          <div className="sidebar-route">
-            <strong>{activeStage.title}</strong>
-            <small>
-              {activeStageProgress.completed} / {activeStageProgress.total}{" "}
-              节点已完成
-            </small>
+        {page === "trees" && sidebarProject && (
+          <div className="tree-side-route">
+            <span>CURRENT ROUTE</span>
+            <strong>{sidebarProject.title}</strong>
+            <p>
+              {routeStages.length} 个阶段 · {routeProgress.total} 个知识点
+              <br />
+              {activeStage
+                ? `当前在 ${activeStage.title}${
+                    activeStageIndex >= 0
+                      ? ` · 第 ${String(activeStageIndex + 1).padStart(2, "0")} 阶段`
+                      : ""
+                  }`
+                : "选择下一阶段继续学习"}
+            </p>
+            <div className="tree-side-meter">
+              <i style={{ width: `${routePercent}%` }} />
+              <b>
+                {routeProgress.completed} / {routeProgress.total}
+              </b>
+            </div>
           </div>
         )}
         <div className="sidebar-grow" />

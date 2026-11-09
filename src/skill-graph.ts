@@ -20,6 +20,7 @@ export type SkillNode = Node<
     rank: number;
     score: number | null;
     active: boolean;
+    current?: boolean;
     dim: boolean;
     due: boolean;
     topicId?: string;
@@ -87,19 +88,19 @@ export function buildSkillGraph(
   const manualPositions = new Map<string, { x: number; y: number }>();
   if (!topics.length && children.length > 2) {
     const positions = [
-      [24, 112],
-      [300, 30],
-      [300, 198],
-      [576, 70],
-      [576, 250],
-      [300, 350],
-      [24, 280],
-      [24, 430],
+      [30, 225],
+      [225, 55],
+      [430, 220],
+      [680, 45],
+      [860, 250],
+      [715, 470],
+      [420, 430],
+      [145, 545],
     ];
     children.forEach((child, index) => {
       const [x, y] = positions[index] ?? [
-        24 + (index % 3) * 260,
-        118 + Math.floor(index / 3) * 160,
+        30 + (index % 3) * 245,
+        120 + Math.floor(index / 3) * 180,
       ];
       manualPositions.set(child.id, { x, y });
     });
@@ -144,11 +145,11 @@ export function buildSkillGraph(
       id: `tree:${t.id}`,
       type: "skill",
       position: manualPositions.get(t.id) ?? {
-        x: p.x - 110,
-        y: p.y - 58,
+        x: p.x - 66,
+        y: p.y - 66,
       },
-      width: 220,
-      height: 116,
+      width: 132,
+      height: 132,
       draggable: false,
       focusable: true,
       ariaLabel: `${t.parentTreeId === tree.id ? "子学习树" : "前置学习树"}：${t.title}，${progress.completed} / ${progress.total} 已完成，点击进入`,
@@ -169,6 +170,7 @@ export function buildSkillGraph(
         rank: progress.complete ? 2 : 0,
         score: null,
         active: false,
+        current: t.id === tree.id,
         dim: false,
         due: false,
       },

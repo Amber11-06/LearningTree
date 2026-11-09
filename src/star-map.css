@@ -1,0 +1,174 @@
+/* Circular stage nodes for the full-bleed star map. */
+.tree-page .skill-map .react-flow__node-skill:has(.star-subtree) {
+  width: 132px !important;
+  height: 132px !important;
+}
+.tree-page .skill-map .star-subtree {
+  position: relative !important;
+  display: flex !important;
+  width: 112px !important;
+  height: 112px !important;
+  margin: 10px !important;
+  padding: 0 !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgb(90 151 186 / 0.22) !important;
+  border-radius: 50% !important;
+  background: radial-gradient(
+    circle at 38% 28%,
+    rgb(255 255 255 / 0.96),
+    rgb(232 246 255 / 0.82)
+  ) !important;
+  box-shadow:
+    0 12px 26px -16px rgb(30 88 128 / 0.8),
+    0 0 26px rgb(83 172 218 / 0.14),
+    inset 0 1px 0 #fff !important;
+  color: #24465f !important;
+  overflow: visible !important;
+  text-align: center;
+}
+.tree-page .skill-map .star-subtree.is-current {
+  width: 132px !important;
+  height: 132px !important;
+  margin: 0 !important;
+  border-color: rgb(183 230 252 / 0.72) !important;
+  background: radial-gradient(
+    circle at 35% 28%,
+    #3f759e,
+    #234d71 58%,
+    #173a59
+  ) !important;
+  box-shadow:
+    0 0 0 7px rgb(113 191 226 / 0.09),
+    0 0 40px rgb(81 173 220 / 0.34),
+    0 18px 36px -18px rgb(18 61 90 / 0.9) !important;
+  color: #fff !important;
+}
+.tree-page .skill-map .star-subtree .subtree-head,
+.tree-page .skill-map .star-subtree .subtree-progress,
+.tree-page .skill-map .star-subtree .subtree-foot,
+.tree-page .skill-map .star-subtree .subtree-kind {
+  display: none !important;
+}
+.star-progress {
+  position: absolute;
+  inset: -8px;
+  width: calc(100% + 16px);
+  height: calc(100% + 16px);
+  transform: rotate(-90deg);
+  pointer-events: none;
+}
+.star-progress circle {
+  fill: none;
+  stroke-width: 3;
+}
+.star-progress .track {
+  stroke: rgb(74 139 174 / 0.17);
+}
+.star-progress .value {
+  stroke: #4d9fc6;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 4px rgb(74 158 194 / 0.34));
+}
+.star-subtree.is-current .star-progress .track {
+  stroke: rgb(186 229 248 / 0.16);
+}
+.star-subtree.is-current .star-progress .value {
+  stroke: #9edcf4;
+  filter: drop-shadow(0 0 6px rgb(144 218 246 / 0.5));
+}
+.star-subtree.locked .star-progress .track {
+  stroke: rgb(91 126 146 / 0.22);
+  stroke-dasharray: 2 7;
+}
+.star-subtree.locked .star-progress .value {
+  display: none;
+}
+.star-status {
+  position: absolute;
+  z-index: 2;
+  top: -3px;
+  right: -3px;
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border: 1px solid rgb(91 151 184 / 0.26);
+  border-radius: 50%;
+  background: #f8fdff;
+  color: #6f94a8;
+  box-shadow: 0 3px 8px -4px rgb(27 79 109 / 0.5);
+}
+.star-status.verified,
+.star-status.learned {
+  color: #2f8c76;
+  border-color: rgb(74 158 132 / 0.35);
+  background: #f1fbf7;
+}
+.star-subtree.is-current .star-status {
+  color: #ccefff;
+  border-color: rgb(161 221 246 / 0.45);
+  background: #2b6d93;
+}
+.star-subtree.locked .star-status {
+  color: #8ba5b4;
+  background: rgb(249 253 255 / 0.9);
+}
+.star-hollow {
+  width: 8px;
+  height: 8px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+}
+.star-subtree > strong {
+  max-width: 88px;
+  color: #1d4058 !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  line-height: 1.3 !important;
+  letter-spacing: 0 !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+.star-subtree.is-current > strong {
+  max-width: 106px;
+  color: #fff !important;
+  font-size: 15px !important;
+}
+.star-count {
+  margin-top: 4px;
+  color: #bdddeb;
+  font: 8px ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+.star-subtree.locked > strong {
+  color: #59788b !important;
+}
+.star-subtree.is-dim {
+  opacity: 0.25;
+}
+.star-subtree .react-flow__handle {
+  top: 50% !important;
+  width: 1px !important;
+  height: 1px !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  border: 0 !important;
+  opacity: 0 !important;
+}
+.tree-page .skill-map .react-flow__edge-path {
+  stroke: url(#skill-edge-gradient) !important;
+  stroke-width: 2.6 !important;
+  stroke-dasharray: none !important;
+  stroke-linecap: round;
+  opacity: 1 !important;
+  filter: drop-shadow(0 0 5px rgb(74 158 194 / 0.45));
+}
+.tree-page .skill-map .react-flow__edge-path[stroke-dasharray] {
+  stroke-dasharray: none !important;
+}
+.tree-page .skill-map .route-energy {
+  stroke: #7fc7e7 !important;
+  filter: drop-shadow(0 0 7px rgb(74 158 194 / 0.6));
+}

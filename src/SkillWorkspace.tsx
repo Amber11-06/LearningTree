@@ -120,6 +120,25 @@ export function Trees({
   const projectProgress = tree
     ? treeProgress(data, tree.id)
     : { total: 0, verified: 0, completed: 0, complete: false };
+  const heroStages = data.trees.filter(
+    (item) => item.parentTreeId === project?.id,
+  );
+  const heroPoints = data.nodes.filter((node) =>
+    heroStages.some((stage) => stage.id === node.treeId),
+  ).length;
+  const heroProgress = heroStages.reduce(
+    (total, stage) => {
+      const progress = treeProgress(data, stage.id);
+      return {
+        completed: total.completed + progress.completed,
+        total: total.total + progress.total,
+      };
+    },
+    { completed: 0, total: 0 },
+  );
+  const heroPercent = heroProgress.total
+    ? Math.round((heroProgress.completed / heroProgress.total) * 100)
+    : 0;
   useEffect(() => {
     setRouteOnly(false);
     setMenuOpen(false);
@@ -154,6 +173,13 @@ export function Trees({
           <div className="page-title-float">
             <h1>{project?.title ?? "技能树"}</h1>
           </div>
+        </div>
+        <div className="tree-route-info">
+          <span>路线 01 · 前端核心</span>
+          <b>
+            {heroStages.length || treePath.length} STAGES · {heroPoints || projectProgress.total} POINTS ·{" "}
+            {heroPercent}% COMPLETE
+          </b>
         </div>
       </header>
       <div
@@ -581,6 +607,14 @@ export function Trees({
         />
       </section>
     </div>
+    {selected && (
+      <button
+        className="tree-continue"
+        onClick={() => actions.learn(selected.id)}
+      >
+        继续学习 <ArrowRight size={15} />
+      </button>
+    )}
     </>
   );
 }
@@ -612,6 +646,16 @@ function SkillInspector({
   const parent = data.nodes.find((n) => n.id === node.parentId);
   const blockers = treeBlockers(data, node.treeId);
   const siblings = data.nodes.filter((n) => n.treeId === node.treeId);
+  const description =
+    node.note.trim() ||
+    node.content
+      .replace(/^#+\s.*$/gm, " ")
+      .replace(/学完要能做到什么/g, " ")
+      .replace(/[#>*`_\-]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim()
+      .slice(0, 120) ||
+    "查看这条知识点的笔记与学习记录。";
   return (
     <aside className="skill-inspector">
       <button
@@ -635,6 +679,24 @@ function SkillInspector({
             {skillLabels[state]}
           </span>
         </div>
+        <div
+          className="inspector-ring"
+          aria-label={`掌握度 ${Math.round((progress.rank / 3) * 100)}%`}
+        >
+          <svg viewBox="0 0 72 72" aria-hidden="true">
+            <circle className="track" cx="36" cy="36" r="30" />
+            <circle
+              className="value"
+              cx="36"
+              cy="36"
+              r="30"
+              pathLength="100"
+              strokeDasharray={`${Math.round((progress.rank / 3) * 100)} 100`}
+            />
+          </svg>
+          <b>{Math.round((progress.rank / 3) * 100)}%</b>
+        </div>
+        <p className="inspector-description">{description}</p>
       </div>
       <div className="inspector-topics">
         <span className="inspector-section-label">知识点</span>
@@ -660,24 +722,18 @@ function SkillInspector({
           );
         })}
       </div>
-      <div className="inspector-bottom">
-        <div
-          className="inspector-ring inspector-ring-large"
-          aria-label={`掌握度 ${Math.round((progress.rank / 3) * 100)}%`}
-        >
-          <svg viewBox="0 0 72 72" aria-hidden="true">
-            <circle className="track" cx="36" cy="36" r="30" />
-            <circle
-              className="value"
-              cx="36"
-              cy="36"
-              r="30"
-              pathLength="100"
-              strokeDasharray={`${Math.round((progress.rank / 3) * 100)} 100`}
-            />
-          </svg>
-          <b>{Math.round((progress.rank / 3) * 100)}%</b>
+      <div className="inspector-mastery">
+        <div className="inspector-mastery-head">
+          <span>节点掌握度</span>
+          <b>
+            {progress.rank} / 3
+          </b>
         </div>
+        <div className="inspector-mastery-track">
+          <i style={{ width: `${(progress.rank / 3) * 100}%` }} />
+        </div>
+      </div>
+      <div className="inspector-bottom">
         <div className="inspector-actions">
           {state === "locked" && (parent || blockers.length) ? (
             <button

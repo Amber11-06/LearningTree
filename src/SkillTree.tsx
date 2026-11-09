@@ -21,6 +21,7 @@ import {
   Expand,
   LockKeyhole,
   Minus,
+  Play,
   Plus,
   Route,
   Scan,
@@ -36,6 +37,7 @@ import { useTreeTransition } from "./useTreeTransition";
 export type { SkillFocusRequest } from "./useTreeCamera";
 import "@xyflow/react/dist/style.css";
 import "./skill-tree.css";
+import "./star-map.css";
 
 const nodeTypes = { skill: SkillNodeView };
 const edgeTypes = { circuit: CircuitEdge };
@@ -50,11 +52,45 @@ function SkillNodeView({ data }: NodeProps<SkillNode>) {
     const percentage = data.total
       ? Math.round(((data.completed ?? 0) / data.total) * 100)
       : 0;
+    const isDone =
+      data.state === "verified" || data.state === "learned";
+    const isLocked = data.state === "locked";
+    const isLearning = data.state === "learning";
+    const ringLength = 351.86;
     return (
       <div
-        className={`skill-node subtree-node ${data.state} ${data.dim ? "is-dim" : ""}`}
+        className={`skill-node subtree-node star-subtree ${data.state}${data.current ? " is-current" : ""}${data.dim ? " is-dim" : ""}`}
       >
-        <CardMeteors count={4} />
+        <svg className="star-progress" viewBox="0 0 128 128" aria-hidden="true">
+          <circle className="track" cx="64" cy="64" r="56" />
+          <circle
+            className="value"
+            cx="64"
+            cy="64"
+            r="56"
+            strokeDasharray={ringLength}
+            strokeDashoffset={
+              isLocked ? ringLength : ringLength * (1 - percentage / 100)
+            }
+          />
+        </svg>
+        <span className={`star-status ${data.state}`}>
+          {isLocked ? (
+            <LockKeyhole size={11} />
+          ) : isDone ? (
+            <Check size={12} />
+          ) : isLearning || data.current ? (
+            <Play size={10} fill="currentColor" />
+          ) : (
+            <span className="star-hollow" />
+          )}
+        </span>
+        <strong title={data.title}>{displayTitle}</strong>
+        {data.current && (
+          <span className="star-count">
+            {data.completed ?? 0} / {data.total ?? 0}
+          </span>
+        )}
         <Handle
           type="target"
           position={Position.Left}
@@ -79,23 +115,6 @@ function SkillNodeView({ data }: NodeProps<SkillNode>) {
           id="target-bottom"
           className="edge-handle"
         />
-        <span className="subtree-head">
-          {hasIndex && <small>{rawIndex}</small>}
-          <i className="subtree-dot" />
-        </span>
-        <strong title={data.title}>{displayTitle}</strong>
-        {data.external && <span className="subtree-kind">前置树</span>}
-        <span className="subtree-progress">
-          <i style={{ width: `${percentage}%` }} />
-        </span>
-        <span className="subtree-foot">
-          <span>
-            {data.state === "locked"
-              ? "未解锁"
-              : `${data.completed ?? 0} / ${data.total} 已完成`}
-          </span>
-          <span>{percentage}%</span>
-        </span>
         <Handle
           type="source"
           position={Position.Right}
