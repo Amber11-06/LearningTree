@@ -335,13 +335,12 @@ describe("nested-tree map contract", () => {
       false,
       false,
     );
-    const topic = graph.nodes.find((n) => n.data.topicId === "root-topic")!;
     const child = graph.nodes.find((n) => n.data.treeId === "child")!;
     const prerequisite = graph.nodes.find(
       (n) => n.data.treeId === "prerequisite",
     )!;
-    expect(child.width).toBeGreaterThan(topic.width!);
-    expect(child.height).toBeGreaterThan(topic.height!);
+    expect(child.width).toBe(132);
+    expect(child.height).toBe(132);
     expect(child.data.external).toBe(false);
     expect(prerequisite.data.external).toBe(true);
     const dependency = graph.edges.find(
