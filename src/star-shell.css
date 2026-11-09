@@ -803,3 +803,11 @@
 .tree-route-info {
   font-size: 9px !important;
 }
+
+/* Keep the map canvas visibly blue like the overview workspace. */
+.tree-page .constellation-stage {
+  background:
+    radial-gradient(ellipse at 26% 0%, rgb(255 255 255 / 0.85), transparent 42%),
+    radial-gradient(ellipse at 82% 18%, rgb(175 216 240 / 0.28), transparent 48%),
+    linear-gradient(140deg, #e2f2fb 0%, #c9e4f5 48%, #b8d8ee 100%) !important;
+}
