@@ -230,7 +230,7 @@ export function useTreeCamera({
   const fit = useCallback(() => {
     if (!initialized || !width || !height) return;
     controlCamera();
-    const availableWidth = compact ? width : Math.max(360, width - 390);
+    const availableWidth = compact ? width : Math.max(360, width - 520);
     void flow.setViewport(
       getViewportForBounds(
         bounds,
