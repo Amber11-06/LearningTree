@@ -1649,3 +1649,15 @@
 .auth-story-copy {
   margin-top: 7.5rem !important;
 }
+
+/* Place the login hero at the exact centre of the left pane. */
+.auth-story-copy {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  width: min(80%, 38rem) !important;
+  max-width: 38rem !important;
+  margin: 0 !important;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
