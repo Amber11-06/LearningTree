@@ -750,7 +750,6 @@ export function Settings({ data, actions }: Props) {
           MB，不包含个人笔记或测验成绩。
         </p>
       </section>
-      </div>
       <section className="panel method-note">
         <Leaf size={22} />
         <div>
@@ -763,6 +762,7 @@ export function Settings({ data, actions }: Props) {
           </p>
         </div>
       </section>
+      </div>
     </>
   );
 }

@@ -48,7 +48,6 @@ import {
   saveCoursePackage,
   type Workspace,
 } from "./storage";
-import { treeProgress } from "./progression";
 import { Modal } from "./components";
 import { SessionForm, TopicForm, TreeForm } from "./forms";
 import { AuthScreen } from "./AuthScreen";
@@ -640,42 +639,6 @@ function WorkspaceApp({
     : [];
   const due = dueTopics(data).length;
   const currentTree = data.trees.find((tree) => tree.id === treeId);
-  const sidebarProject = currentTree?.parentTreeId
-    ? data.trees.find((tree) => tree.id === currentTree.parentTreeId)
-    : currentTree;
-  const selectedNode = data.nodes.find((node) => node.id === selectedId);
-  const fallbackStage = currentTree
-    ? data.trees.find((tree) => tree.parentTreeId === currentTree.id)
-    : undefined;
-  const activeStage = selectedNode
-    ? data.trees.find((tree) => tree.id === selectedNode.treeId)
-    : currentTree?.parentTreeId
-      ? currentTree
-      : (fallbackStage ?? currentTree);
-  const projectStages = sidebarProject
-    ? data.trees.filter((tree) => tree.parentTreeId === sidebarProject.id)
-    : [];
-  const routeStages = projectStages.length
-    ? projectStages
-    : sidebarProject
-      ? [sidebarProject]
-      : [];
-  const routeProgress = routeStages.reduce(
-    (total, tree) => {
-      const progress = treeProgress(data, tree.id);
-      return {
-        completed: total.completed + progress.completed,
-        total: total.total + progress.total,
-      };
-    },
-    { completed: 0, total: 0 },
-  );
-  const routePercent = routeProgress.total
-    ? Math.round((routeProgress.completed / routeProgress.total) * 100)
-    : 0;
-  const activeStageIndex = activeStage
-    ? projectStages.findIndex((tree) => tree.id === activeStage.id)
-    : -1;
   return (
     <div
       className={`app-shell ${page === "trees" ? "tree-page" : page === "home" ? "overview-shell" : ""} ${page === "learn" ? "learning-page" : ""}`}
@@ -785,28 +748,6 @@ function WorkspaceApp({
             </button>
           ))}
         </nav>
-        {page === "trees" && sidebarProject && (
-          <div className="tree-side-route">
-            <span>CURRENT ROUTE</span>
-            <p>
-              {routeStages.length} 个阶段 · {routeProgress.total} 个知识点
-              <br />
-              {activeStage
-                ? `当前在 ${activeStage.title}${
-                    activeStageIndex >= 0
-                      ? ` · 第 ${String(activeStageIndex + 1).padStart(2, "0")} 阶段`
-                      : ""
-                  }`
-                : "选择下一阶段继续学习"}
-            </p>
-            <div className="tree-side-meter">
-              <i style={{ width: `${routePercent}%` }} />
-              <b>
-                {routeProgress.completed} / {routeProgress.total}
-              </b>
-            </div>
-          </div>
-        )}
         <div className="sidebar-grow" />
         <button
           className={`settings-nav ${page === "settings" ? "active" : ""}`}

@@ -1176,3 +1176,48 @@
     var(--secondary) 100%
   ) !important;
 }
+
+/* Make the left rail identical on every page: same nav size and rhythm. */
+.app-shell .sidebar nav > button,
+.app-shell .sidebar .settings-nav {
+  min-height: 40px !important;
+  font-size: 14px !important;
+}
+.app-shell .sidebar nav > button b {
+  font-size: 11px !important;
+}
+.app-shell .sidebar .brand {
+  padding-bottom: 8px !important;
+}
+.tree-side-tools {
+  margin-top: 0 !important;
+}
+
+/* Use a clearly blue wash sampled from the other pages. */
+.tree-page .constellation-stage {
+  background:
+    radial-gradient(circle at 28% 12%, rgb(255 255 255 / 0.18), transparent 40%),
+    linear-gradient(145deg, #d6eaf8 0%, #c5e0f2 48%, #b5d6ec 100%) !important;
+}
+
+/* Fill the settings right column with the data note instead of leaving a hole. */
+.settings-layout {
+  grid-template-areas:
+    "prefs data"
+    "import data"
+    "import note" !important;
+}
+.settings-layout > .method-note {
+  grid-area: note;
+  align-self: stretch;
+  margin-top: 0 !important;
+}
+@media (max-width: 900px) {
+  .settings-layout {
+    grid-template-areas:
+      "prefs"
+      "data"
+      "import"
+      "note" !important;
+  }
+}
