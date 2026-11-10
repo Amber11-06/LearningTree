@@ -713,7 +713,7 @@ function SkillInspector({
           <small>{mastery}% · {progress.rank} / 3</small>
         </div>
         <div
-          className="inspector-ring inspector-ring-animated"
+          className={`inspector-ring inspector-ring-animated${mastery === 0 ? " is-zero" : ""}`}
           aria-label={`学习进度 ${mastery}%`}
         >
           <svg viewBox="0 0 72 72" aria-hidden="true">

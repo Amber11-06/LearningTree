@@ -1391,3 +1391,98 @@
     radial-gradient(circle at 82% 8%, rgb(47 99 153 / 0.12), transparent 44%),
     linear-gradient(138deg, #e9f6ff 0%, #d9edfc 46%, #c7e4f8 100%) !important;
 }
+
+/* Locked star nodes: stronger text, border and inner depth. */
+.tree-page .skill-map .star-subtree.locked,
+.tree-page .skill-map .star-topic.locked {
+  opacity: 0.82 !important;
+  border-color: rgb(75 128 157 / 0.38) !important;
+  box-shadow:
+    inset 0 2px 9px rgb(47 99 153 / 0.11),
+    0 8px 20px -16px rgb(30 88 128 / 0.55) !important;
+}
+.tree-page .skill-map .star-subtree.locked > strong,
+.tree-page .skill-map .star-topic.locked > strong {
+  color: #3f6176 !important;
+  font-weight: 700 !important;
+}
+.tree-page .skill-map .star-subtree.locked .star-status,
+.tree-page .skill-map .star-topic.locked .star-status,
+.tree-page .skill-map .star-topic.locked .skill-badge {
+  color: #54778b !important;
+  border-color: rgb(75 128 157 / 0.4) !important;
+}
+.tree-page .skill-map .star-subtree.locked .star-progress .track {
+  stroke: rgb(70 120 150 / 0.36) !important;
+}
+
+/* 0% ring: a complete quiet track, never a broken arc. */
+.tree-page .inspector-ring-animated.is-zero::before,
+.tree-page .inspector-ring-animated.is-zero::after {
+  display: none !important;
+}
+.tree-page .inspector-ring-animated.is-zero .value {
+  display: none !important;
+}
+.tree-page .inspector-ring-animated.is-zero .track {
+  stroke: #bad2e3 !important;
+  stroke-width: 4 !important;
+}
+.tree-page .inspector-ring-animated.is-zero b {
+  color: #577a8f !important;
+  text-shadow: none !important;
+  animation: none !important;
+}
+
+/* Lighter floating continue CTA on the overview. */
+.overview-primary {
+  box-shadow: 0 2px 6px rgb(72 120 187 / 0.12) !important;
+}
+.overview-primary:hover {
+  box-shadow: 0 3px 8px rgb(72 120 187 / 0.16) !important;
+}
+.overview-continue {
+  box-shadow: inset 0 1px 0 #fff !important;
+  border-color: #d7e4ef !important;
+}
+
+/* Review: larger, higher-contrast list and context text. */
+.review-queue strong {
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  color: #1f3549 !important;
+}
+.review-queue small {
+  font-size: 11.5px !important;
+  color: #5c7487 !important;
+}
+.review-context.panel {
+  background: linear-gradient(160deg, #f8fcff, #eaf4fc) !important;
+  border-color: rgb(84 112 149 / 0.22) !important;
+}
+.context-label {
+  color: #526d80 !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+}
+.review-context h3 {
+  font-size: 19px !important;
+}
+.context-meta {
+  color: #5c7487 !important;
+  font-size: 12px !important;
+}
+.context-meta b {
+  color: #2f6399 !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+}
+
+/* Keep the feedback chart visually complete at zero. */
+.bar-column > div {
+  border-bottom: 1px solid var(--border) !important;
+  box-shadow: 0 1px 0 rgb(255 255 255 / 0.7);
+}
+.bar-column i {
+  min-height: 1px;
+}
