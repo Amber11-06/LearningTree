@@ -351,9 +351,9 @@ function MapView({
       <svg className="skill-edge-defs" aria-hidden="true" focusable="false">
         <defs>
           <linearGradient id="skill-edge-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#a7c5da" />
-            <stop offset="50%" stopColor="#547095" />
-            <stop offset="100%" stopColor="#8fb6d2" />
+            <stop offset="0%" stopColor="#8fb8d8" />
+            <stop offset="50%" stopColor="#2f6399" />
+            <stop offset="100%" stopColor="#4f88b8" />
           </linearGradient>
         </defs>
       </svg>
