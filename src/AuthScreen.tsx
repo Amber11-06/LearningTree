@@ -98,20 +98,6 @@ export function AuthScreen({
             <br />
             学习空间
           </h1>
-          <div className="auth-stats">
-            <div>
-              <strong>8</strong>
-              <span>学习阶段</span>
-            </div>
-            <div>
-              <strong>24</strong>
-              <span>知识点</span>
-            </div>
-            <div>
-              <strong>4</strong>
-              <span>待复习</span>
-            </div>
-          </div>
         </div>
         <svg
           className="auth-constellation"
