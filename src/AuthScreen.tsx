@@ -6,7 +6,6 @@ import {
   EyeOff,
   Leaf,
   LockKeyhole,
-  ShieldCheck,
   Sprout,
   UserRound,
 } from "lucide-react";
@@ -99,9 +98,6 @@ export function AuthScreen({
             <br />
             学习空间
           </h1>
-          <p>
-            技能树、学习记录和复习计划保存在本机 PostgreSQL。每个账号拥有独立工作区。
-          </p>
           <div className="auth-stats">
             <div>
               <strong>8</strong>
@@ -142,14 +138,6 @@ export function AuthScreen({
             ))}
           </g>
         </svg>
-        <div className="auth-meta">
-          <span>
-            <ShieldCheck size={14} />
-            HttpOnly 会话
-          </span>
-          <span>独立工作区</span>
-          <span>不连接第三方</span>
-        </div>
       </section>
 
       <section className="auth-panel">
@@ -157,11 +145,6 @@ export function AuthScreen({
           <div className="auth-card-head">
             <span className="auth-eyebrow">LOCAL ACCOUNT</span>
             <h2>{mode === "login" ? "登录" : "创建账号"}</h2>
-            <p>
-              {mode === "login"
-                ? "使用本地账号进入工作区。"
-                : "账号只保存在这台电脑的 PostgreSQL 中。"}
-            </p>
           </div>
 
           <div className="auth-tabs" role="tablist" aria-label="登录或创建账号">
@@ -279,7 +262,6 @@ export function AuthScreen({
                   />
                   保持登录
                 </label>
-                <span>7 天会话</span>
               </div>
             )}
 
@@ -302,10 +284,6 @@ export function AuthScreen({
               {!busy && <ArrowRight size={17} />}
             </button>
           </form>
-
-          <p className="auth-footnote">
-            账号与学习数据只保存在本机 PostgreSQL，不使用第三方登录。
-          </p>
         </div>
       </section>
     </div>
