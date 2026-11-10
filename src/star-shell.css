@@ -824,3 +824,200 @@
 .tree-page .skill-map .react-flow__pane {
   background: transparent !important;
 }
+
+/* Search matches the effect image: a quiet underline, not a boxed field. */
+.sidebar .tree-side-search {
+  padding: 8px 2px !important;
+  border: 0 !important;
+  border-bottom: 1px solid rgb(137 190 226 / 0.22) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+.sidebar .tree-side-search kbd {
+  border-color: rgb(137 190 226 / 0.22) !important;
+  background: transparent !important;
+}
+
+/* Inspector header: status is pinned to the top-right; the ring moves down. */
+.tree-page .inspector-title-row {
+  position: relative !important;
+  display: block !important;
+  padding-right: 0 !important;
+}
+.tree-page .inspector-title-row h2 {
+  padding-right: 82px;
+}
+.tree-page .inspector-title-row .state-pill {
+  position: absolute !important;
+  top: -2px;
+  right: 0;
+  margin: 0 !important;
+}
+.tree-page .inspector-description {
+  display: none !important;
+}
+
+/* Animated mastery ring at the bottom of the sheet. */
+.tree-page .inspector-progress {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-top: 18px;
+  padding-top: 15px;
+  border-top: 1px solid rgb(65 132 166 / 0.17);
+}
+.tree-page .inspector-progress > div:first-child {
+  display: grid;
+  gap: 5px;
+}
+.tree-page .inspector-progress > div:first-child span {
+  color: #537b92;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}
+.tree-page .inspector-progress > div:first-child small {
+  color: #6e91a4;
+  font: 9px ui-monospace, monospace;
+}
+.tree-page .inspector-progress .inspector-ring {
+  position: relative !important;
+  top: auto !important;
+  right: auto !important;
+  width: 88px !important;
+  height: 88px !important;
+  margin: 0 !important;
+  flex: none;
+}
+.tree-page .inspector-ring-animated {
+  isolation: isolate;
+}
+.tree-page .inspector-ring-animated::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -7px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0 58%,
+    rgb(116 201 238 / 0.15) 68%,
+    #74c9ee 82%,
+    transparent 92%
+  );
+  mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 0);
+  animation: inspector-ring-spin 3.2s linear infinite;
+}
+.tree-page .inspector-ring-animated::after {
+  content: "";
+  position: absolute;
+  z-index: -2;
+  inset: 4px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(83 172 218 / 0.28), transparent 68%);
+  animation: inspector-ring-breathe 2.5s ease-in-out infinite;
+}
+.tree-page .inspector-ring-animated .value {
+  stroke: #3f9ec8;
+  filter: drop-shadow(0 0 6px rgb(74 158 194 / 0.55));
+  animation:
+    inspector-ring-draw 1.4s cubic-bezier(0.22, 1, 0.36, 1) both,
+    inspector-ring-glow 2.5s ease-in-out infinite;
+}
+.tree-page .inspector-ring-animated b {
+  color: #2c617f;
+  text-shadow: 0 0 12px rgb(120 205 241 / 0.45);
+  animation: inspector-ring-number 2.5s ease-in-out infinite;
+}
+@keyframes inspector-ring-spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes inspector-ring-breathe {
+  0%, 100% { opacity: 0.4; transform: scale(0.92); }
+  50% { opacity: 0.9; transform: scale(1.06); }
+}
+@keyframes inspector-ring-draw {
+  from { stroke-dashoffset: 100; }
+}
+@keyframes inspector-ring-glow {
+  0%, 100% { filter: drop-shadow(0 0 4px rgb(74 158 194 / 0.35)); }
+  50% { filter: drop-shadow(0 0 10px rgb(102 196 232 / 0.85)); }
+}
+@keyframes inspector-ring-number {
+  0%, 100% { opacity: 0.82; }
+  50% { opacity: 1; }
+}
+
+/* Collapse the inspection sheet to the right. */
+.tree-page .command-center {
+  transition:
+    transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 220ms ease;
+}
+.tree-page .command-center.is-collapsed {
+  transform: translateX(calc(100% + 34px));
+  opacity: 0;
+  pointer-events: none;
+}
+.inspector-collapse {
+  position: absolute;
+  z-index: 5;
+  left: 14px;
+  bottom: 13px;
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border: 1px solid rgb(84 112 149 / 0.2);
+  border-radius: 8px;
+  background: rgb(249 253 255 / 0.7);
+  color: #6f96aa;
+  transition:
+    color 160ms ease,
+    background 160ms ease,
+    transform 160ms ease;
+}
+.inspector-collapse:hover {
+  color: #2c6f91;
+  background: #fff;
+  transform: translateX(2px);
+}
+.inspector-reopen {
+  position: absolute;
+  z-index: 30;
+  top: 50%;
+  right: 0;
+  display: grid;
+  width: 30px;
+  height: 54px;
+  place-items: center;
+  border: 1px solid #285c84;
+  border-right: 0;
+  border-radius: 9px 0 0 9px;
+  background: #1d4b6d;
+  color: #effaff;
+  box-shadow: -8px 8px 24px -14px rgb(17 62 91 / 0.8);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(36px, -50%);
+  transition:
+    opacity 180ms ease,
+    transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.inspector-reopen.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(0, -50%);
+}
+.tree-page .command-center > .skill-inspector {
+  padding-bottom: 58px !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tree-page .inspector-ring-animated::before,
+  .tree-page .inspector-ring-animated::after,
+  .tree-page .inspector-ring-animated .value,
+  .tree-page .inspector-ring-animated b {
+    animation: none;
+  }
+}

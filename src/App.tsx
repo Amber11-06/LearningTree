@@ -812,7 +812,6 @@ function WorkspaceApp({
         {page === "trees" && sidebarProject && (
           <div className="tree-side-route">
             <span>CURRENT ROUTE</span>
-            <strong>{sidebarProject.title}</strong>
             <p>
               {routeStages.length} 个阶段 · {routeProgress.total} 个知识点
               <br />

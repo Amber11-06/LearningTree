@@ -3,6 +3,8 @@ import {
   ArrowDownRight,
   ArrowRight,
   ChevronDown,
+  ChevronLeft,
+  ChevronsRight,
   Settings2,
   BookOpen,
   FileUp,
@@ -57,6 +59,7 @@ export function Trees({
     () => new Set(),
   );
   const [routeOnly, setRouteOnly] = useState(false);
+  const [panelCollapsed, setPanelCollapsed] = useState(false);
   const [showRecommendedRoute, setShowRecommendedRoute] = useState(false);
   const [focusRequest, setFocusRequest] = useState<SkillFocusRequest>();
   const focusSequence = useRef(0);
@@ -120,25 +123,6 @@ export function Trees({
   const projectProgress = tree
     ? treeProgress(data, tree.id)
     : { total: 0, verified: 0, completed: 0, complete: false };
-  const heroStages = data.trees.filter(
-    (item) => item.parentTreeId === project?.id,
-  );
-  const heroPoints = data.nodes.filter((node) =>
-    heroStages.some((stage) => stage.id === node.treeId),
-  ).length;
-  const heroProgress = heroStages.reduce(
-    (total, stage) => {
-      const progress = treeProgress(data, stage.id);
-      return {
-        completed: total.completed + progress.completed,
-        total: total.total + progress.total,
-      };
-    },
-    { completed: 0, total: 0 },
-  );
-  const heroPercent = heroProgress.total
-    ? Math.round((heroProgress.completed / heroProgress.total) * 100)
-    : 0;
   useEffect(() => {
     setRouteOnly(false);
     setMenuOpen(false);
@@ -173,13 +157,6 @@ export function Trees({
           <div className="page-title-float">
             <h1>{project?.title ?? "技能树"}</h1>
           </div>
-        </div>
-        <div className="tree-route-info">
-          <span>路线 01 · 前端核心</span>
-          <b>
-            {heroStages.length || treePath.length} STAGES · {heroPoints || projectProgress.total} POINTS ·{" "}
-            {heroPercent}% COMPLETE
-          </b>
         </div>
       </header>
       <div
@@ -596,7 +573,10 @@ export function Trees({
           </div>
         )}
       </section>
-      <section className="command-center" aria-label="节点详情">
+      <section
+        className={`command-center ${panelCollapsed ? "is-collapsed" : ""}`}
+        aria-label="节点详情"
+      >
         <SkillInspector
           key={selected?.id ?? "none"}
           data={data}
@@ -605,7 +585,23 @@ export function Trees({
           onLearn={actions.learn}
           onOpenTree={setTreeId}
         />
+        <button
+          className="inspector-collapse"
+          aria-label="收起节点详情"
+          title="收起节点详情"
+          onClick={() => setPanelCollapsed(true)}
+        >
+          <ChevronsRight size={16} />
+        </button>
       </section>
+      <button
+        className={`inspector-reopen ${panelCollapsed ? "is-visible" : ""}`}
+        aria-label="展开节点详情"
+        title="展开节点详情"
+        onClick={() => setPanelCollapsed(false)}
+      >
+        <ChevronLeft size={17} />
+      </button>
     </div>
     {selected && (
       <button
@@ -646,16 +642,7 @@ function SkillInspector({
   const parent = data.nodes.find((n) => n.id === node.parentId);
   const blockers = treeBlockers(data, node.treeId);
   const siblings = data.nodes.filter((n) => n.treeId === node.treeId);
-  const description =
-    node.note.trim() ||
-    node.content
-      .replace(/^#+\s.*$/gm, " ")
-      .replace(/学完要能做到什么/g, " ")
-      .replace(/[#>*`_\-]/g, " ")
-      .replace(/\s+/g, " ")
-      .trim()
-      .slice(0, 120) ||
-    "查看这条知识点的笔记与学习记录。";
+  const mastery = Math.round((progress.rank / 3) * 100);
   return (
     <aside className="skill-inspector">
       <button
@@ -679,24 +666,6 @@ function SkillInspector({
             {skillLabels[state]}
           </span>
         </div>
-        <div
-          className="inspector-ring"
-          aria-label={`掌握度 ${Math.round((progress.rank / 3) * 100)}%`}
-        >
-          <svg viewBox="0 0 72 72" aria-hidden="true">
-            <circle className="track" cx="36" cy="36" r="30" />
-            <circle
-              className="value"
-              cx="36"
-              cy="36"
-              r="30"
-              pathLength="100"
-              strokeDasharray={`${Math.round((progress.rank / 3) * 100)} 100`}
-            />
-          </svg>
-          <b>{Math.round((progress.rank / 3) * 100)}%</b>
-        </div>
-        <p className="inspector-description">{description}</p>
       </div>
       <div className="inspector-topics">
         <span className="inspector-section-label">知识点</span>
@@ -731,6 +700,29 @@ function SkillInspector({
         </div>
         <div className="inspector-mastery-track">
           <i style={{ width: `${(progress.rank / 3) * 100}%` }} />
+        </div>
+      </div>
+      <div className="inspector-progress">
+        <div>
+          <span>学习进度</span>
+          <small>{mastery}% · {progress.rank} / 3</small>
+        </div>
+        <div
+          className="inspector-ring inspector-ring-animated"
+          aria-label={`学习进度 ${mastery}%`}
+        >
+          <svg viewBox="0 0 72 72" aria-hidden="true">
+            <circle className="track" cx="36" cy="36" r="30" />
+            <circle
+              className="value"
+              cx="36"
+              cy="36"
+              r="30"
+              pathLength="100"
+              strokeDasharray={`${mastery} 100`}
+            />
+          </svg>
+          <b>{mastery}%</b>
         </div>
       </div>
       <div className="inspector-bottom">
