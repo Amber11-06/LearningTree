@@ -1644,3 +1644,8 @@
 .app-shell .profile .avatar {
   font-size: 11px !important;
 }
+
+/* Nudge the login hero down without changing its centred alignment. */
+.auth-story-copy {
+  margin-top: 7.5rem !important;
+}
