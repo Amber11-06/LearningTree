@@ -6,7 +6,6 @@ import {
   BookOpen,
   ChartNoAxesCombined,
   CheckCircle2,
-  ChevronDown,
   ChevronRight,
   CircleHelp,
   FileUp,
@@ -641,7 +640,6 @@ function WorkspaceApp({
     : [];
   const due = dueTopics(data).length;
   const currentTree = data.trees.find((tree) => tree.id === treeId);
-  const topProjects = data.trees.filter((tree) => !tree.parentTreeId);
   const sidebarProject = currentTree?.parentTreeId
     ? data.trees.find((tree) => tree.id === currentTree.parentTreeId)
     : currentTree;
@@ -720,28 +718,6 @@ function WorkspaceApp({
             LearningTree<small>YOUR PERSONAL SKILL MAP</small>
           </span>
         </button>
-        {page === "trees" && sidebarProject && (
-          <div className="sidebar-project">
-            <span className="sidebar-project-icon">
-              <Network size={16} />
-            </span>
-            <span>
-              <strong>{sidebarProject.title}</strong>
-            </span>
-            <ChevronDown size={14} />
-            <select
-              aria-label="切换学习项目"
-              value={sidebarProject.id}
-              onChange={(event) => setTreeId(event.target.value)}
-            >
-              {topProjects.map((project) => (
-                <option key={project.id} value={project.id}>
-                  {project.title}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
         <div className="tree-side-tools">
             <label className="tree-side-search">
               <Search size={14} />

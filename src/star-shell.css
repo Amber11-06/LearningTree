@@ -1052,3 +1052,112 @@
   top: 0 !important;
   right: 0 !important;
 }
+
+/* #4 remove the empty band left by the old project switcher. */
+.tree-side-tools {
+  margin-top: 8px !important;
+}
+
+/* #5 larger left-rail type across tree, overview and settings. */
+.sidebar .brand > span:last-child {
+  font-size: 20px !important;
+}
+.sidebar .brand small {
+  font-size: 9px !important;
+}
+.sidebar .tree-side-search input,
+.sidebar .tree-side-search input::placeholder {
+  font-size: 13px !important;
+}
+.sidebar .tree-side-search kbd {
+  font-size: 10px !important;
+}
+.sidebar .tree-side-actions button {
+  font-size: 12px !important;
+}
+.sidebar nav > button,
+.settings-nav {
+  font-size: 14px !important;
+}
+.sidebar nav > button b {
+  font-size: 11px !important;
+}
+.tree-side-route > span {
+  font-size: 10px !important;
+}
+.tree-side-route p {
+  font-size: 12px !important;
+}
+.tree-side-meter b {
+  font-size: 11px !important;
+}
+.profile strong {
+  font-size: 13px !important;
+}
+.profile span {
+  font-size: 11px !important;
+}
+
+/* #1/#2 status stays top-right; title gets the full width and one line. */
+.tree-page .inspector-summary {
+  padding-right: 0 !important;
+}
+.tree-page .inspector-title-row h2 {
+  padding-top: 30px !important;
+  padding-right: 0 !important;
+  font-size: 32px !important;
+  white-space: nowrap;
+}
+.tree-page .inspector-title-row .state-pill {
+  top: 0 !important;
+  right: 0 !important;
+}
+
+/* #3 larger progress labels and ring number. */
+.tree-page .inspector-progress > div:first-child span {
+  font-size: 13px !important;
+}
+.tree-page .inspector-progress > div:first-child small {
+  font-size: 11px !important;
+}
+.tree-page .inspector-ring-animated b {
+  font-size: 22px !important;
+}
+
+/* #7 align the overview aside with the hero card. */
+.overview-shell .overview-aside {
+  padding-top: 38px !important;
+}
+
+/* #8 the tree canvas uses the shared page background, no separate tint. */
+.tree-page .constellation-stage {
+  background: transparent !important;
+}
+
+/* #6 two-column settings page with the import card pulled up under preferences. */
+.settings-layout {
+  grid-template-areas:
+    "prefs data"
+    "import data" !important;
+  align-items: start !important;
+}
+.settings-layout > section:nth-of-type(1) {
+  grid-area: prefs;
+}
+.settings-layout > section:nth-of-type(2) {
+  grid-area: data;
+}
+.settings-layout > .course-settings {
+  grid-area: import;
+  margin-top: 0 !important;
+  max-width: none !important;
+}
+@media (max-width: 900px) {
+  .settings-layout {
+    grid-template-columns: 1fr !important;
+    grid-template-areas:
+      "prefs"
+      "data"
+      "import" !important;
+  }
+}

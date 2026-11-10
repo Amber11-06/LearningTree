@@ -716,7 +716,6 @@ export function Settings({ data, actions }: Props) {
             </button>
           )}
         </section>
-      </div>
       <section className="panel settings-panel course-settings">
         <h2>导入学习内容</h2>
         <p>
@@ -751,6 +750,7 @@ export function Settings({ data, actions }: Props) {
           MB，不包含个人笔记或测验成绩。
         </p>
       </section>
+      </div>
       <section className="panel method-note">
         <Leaf size={22} />
         <div>
