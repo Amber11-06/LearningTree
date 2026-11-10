@@ -1661,3 +1661,8 @@
   transform: translate(-50%, -50%);
   z-index: 2;
 }
+
+/* Nudge the centred login hero a little higher. */
+.auth-story-copy {
+  top: 47% !important;
+}
