@@ -1530,3 +1530,26 @@
     animation: none;
   }
 }
+
+/* Make the current-node floor glow visible below the orb. */
+.tree-page .skill-map .star-subtree.is-current::after {
+  z-index: 0;
+}
+.tree-page .skill-map .star-subtree.is-current > strong,
+.tree-page .skill-map .star-subtree.is-current .star-count,
+.tree-page .skill-map .star-subtree.is-current .star-progress,
+.tree-page .skill-map .star-subtree.is-current .star-status {
+  position: relative;
+  z-index: 2;
+}
+
+/* Slightly clearer orbital guides. */
+.star-orbits i:nth-child(1) {
+  border-color: rgb(47 99 153 / 0.17);
+}
+.star-orbits i:nth-child(2) {
+  border-color: rgb(47 99 153 / 0.14);
+}
+.star-orbits i:nth-child(3) {
+  border-color: rgb(47 99 153 / 0.11);
+}
