@@ -348,6 +348,12 @@ function MapView({
         if (event.key === "-") changeZoom("out");
       }}
     >
+      <div className="star-orbits" aria-hidden="true">
+        <i />
+        <i />
+        <i />
+        <b />
+      </div>
       <svg className="skill-edge-defs" aria-hidden="true" focusable="false">
         <defs>
           <linearGradient id="skill-edge-gradient" x1="0%" y1="0%" x2="100%" y2="0%">

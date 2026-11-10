@@ -267,3 +267,89 @@
   width: 8px !important;
   height: 8px !important;
 }
+
+/* Star-chart orbit backdrop. */
+.star-orbits {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 47% 50%,
+    rgb(118 184 223 / 0.12),
+    transparent 46%
+  );
+}
+.star-orbits i {
+  position: absolute;
+  left: 47%;
+  top: 50%;
+  display: block;
+  border: 1px solid rgb(47 99 153 / 0.14);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+.star-orbits i:nth-child(1) {
+  width: clamp(360px, 54vw, 720px);
+  height: clamp(360px, 54vw, 720px);
+}
+.star-orbits i:nth-child(2) {
+  width: clamp(270px, 40vw, 540px);
+  height: clamp(270px, 40vw, 540px);
+  border-color: rgb(47 99 153 / 0.11);
+}
+.star-orbits i:nth-child(3) {
+  width: clamp(170px, 26vw, 350px);
+  height: clamp(170px, 26vw, 350px);
+  border-color: rgb(47 99 153 / 0.09);
+}
+.star-orbits b {
+  position: absolute;
+  left: 47%;
+  top: 50%;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #5ba8d4;
+  box-shadow: 0 0 16px 4px rgb(91 168 212 / 0.35);
+  transform: translate(-50%, -50%);
+  opacity: 0.7;
+}
+.skill-map > .react-flow {
+  position: relative;
+  z-index: 1;
+}
+
+/* Completed nodes get the crisp blue halo from the reference. */
+.tree-page .skill-map .star-subtree.verified,
+.tree-page .skill-map .star-subtree.learned {
+  border-color: rgb(47 99 153 / 0.42) !important;
+  box-shadow:
+    0 0 0 4px rgb(47 99 153 / 0.05),
+    0 14px 30px -18px rgb(20 71 112 / 0.8),
+    0 0 30px rgb(47 99 153 / 0.16) !important;
+}
+.tree-page .skill-map .star-subtree .star-progress .value {
+  stroke: #3f93bd;
+  stroke-width: 3;
+}
+.tree-page .skill-map .react-flow__edge-path {
+  stroke-width: 3 !important;
+  filter: drop-shadow(0 0 5px rgb(47 99 153 / 0.4));
+}
+
+@media (max-width: 760px) {
+  .star-orbits i:nth-child(1) {
+    width: 360px;
+    height: 360px;
+  }
+  .star-orbits i:nth-child(2) {
+    width: 270px;
+    height: 270px;
+  }
+  .star-orbits i:nth-child(3) {
+    width: 170px;
+    height: 170px;
+  }
+}
