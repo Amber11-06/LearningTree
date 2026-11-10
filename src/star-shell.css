@@ -1161,3 +1161,18 @@
       "import" !important;
   }
 }
+
+/* Align the overview aside with the top of the hero card. */
+.overview-shell .overview-aside {
+  padding-top: 138px !important;
+}
+
+/* Use the exact shared workspace wash on the tree canvas. */
+.tree-page .constellation-stage {
+  background: radial-gradient(
+    ellipse at 35% 5%,
+    #fff 0,
+    var(--surface-subtle) 50%,
+    var(--secondary) 100%
+  ) !important;
+}
