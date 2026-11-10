@@ -1221,3 +1221,79 @@
       "note" !important;
   }
 }
+
+/* Unlocking state inside the inspector knowledge row. */
+.topic-state .unlocking-icon {
+  position: relative;
+  display: grid;
+  width: 16px;
+  height: 16px;
+  place-items: center;
+  color: #3b93b9;
+}
+.topic-state .unlocking-icon svg {
+  position: relative;
+  z-index: 1;
+  animation: unlock-wiggle 1.7s ease-in-out infinite;
+  filter: drop-shadow(0 0 4px rgb(88 180 219 / 0.55));
+}
+.topic-state .unlocking-icon::before {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border: 1px solid rgb(96 181 217 / 0.7);
+  border-radius: 50%;
+  animation: unlock-pulse 1.7s ease-out infinite;
+}
+@keyframes unlock-wiggle {
+  0%, 100% { transform: rotate(0deg) translateY(0); }
+  28% { transform: rotate(-14deg) translateY(-1px); }
+  52% { transform: rotate(7deg) translateY(0); }
+  72% { transform: rotate(-3deg); }
+}
+@keyframes unlock-pulse {
+  0% { opacity: 0.9; transform: scale(0.65); }
+  75%, 100% { opacity: 0; transform: scale(1.55); }
+}
+
+/* Larger and heavier learning-progress label. */
+.tree-page .inspector-progress > div:first-child span {
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.06em !important;
+  color: #315f7b !important;
+}
+.tree-page .inspector-progress > div:first-child small {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: #4f7c94 !important;
+}
+.tree-page .inspector-ring-animated b {
+  font-size: 26px !important;
+  font-weight: 700 !important;
+}
+
+/* White-centred aurora like the reference star map. */
+.tree-page .constellation-stage {
+  background:
+    radial-gradient(
+      ellipse at 48% 44%,
+      #fff 0%,
+      #f5fbff 26%,
+      rgb(234 247 254 / 0.72) 49%,
+      transparent 70%
+    ),
+    radial-gradient(
+      circle at 84% 10%,
+      rgb(164 211 238 / 0.3),
+      transparent 44%
+    ),
+    linear-gradient(140deg, #e3f2fb 0%, #d2e8f7 50%, #c2dfF1 100%) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .topic-state .unlocking-icon svg,
+  .topic-state .unlocking-icon::before {
+    animation: none;
+  }
+}

@@ -15,6 +15,7 @@ import {
   Layers3,
   List,
   LockKeyhole,
+  LockOpen,
   Network,
   Pencil,
   Play,
@@ -683,6 +684,10 @@ function SkillInspector({
                   <Check size={11} />
                 ) : itemState === "locked" ? (
                   <LockKeyhole size={10} />
+                ) : item.id === node.id ? (
+                  <span className="unlocking-icon" aria-label="正在开锁">
+                    <LockOpen size={12} />
+                  </span>
                 ) : null}
               </span>
               <span>{item.title}</span>
