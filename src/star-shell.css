@@ -1585,3 +1585,26 @@
   height: 28px !important;
   font-size: 10px !important;
 }
+
+/* Keep the status badge pinned to the orb's top-right. */
+.tree-page .skill-map .star-subtree.is-current .star-status {
+  position: absolute !important;
+  top: -3px !important;
+  right: -3px !important;
+  z-index: 2 !important;
+}
+
+/* Locked orbs stay visually light without becoming transparent to edges. */
+.tree-page .skill-map .star-subtree.locked {
+  opacity: 1 !important;
+}
+.tree-page .skill-map .star-subtree.locked > strong {
+  color: #547487 !important;
+}
+.tree-page .skill-map .star-subtree.locked {
+  background: radial-gradient(
+    circle at 38% 28%,
+    #ffffff,
+    #f5fbfe 72%
+  ) !important;
+}
