@@ -1537,9 +1537,11 @@
 }
 .tree-page .skill-map .star-subtree.is-current > strong,
 .tree-page .skill-map .star-subtree.is-current .star-count,
-.tree-page .skill-map .star-subtree.is-current .star-progress,
 .tree-page .skill-map .star-subtree.is-current .star-status {
   position: relative;
+  z-index: 2;
+}
+.tree-page .skill-map .star-subtree.is-current .star-progress {
   z-index: 2;
 }
 

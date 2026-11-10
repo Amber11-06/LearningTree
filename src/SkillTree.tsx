@@ -9,7 +9,6 @@ import {
   Position,
   ReactFlow,
   ReactFlowProvider,
-  getBezierPath,
   useReactFlow,
   useViewport,
   type EdgeProps,
@@ -183,10 +182,18 @@ function SkillNodeView({ data }: NodeProps<SkillNode>) {
   );
 }
 function CircuitEdge(props: EdgeProps) {
-  const [path, labelX, labelY] = getBezierPath({
-    ...props,
-    curvature: 0.32,
-  });
+  const { sourceX, sourceY, targetX, targetY } = props;
+  const dx = targetX - sourceX;
+  const dy = targetY - sourceY;
+  const length = Math.hypot(dx, dy) || 1;
+  const bow = Math.min(52, length * 0.09);
+  const nx = -dy / length;
+  const ny = dx / length;
+  const controlX = (sourceX + targetX) / 2 + nx * bow;
+  const controlY = (sourceY + targetY) / 2 + ny * bow;
+  const path = `M ${sourceX},${sourceY} Q ${controlX},${controlY} ${targetX},${targetY}`;
+  const labelX = (sourceX + targetX) / 2;
+  const labelY = (sourceY + targetY) / 2;
   return (
     <>
       <BaseEdge
