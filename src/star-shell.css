@@ -1377,3 +1377,17 @@
   color: #2f6399 !important;
   border-color: rgb(47 99 153 / 0.35) !important;
 }
+
+/* Match the lighter review-challenge wash: low grey, higher blue saturation. */
+.tree-page .constellation-stage {
+  background:
+    radial-gradient(
+      ellipse at 44% 38%,
+      rgb(255 255 255 / 0.36) 0%,
+      rgb(226 244 255 / 0.55) 30%,
+      rgb(198 230 250 / 0.2) 52%,
+      transparent 68%
+    ),
+    radial-gradient(circle at 82% 8%, rgb(47 99 153 / 0.12), transparent 44%),
+    linear-gradient(138deg, #e9f6ff 0%, #d9edfc 46%, #c7e4f8 100%) !important;
+}
