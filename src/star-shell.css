@@ -1021,3 +1021,34 @@
     animation: none;
   }
 }
+
+/* Hard override: the sidebar search is a line, never a box. */
+.tree-page .sidebar .tree-side-tools label.tree-side-search,
+.sidebar .tree-side-tools label.tree-side-search {
+  border: 0 !important;
+  border-bottom: 1px solid rgb(137 190 226 / 0.22) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+.tree-page .sidebar .tree-side-tools .tree-side-search:focus-within,
+.sidebar .tree-side-tools .tree-side-search:focus-within {
+  outline: none !important;
+  box-shadow: none !important;
+}
+.tree-side-search input {
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Give the long title the full width, with status in the top-right corner. */
+.tree-page .inspector-title-row h2 {
+  padding-right: 0 !important;
+  padding-top: 30px;
+}
+.tree-page .inspector-title-row .state-pill {
+  top: 0 !important;
+  right: 0 !important;
+}
