@@ -1297,3 +1297,18 @@
     animation: none;
   }
 }
+
+/* Long inspector titles wrap instead of running under the right edge. */
+.tree-page .inspector-title-row h2 {
+  max-width: 100% !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  line-height: 1.15 !important;
+  margin-left: -2px;
+}
+
+/* Nudge the overview page down so its title aligns with the other pages. */
+.learning-overview {
+  padding-top: 18px !important;
+}
