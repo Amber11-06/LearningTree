@@ -1416,24 +1416,6 @@
   stroke: rgb(70 120 150 / 0.36) !important;
 }
 
-/* 0% ring: a complete quiet track, never a broken arc. */
-.tree-page .inspector-ring-animated.is-zero::before,
-.tree-page .inspector-ring-animated.is-zero::after {
-  display: none !important;
-}
-.tree-page .inspector-ring-animated.is-zero .value {
-  display: none !important;
-}
-.tree-page .inspector-ring-animated.is-zero .track {
-  stroke: #bad2e3 !important;
-  stroke-width: 4 !important;
-}
-.tree-page .inspector-ring-animated.is-zero b {
-  color: #577a8f !important;
-  text-shadow: none !important;
-  animation: none !important;
-}
-
 /* Lighter floating continue CTA on the overview. */
 .overview-primary {
   box-shadow: 0 2px 6px rgb(72 120 187 / 0.12) !important;
