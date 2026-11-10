@@ -1553,3 +1553,33 @@
 .star-orbits i:nth-child(3) {
   border-color: rgb(47 99 153 / 0.11);
 }
+
+/* Login hero sits high in the left pane again. */
+.auth-story {
+  justify-content: flex-start !important;
+  gap: 1.6rem !important;
+}
+.auth-story-copy {
+  flex: 0 0 auto !important;
+  display: block !important;
+  margin-top: 2.5rem !important;
+}
+.auth-constellation {
+  margin-top: auto !important;
+}
+
+/* Profile footer keeps the same scale as the other pages. */
+.app-shell .profile {
+  padding: 14px 2px !important;
+}
+.app-shell .profile strong {
+  font-size: 11px !important;
+}
+.app-shell .profile span {
+  font-size: 9px !important;
+}
+.app-shell .profile .avatar {
+  width: 28px !important;
+  height: 28px !important;
+  font-size: 10px !important;
+}

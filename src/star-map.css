@@ -353,3 +353,10 @@
     height: 170px;
   }
 }
+
+/* Center the orbit rings on the central JavaScript stage. */
+.star-orbits i,
+.star-orbits b {
+  left: 50%;
+  top: 42%;
+}

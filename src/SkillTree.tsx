@@ -185,7 +185,7 @@ function SkillNodeView({ data }: NodeProps<SkillNode>) {
 function CircuitEdge(props: EdgeProps) {
   const [path, labelX, labelY] = getBezierPath({
     ...props,
-    curvature: 0.26,
+    curvature: 0.32,
   });
   return (
     <>
