@@ -1608,3 +1608,39 @@
     #f5fbfe 72%
   ) !important;
 }
+
+/* Login hero: one centered line, still in the upper area. */
+.auth-story-copy {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.auth-story h1 {
+  white-space: nowrap;
+  font-size: clamp(2.2rem, 3.4vw, 3.2rem) !important;
+}
+@media (max-width: 760px) {
+  .auth-story h1 {
+    font-size: 2rem !important;
+  }
+}
+
+/* Lighter, tighter inspection-sheet shadow. */
+.tree-page .command-center {
+  box-shadow:
+    -18px 14px 36px -32px rgb(16 55 82 / 0.3),
+    0 12px 24px -24px rgb(16 55 82 / 0.22),
+    inset 0 1px 0 rgb(255 255 255 / 0.9) !important;
+}
+
+/* Slightly larger profile footer, identical on every page. */
+.app-shell .profile strong {
+  font-size: 13px !important;
+}
+.app-shell .profile span {
+  font-size: 10px !important;
+}
+.app-shell .profile .avatar {
+  font-size: 11px !important;
+}

@@ -93,11 +93,7 @@ export function AuthScreen({
             <Database size={14} />
             LOCAL WORKSPACE
           </span>
-          <h1>
-            登录你的
-            <br />
-            学习空间
-          </h1>
+          <h1>登录你的学习空间</h1>
         </div>
         <svg
           className="auth-constellation"
