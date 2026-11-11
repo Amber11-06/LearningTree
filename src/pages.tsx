@@ -116,6 +116,10 @@ export function Reviews({
               key={current.id}
               node={current}
               revealSignal={revealSignal}
+              onSkip={() => {
+                const next = due[(currentIndex + 1) % due.length];
+                if (next) setChosen(next.id);
+              }}
               onRate={async (rating, response) => {
                 if (await actions.review(current.id, rating, response)) {
                   setDone((n) => n + 1);
@@ -157,17 +161,12 @@ export function Reviews({
               </div>
             </div>
             <div className="context-actions">
-              <button onClick={() => setRevealSignal((value) => value + 1)}>
-                查看参考答案
-              </button>
               <button
-                className="ghost"
-                onClick={() => {
-                  const next = due[(currentIndex + 1) % due.length];
-                  if (next) setChosen(next.id);
-                }}
+                className="context-note-link"
+                onClick={() => actions.select(current.id)}
               >
-                稍后再复习
+                打开相关笔记
+                <ArrowUpRight size={14} />
               </button>
             </div>
           </aside>
@@ -179,10 +178,12 @@ export function Reviews({
 function ReviewCard({
   node,
   revealSignal = 0,
+  onSkip,
   onRate,
 }: {
   node: Topic;
   revealSignal?: number;
+  onSkip?: () => void;
   onRate: (rating: Grade, response: string) => Promise<void>;
 }) {
   const [revealed, setRevealed] = useState(false),
@@ -196,25 +197,31 @@ function ReviewCard({
     <section className="panel review-card">
       <h2>{node.title}</h2>
       <div className="recall-question">{node.question}</div>
-      <label>
+      <label className="recall-answer">
         <textarea
           aria-label="复习回答"
-          rows={4}
-          maxLength={4000}
+          rows={12}
+          maxLength={500}
           value={response}
           onChange={(e) => setResponse(e.target.value)}
-          placeholder="先不翻笔记，试着用自己的话说清楚…"
+          placeholder="先写结论，再补因果。没有把握也先写下你想到的部分……"
           disabled={revealed}
         />
+        <span className="recall-count">{response.length} / 500</span>
       </label>
       {!revealed ? (
-        <button
-          className="button primary reveal-button"
-          onClick={() => setRevealed(true)}
-        >
-          我想好了，查看参考答案
-          <ArrowRight size={16} />
-        </button>
+        <div className="recall-footer">
+          <button className="recall-skip" onClick={onSkip}>
+            稍后再复习
+          </button>
+          <button
+            className="button primary recall-submit"
+            onClick={() => setRevealed(true)}
+          >
+            提交并查看答案
+            <ArrowRight size={16} />
+          </button>
+        </div>
       ) : (
         <>
           <div className="answer">
@@ -688,26 +695,12 @@ export function Settings({ data, actions }: Props) {
               }}
             />
           </label>
-          <p className="caption">
-            支持本应用导出的完整 JSON 备份，最大 32
-            MB。恢复会替换数据库中的整个学习空间。
-          </p>
           <button
             className="text-button demo-link"
             onClick={actions.migrateLegacy}
           >
             迁移此浏览器的旧版数据
             <ArrowUpRight size={14} />
-          </button>
-          <div className="settings-divider" />
-          <h3>{data.demo ? "清空示例空间" : "清空学习数据"}</h3>
-          <p>
-            {data.demo
-              ? "当前是示例空间。清空示例后，就能建立属于你的学习树。"
-              : "清空数据库中的学习内容与进度。建议先导出完整备份。"}
-          </p>
-          <button className="button danger" onClick={actions.reset}>
-            {data.demo ? "清空示例空间" : "清空全部学习数据"}
           </button>
           {!data.trees.length && (
             <button className="text-button demo-link" onClick={actions.demo}>

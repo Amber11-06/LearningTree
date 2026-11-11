@@ -1666,3 +1666,78 @@
 .auth-story-copy {
   top: 47% !important;
 }
+
+/* Review answer panel: large writing area with footer actions. */
+.recall-answer {
+  position: relative;
+  display: block;
+  margin-top: 12px;
+}
+.recall-answer textarea {
+  width: 100%;
+  min-height: 300px;
+  height: clamp(260px, 36vh, 360px);
+  padding: 18px 18px 38px;
+  border: 1px solid rgb(84 112 149 / 0.22);
+  border-radius: 8px;
+  background: #fff;
+  font-size: 14px;
+  line-height: 1.75;
+  resize: vertical;
+}
+.recall-answer textarea::placeholder {
+  color: #9aabb9;
+  font-weight: 400;
+}
+.recall-count {
+  position: absolute;
+  right: 14px;
+  bottom: 12px;
+  color: #91a4b3;
+  font: 11px ui-monospace, monospace;
+}
+.recall-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 14px;
+}
+.recall-skip {
+  padding: 8px 4px;
+  color: #5b7488;
+  font-size: 13px;
+  font-weight: 500;
+}
+.recall-submit {
+  width: auto !important;
+  min-width: 190px;
+  margin: 0 !important;
+}
+
+/* Context footer becomes a single note link. */
+.context-note-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 0;
+  color: #2f6399 !important;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+/* Larger journal filters and empty-state actions. */
+.journal-toolbar .segmented button {
+  font-size: 14px !important;
+  font-weight: 650 !important;
+}
+.journal-actions button {
+  font-size: 14px !important;
+  font-weight: 650 !important;
+}
+
+/* Larger star-map continue CTA text. */
+.tree-continue {
+  font-size: 15px !important;
+  font-weight: 700 !important;
+}
