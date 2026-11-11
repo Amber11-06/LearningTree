@@ -1741,3 +1741,14 @@
   font-size: 15px !important;
   font-weight: 700 !important;
 }
+
+/* Context note link must read as a link, not sit on a button fill. */
+.context-actions .context-note-link {
+  width: auto !important;
+  min-height: 0 !important;
+  justify-content: flex-start !important;
+  padding: 6px 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: #2f6399 !important;
+}
