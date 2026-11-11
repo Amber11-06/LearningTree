@@ -9,7 +9,6 @@ import {
   ChevronRight,
   Clock3,
   FileUp,
-  Leaf,
   RotateCcw,
   Trash2,
 } from "lucide-react";
@@ -194,7 +193,7 @@ function ReviewCard({
     if (revealSignal) setRevealed(true);
   }, [revealSignal]);
   return (
-    <section className="panel review-card">
+    <section className={`panel review-card${revealed ? " is-revealed" : ""}`}>
       <h2>{node.title}</h2>
       <div className="recall-question">{node.question}</div>
       <label className="recall-answer">
@@ -742,18 +741,6 @@ export function Settings({ data, actions }: Props) {
           课程包格式为 learning-tree-course，单文件最大 32
           MB，不包含个人笔记或测验成绩。
         </p>
-      </section>
-      <section className="panel method-note">
-        <Leaf size={22} />
-        <div>
-          <h3>数据说明</h3>
-          <p>
-            反馈由实际学习记录和明确规则生成；自测正确率、主观信心和复习自评分开记录。复习采用
-            FSRS 算法安排时间。课程和学习数据通过本机 FastAPI 写入
-            PostgreSQL，账号与数据按登录用户隔离，不调用
-            AI。请定期导出完整备份。
-          </p>
-        </div>
       </section>
       </div>
     </>

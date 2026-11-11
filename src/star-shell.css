@@ -1752,3 +1752,55 @@
   background: transparent !important;
   color: #2f6399 !important;
 }
+
+/* Settings: equal top cards and a full-width import card. */
+.settings-layout {
+  grid-template-columns: 1fr 1fr !important;
+  grid-template-areas:
+    "prefs data"
+    "import import" !important;
+  align-items: stretch !important;
+}
+.settings-layout > .course-settings {
+  grid-area: import;
+  width: 100%;
+  max-width: none !important;
+  margin-top: 0 !important;
+}
+@media (max-width: 900px) {
+  .settings-layout {
+    grid-template-columns: 1fr !important;
+    grid-template-areas:
+      "prefs"
+      "data"
+      "import" !important;
+  }
+}
+
+/* Review: make the writing box fill the card and pin actions bottom-right. */
+.review-card {
+  display: flex !important;
+  flex-direction: column;
+}
+.recall-answer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.recall-answer textarea {
+  flex: 1;
+  height: auto !important;
+  min-height: 340px;
+}
+.recall-footer {
+  margin-top: auto;
+  padding-top: 16px;
+}
+.review-card.is-revealed .recall-answer {
+  flex: 0 0 auto;
+}
+.review-card.is-revealed .recall-answer textarea {
+  height: 180px !important;
+  min-height: 180px;
+}
